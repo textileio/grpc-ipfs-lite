@@ -31,11 +31,11 @@ message Link {
 
 message NodeStat {
     string hash = 1;
-	int32 numLinks = 2;
-	int32 blockSize = 3;
-	int32 linksSize = 4;
-	int32 dataSize = 5;
-	int32 cumulativeSize = 6;
+    int32 numLinks = 2;
+    int32 blockSize = 3;
+    int32 linksSize = 4;
+    int32 dataSize = 5;
+    int32 cumulativeSize = 6;
 }
 
 message Node {
