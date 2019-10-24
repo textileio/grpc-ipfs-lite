@@ -1,0 +1,218 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "io.textile.grpc_ipfs_lite";
+option java_outer_classname = "IpfsLiteProto";
+
+// Model messages
+
+message AddParams {
+    string layout = 1;
+    string chunker = 2;
+    bool rawLeaves = 3;
+    bool hidden = 4;
+    bool shared = 5;
+    bool noCopy = 6;
+    string hashFun = 7;
+}
+
+message Block {
+    bytes rawData = 1;
+    string cid = 2;
+}
+
+message Link {
+    string name = 1;
+    int64 size = 2;
+    string cid  = 3;
+}
+
+message NodeStat {
+    string hash = 1;
+    int32 numLinks = 2;
+    int32 blockSize = 3;
+    int32 linksSize = 4;
+    int32 dataSize = 5;
+    int32 cumulativeSize = 6;
+}
+
+message Node {
+    Block block = 1;
+    repeated Link links = 2;
+    NodeStat state = 3;
+    int64 size = 4;
+}
+
+// Request and Response messages
+
+message AddFileRequest {
+    oneof msgtype {
+        AddParams addParams = 1;
+        bytes chunk = 2;
+    }
+}
+
+message AddFileResponse {
+    Node node = 1;
+}
+
+message GetFileRequest {
+    string cid = 1;
+}
+
+message GetFileResponse {
+    bytes data = 1;
+}
+
+message GetNodeRequest {
+    string cid = 1;
+}
+
+message GetNodeResponse {
+    Node node = 1;
+}
+
+message GetNodesRequest {
+    repeated string cid = 1;
+}
+
+message GetNodesResponse {
+    oneof option {
+        Node node = 1;
+        string error = 2;
+    }
+}
+
+message ResolveLinkRequest {
+    string nodeCid = 1;
+    repeated string path = 2;
+}
+
+message ResolveLinkResponse {
+    Link link = 1;
+    repeated string remainingPath = 2;
+}
+
+message ResolveRequest {
+    string nodeCid = 1;
+    repeated string path = 2;
+}
+
+message ResolveResponse {
+    google.protobuf.Any object = 1;
+    repeated string remainingPath = 2;
+}
+
+message TreeRequest {
+    string nodeCid = 1;
+    repeated string path = 2;
+    int32 depth = 3;
+}
+
+message TreeResponse {
+    repeated string paths = 1;
+}
+
+message DeleteBlockRequest {
+    string cid = 1;
+}
+
+message DeleteBlockResponse {
+    
+}
+
+message HasBlockRequest {
+    string cid = 1;
+}
+
+message HasBlockResponse {
+    bool hasBlock = 1;
+}
+
+message GetBlockRequest {
+    string cid = 1;
+}
+
+message GetBlockResponse {
+    Block block = 1;
+}
+
+message GetBlockSizeRequest {
+    string cid = 1;
+}
+
+message GetBlockSizeResponse {
+    int32 size = 1;
+}
+
+message PutBlockRequest {
+    Block block = 1;
+}
+
+message PutBlockResponse {
+    
+}
+
+message PutBlocksRequest {
+    repeated Block blocks = 1;
+}
+
+message PutBlocksResponse {
+    
+}
+
+message AllKeysRequest {
+
+}
+
+message AllKeysResponse {
+    string cid = 1;
+}
+
+message HashOnReadRequest {
+    bool hashOnRead = 1;
+}
+
+message HashOnReadResponse {
+
+}
+
+service IpfsLite {
+    rpc AddFile(stream AddFileRequest) returns (AddFileResponse) {}
+
+    rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
+
+    // Session() returns a NodeGetter which provides Get and GetMany methods
+
+    rpc GetNode(GetNodeRequest) returns (GetNodeResponse) {}
+
+    rpc GetNodes(GetNodesRequest) returns (stream GetNodesResponse) {}
+
+    // Node provides a ResloveLink method and a Resolver prop that provides Resolve and Tree methods
+
+    rpc ResolveLink(ResolveLinkRequest) returns (ResolveLinkResponse) {}
+
+    rpc Resolve(ResolveRequest) returns (ResolveResponse) {}
+
+    rpc Tree(TreeRequest) returns (TreeResponse) {}
+
+    // BlockStore() returns a blockstore.Blockstore that provides the following
+
+    rpc DeleteBlock(DeleteBlockRequest) returns (DeleteBlockResponse) {}
+
+    rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
+
+    rpc GetBlock(GetBlockRequest) returns (GetBlockResponse) {}
+
+    rpc GetBlockSize(GetBlockSizeRequest) returns (GetBlockSizeResponse) {}
+
+    rpc PutBlock(PutBlockRequest) returns (PutBlockResponse) {}
+
+    rpc PutBlocks(PutBlocksRequest) returns (PutBlocksResponse) {}
+
+    rpc AllKeys(AllKeysRequest) returns (stream AllKeysResponse) {}
+
+    rpc HashOnRead(HashOnReadRequest) returns (HashOnReadResponse) {}
+}
