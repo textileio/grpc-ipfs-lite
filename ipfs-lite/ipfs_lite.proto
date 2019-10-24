@@ -41,17 +41,15 @@ message NodeStat {
 message Node {
     Block block = 1;
     repeated Link links = 2;
-    NodeStat state = 3;
+    NodeStat stat = 3;
     int64 size = 4;
 }
 
 // Request and Response messages
 
 message AddFileRequest {
-    oneof msgtype {
-        AddParams addParams = 1;
-        bytes chunk = 2;
-    }
+    AddParams addParams = 1;
+    bytes data = 2;
 }
 
 message AddFileResponse {
@@ -180,7 +178,7 @@ message HashOnReadResponse {
 }
 
 service IpfsLite {
-    rpc AddFile(stream AddFileRequest) returns (AddFileResponse) {}
+    rpc AddFile(AddFileRequest) returns (AddFileResponse) {}
 
     rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
 
