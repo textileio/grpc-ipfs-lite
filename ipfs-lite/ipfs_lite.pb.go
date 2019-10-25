@@ -520,6 +520,146 @@ func (m *GetFileResponse) GetData() []byte {
 	return nil
 }
 
+type AddNodeRequest struct {
+	Node                 *Node    `protobuf:"bytes,1,opt,name=node,proto3" json:"node,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodeRequest) Reset()         { *m = AddNodeRequest{} }
+func (m *AddNodeRequest) String() string { return proto.CompactTextString(m) }
+func (*AddNodeRequest) ProtoMessage()    {}
+func (*AddNodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{9}
+}
+
+func (m *AddNodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodeRequest.Unmarshal(m, b)
+}
+func (m *AddNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodeRequest.Marshal(b, m, deterministic)
+}
+func (m *AddNodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodeRequest.Merge(m, src)
+}
+func (m *AddNodeRequest) XXX_Size() int {
+	return xxx_messageInfo_AddNodeRequest.Size(m)
+}
+func (m *AddNodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodeRequest proto.InternalMessageInfo
+
+func (m *AddNodeRequest) GetNode() *Node {
+	if m != nil {
+		return m.Node
+	}
+	return nil
+}
+
+type AddNodeResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodeResponse) Reset()         { *m = AddNodeResponse{} }
+func (m *AddNodeResponse) String() string { return proto.CompactTextString(m) }
+func (*AddNodeResponse) ProtoMessage()    {}
+func (*AddNodeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{10}
+}
+
+func (m *AddNodeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodeResponse.Unmarshal(m, b)
+}
+func (m *AddNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodeResponse.Marshal(b, m, deterministic)
+}
+func (m *AddNodeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodeResponse.Merge(m, src)
+}
+func (m *AddNodeResponse) XXX_Size() int {
+	return xxx_messageInfo_AddNodeResponse.Size(m)
+}
+func (m *AddNodeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodeResponse proto.InternalMessageInfo
+
+type AddNodesRequest struct {
+	Nodes                []*Node  `protobuf:"bytes,1,rep,name=nodes,proto3" json:"nodes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodesRequest) Reset()         { *m = AddNodesRequest{} }
+func (m *AddNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*AddNodesRequest) ProtoMessage()    {}
+func (*AddNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{11}
+}
+
+func (m *AddNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodesRequest.Unmarshal(m, b)
+}
+func (m *AddNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodesRequest.Marshal(b, m, deterministic)
+}
+func (m *AddNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodesRequest.Merge(m, src)
+}
+func (m *AddNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_AddNodesRequest.Size(m)
+}
+func (m *AddNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodesRequest proto.InternalMessageInfo
+
+func (m *AddNodesRequest) GetNodes() []*Node {
+	if m != nil {
+		return m.Nodes
+	}
+	return nil
+}
+
+type AddNodesResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodesResponse) Reset()         { *m = AddNodesResponse{} }
+func (m *AddNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*AddNodesResponse) ProtoMessage()    {}
+func (*AddNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{12}
+}
+
+func (m *AddNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodesResponse.Unmarshal(m, b)
+}
+func (m *AddNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodesResponse.Marshal(b, m, deterministic)
+}
+func (m *AddNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodesResponse.Merge(m, src)
+}
+func (m *AddNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_AddNodesResponse.Size(m)
+}
+func (m *AddNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodesResponse proto.InternalMessageInfo
+
 type GetNodeRequest struct {
 	Cid                  string   `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -531,7 +671,7 @@ func (m *GetNodeRequest) Reset()         { *m = GetNodeRequest{} }
 func (m *GetNodeRequest) String() string { return proto.CompactTextString(m) }
 func (*GetNodeRequest) ProtoMessage()    {}
 func (*GetNodeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{9}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{13}
 }
 
 func (m *GetNodeRequest) XXX_Unmarshal(b []byte) error {
@@ -570,7 +710,7 @@ func (m *GetNodeResponse) Reset()         { *m = GetNodeResponse{} }
 func (m *GetNodeResponse) String() string { return proto.CompactTextString(m) }
 func (*GetNodeResponse) ProtoMessage()    {}
 func (*GetNodeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{10}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{14}
 }
 
 func (m *GetNodeResponse) XXX_Unmarshal(b []byte) error {
@@ -599,7 +739,7 @@ func (m *GetNodeResponse) GetNode() *Node {
 }
 
 type GetNodesRequest struct {
-	Cid                  []string `protobuf:"bytes,1,rep,name=cid,proto3" json:"cid,omitempty"`
+	Cids                 []string `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -609,7 +749,7 @@ func (m *GetNodesRequest) Reset()         { *m = GetNodesRequest{} }
 func (m *GetNodesRequest) String() string { return proto.CompactTextString(m) }
 func (*GetNodesRequest) ProtoMessage()    {}
 func (*GetNodesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{11}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{15}
 }
 
 func (m *GetNodesRequest) XXX_Unmarshal(b []byte) error {
@@ -630,9 +770,9 @@ func (m *GetNodesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetNodesRequest proto.InternalMessageInfo
 
-func (m *GetNodesRequest) GetCid() []string {
+func (m *GetNodesRequest) GetCids() []string {
 	if m != nil {
-		return m.Cid
+		return m.Cids
 	}
 	return nil
 }
@@ -651,7 +791,7 @@ func (m *GetNodesResponse) Reset()         { *m = GetNodesResponse{} }
 func (m *GetNodesResponse) String() string { return proto.CompactTextString(m) }
 func (*GetNodesResponse) ProtoMessage()    {}
 func (*GetNodesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{12}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{16}
 }
 
 func (m *GetNodesResponse) XXX_Unmarshal(b []byte) error {
@@ -717,6 +857,146 @@ func (*GetNodesResponse) XXX_OneofWrappers() []interface{} {
 	}
 }
 
+type RemoveNodeRequest struct {
+	Cid                  string   `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodeRequest) Reset()         { *m = RemoveNodeRequest{} }
+func (m *RemoveNodeRequest) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodeRequest) ProtoMessage()    {}
+func (*RemoveNodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{17}
+}
+
+func (m *RemoveNodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodeRequest.Unmarshal(m, b)
+}
+func (m *RemoveNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodeRequest.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodeRequest.Merge(m, src)
+}
+func (m *RemoveNodeRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodeRequest.Size(m)
+}
+func (m *RemoveNodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodeRequest proto.InternalMessageInfo
+
+func (m *RemoveNodeRequest) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+type RemoveNodeResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodeResponse) Reset()         { *m = RemoveNodeResponse{} }
+func (m *RemoveNodeResponse) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodeResponse) ProtoMessage()    {}
+func (*RemoveNodeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{18}
+}
+
+func (m *RemoveNodeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodeResponse.Unmarshal(m, b)
+}
+func (m *RemoveNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodeResponse.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodeResponse.Merge(m, src)
+}
+func (m *RemoveNodeResponse) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodeResponse.Size(m)
+}
+func (m *RemoveNodeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodeResponse proto.InternalMessageInfo
+
+type RemoveNodesRequest struct {
+	Cids                 []string `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodesRequest) Reset()         { *m = RemoveNodesRequest{} }
+func (m *RemoveNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodesRequest) ProtoMessage()    {}
+func (*RemoveNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{19}
+}
+
+func (m *RemoveNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodesRequest.Unmarshal(m, b)
+}
+func (m *RemoveNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodesRequest.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodesRequest.Merge(m, src)
+}
+func (m *RemoveNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodesRequest.Size(m)
+}
+func (m *RemoveNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodesRequest proto.InternalMessageInfo
+
+func (m *RemoveNodesRequest) GetCids() []string {
+	if m != nil {
+		return m.Cids
+	}
+	return nil
+}
+
+type RemoveNodesResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodesResponse) Reset()         { *m = RemoveNodesResponse{} }
+func (m *RemoveNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodesResponse) ProtoMessage()    {}
+func (*RemoveNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{20}
+}
+
+func (m *RemoveNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodesResponse.Unmarshal(m, b)
+}
+func (m *RemoveNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodesResponse.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodesResponse.Merge(m, src)
+}
+func (m *RemoveNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodesResponse.Size(m)
+}
+func (m *RemoveNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodesResponse proto.InternalMessageInfo
+
 type ResolveLinkRequest struct {
 	NodeCid              string   `protobuf:"bytes,1,opt,name=nodeCid,proto3" json:"nodeCid,omitempty"`
 	Path                 []string `protobuf:"bytes,2,rep,name=path,proto3" json:"path,omitempty"`
@@ -729,7 +1009,7 @@ func (m *ResolveLinkRequest) Reset()         { *m = ResolveLinkRequest{} }
 func (m *ResolveLinkRequest) String() string { return proto.CompactTextString(m) }
 func (*ResolveLinkRequest) ProtoMessage()    {}
 func (*ResolveLinkRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{13}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{21}
 }
 
 func (m *ResolveLinkRequest) XXX_Unmarshal(b []byte) error {
@@ -776,7 +1056,7 @@ func (m *ResolveLinkResponse) Reset()         { *m = ResolveLinkResponse{} }
 func (m *ResolveLinkResponse) String() string { return proto.CompactTextString(m) }
 func (*ResolveLinkResponse) ProtoMessage()    {}
 func (*ResolveLinkResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{14}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{22}
 }
 
 func (m *ResolveLinkResponse) XXX_Unmarshal(b []byte) error {
@@ -823,7 +1103,7 @@ func (m *ResolveRequest) Reset()         { *m = ResolveRequest{} }
 func (m *ResolveRequest) String() string { return proto.CompactTextString(m) }
 func (*ResolveRequest) ProtoMessage()    {}
 func (*ResolveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{15}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{23}
 }
 
 func (m *ResolveRequest) XXX_Unmarshal(b []byte) error {
@@ -870,7 +1150,7 @@ func (m *ResolveResponse) Reset()         { *m = ResolveResponse{} }
 func (m *ResolveResponse) String() string { return proto.CompactTextString(m) }
 func (*ResolveResponse) ProtoMessage()    {}
 func (*ResolveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{16}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{24}
 }
 
 func (m *ResolveResponse) XXX_Unmarshal(b []byte) error {
@@ -918,7 +1198,7 @@ func (m *TreeRequest) Reset()         { *m = TreeRequest{} }
 func (m *TreeRequest) String() string { return proto.CompactTextString(m) }
 func (*TreeRequest) ProtoMessage()    {}
 func (*TreeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{17}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{25}
 }
 
 func (m *TreeRequest) XXX_Unmarshal(b []byte) error {
@@ -971,7 +1251,7 @@ func (m *TreeResponse) Reset()         { *m = TreeResponse{} }
 func (m *TreeResponse) String() string { return proto.CompactTextString(m) }
 func (*TreeResponse) ProtoMessage()    {}
 func (*TreeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{18}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{26}
 }
 
 func (m *TreeResponse) XXX_Unmarshal(b []byte) error {
@@ -1010,7 +1290,7 @@ func (m *DeleteBlockRequest) Reset()         { *m = DeleteBlockRequest{} }
 func (m *DeleteBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteBlockRequest) ProtoMessage()    {}
 func (*DeleteBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{19}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{27}
 }
 
 func (m *DeleteBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1048,7 +1328,7 @@ func (m *DeleteBlockResponse) Reset()         { *m = DeleteBlockResponse{} }
 func (m *DeleteBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteBlockResponse) ProtoMessage()    {}
 func (*DeleteBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{20}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{28}
 }
 
 func (m *DeleteBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1080,7 +1360,7 @@ func (m *HasBlockRequest) Reset()         { *m = HasBlockRequest{} }
 func (m *HasBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*HasBlockRequest) ProtoMessage()    {}
 func (*HasBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{21}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{29}
 }
 
 func (m *HasBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1119,7 +1399,7 @@ func (m *HasBlockResponse) Reset()         { *m = HasBlockResponse{} }
 func (m *HasBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*HasBlockResponse) ProtoMessage()    {}
 func (*HasBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{22}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{30}
 }
 
 func (m *HasBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1158,7 +1438,7 @@ func (m *GetBlockRequest) Reset()         { *m = GetBlockRequest{} }
 func (m *GetBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBlockRequest) ProtoMessage()    {}
 func (*GetBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{23}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{31}
 }
 
 func (m *GetBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1197,7 +1477,7 @@ func (m *GetBlockResponse) Reset()         { *m = GetBlockResponse{} }
 func (m *GetBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*GetBlockResponse) ProtoMessage()    {}
 func (*GetBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{24}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{32}
 }
 
 func (m *GetBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1236,7 +1516,7 @@ func (m *GetBlockSizeRequest) Reset()         { *m = GetBlockSizeRequest{} }
 func (m *GetBlockSizeRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBlockSizeRequest) ProtoMessage()    {}
 func (*GetBlockSizeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{25}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{33}
 }
 
 func (m *GetBlockSizeRequest) XXX_Unmarshal(b []byte) error {
@@ -1275,7 +1555,7 @@ func (m *GetBlockSizeResponse) Reset()         { *m = GetBlockSizeResponse{} }
 func (m *GetBlockSizeResponse) String() string { return proto.CompactTextString(m) }
 func (*GetBlockSizeResponse) ProtoMessage()    {}
 func (*GetBlockSizeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{26}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{34}
 }
 
 func (m *GetBlockSizeResponse) XXX_Unmarshal(b []byte) error {
@@ -1314,7 +1594,7 @@ func (m *PutBlockRequest) Reset()         { *m = PutBlockRequest{} }
 func (m *PutBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*PutBlockRequest) ProtoMessage()    {}
 func (*PutBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{27}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{35}
 }
 
 func (m *PutBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1352,7 +1632,7 @@ func (m *PutBlockResponse) Reset()         { *m = PutBlockResponse{} }
 func (m *PutBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*PutBlockResponse) ProtoMessage()    {}
 func (*PutBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{28}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{36}
 }
 
 func (m *PutBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1384,7 +1664,7 @@ func (m *PutBlocksRequest) Reset()         { *m = PutBlocksRequest{} }
 func (m *PutBlocksRequest) String() string { return proto.CompactTextString(m) }
 func (*PutBlocksRequest) ProtoMessage()    {}
 func (*PutBlocksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{29}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{37}
 }
 
 func (m *PutBlocksRequest) XXX_Unmarshal(b []byte) error {
@@ -1422,7 +1702,7 @@ func (m *PutBlocksResponse) Reset()         { *m = PutBlocksResponse{} }
 func (m *PutBlocksResponse) String() string { return proto.CompactTextString(m) }
 func (*PutBlocksResponse) ProtoMessage()    {}
 func (*PutBlocksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{30}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{38}
 }
 
 func (m *PutBlocksResponse) XXX_Unmarshal(b []byte) error {
@@ -1453,7 +1733,7 @@ func (m *AllKeysRequest) Reset()         { *m = AllKeysRequest{} }
 func (m *AllKeysRequest) String() string { return proto.CompactTextString(m) }
 func (*AllKeysRequest) ProtoMessage()    {}
 func (*AllKeysRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{31}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{39}
 }
 
 func (m *AllKeysRequest) XXX_Unmarshal(b []byte) error {
@@ -1485,7 +1765,7 @@ func (m *AllKeysResponse) Reset()         { *m = AllKeysResponse{} }
 func (m *AllKeysResponse) String() string { return proto.CompactTextString(m) }
 func (*AllKeysResponse) ProtoMessage()    {}
 func (*AllKeysResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{32}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{40}
 }
 
 func (m *AllKeysResponse) XXX_Unmarshal(b []byte) error {
@@ -1524,7 +1804,7 @@ func (m *HashOnReadRequest) Reset()         { *m = HashOnReadRequest{} }
 func (m *HashOnReadRequest) String() string { return proto.CompactTextString(m) }
 func (*HashOnReadRequest) ProtoMessage()    {}
 func (*HashOnReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{33}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{41}
 }
 
 func (m *HashOnReadRequest) XXX_Unmarshal(b []byte) error {
@@ -1562,7 +1842,7 @@ func (m *HashOnReadResponse) Reset()         { *m = HashOnReadResponse{} }
 func (m *HashOnReadResponse) String() string { return proto.CompactTextString(m) }
 func (*HashOnReadResponse) ProtoMessage()    {}
 func (*HashOnReadResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{34}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{42}
 }
 
 func (m *HashOnReadResponse) XXX_Unmarshal(b []byte) error {
@@ -1593,10 +1873,18 @@ func init() {
 	proto.RegisterType((*AddFileResponse)(nil), "AddFileResponse")
 	proto.RegisterType((*GetFileRequest)(nil), "GetFileRequest")
 	proto.RegisterType((*GetFileResponse)(nil), "GetFileResponse")
+	proto.RegisterType((*AddNodeRequest)(nil), "AddNodeRequest")
+	proto.RegisterType((*AddNodeResponse)(nil), "AddNodeResponse")
+	proto.RegisterType((*AddNodesRequest)(nil), "AddNodesRequest")
+	proto.RegisterType((*AddNodesResponse)(nil), "AddNodesResponse")
 	proto.RegisterType((*GetNodeRequest)(nil), "GetNodeRequest")
 	proto.RegisterType((*GetNodeResponse)(nil), "GetNodeResponse")
 	proto.RegisterType((*GetNodesRequest)(nil), "GetNodesRequest")
 	proto.RegisterType((*GetNodesResponse)(nil), "GetNodesResponse")
+	proto.RegisterType((*RemoveNodeRequest)(nil), "RemoveNodeRequest")
+	proto.RegisterType((*RemoveNodeResponse)(nil), "RemoveNodeResponse")
+	proto.RegisterType((*RemoveNodesRequest)(nil), "RemoveNodesRequest")
+	proto.RegisterType((*RemoveNodesResponse)(nil), "RemoveNodesResponse")
 	proto.RegisterType((*ResolveLinkRequest)(nil), "ResolveLinkRequest")
 	proto.RegisterType((*ResolveLinkResponse)(nil), "ResolveLinkResponse")
 	proto.RegisterType((*ResolveRequest)(nil), "ResolveRequest")
@@ -1624,76 +1912,83 @@ func init() {
 func init() { proto.RegisterFile("ipfs_lite.proto", fileDescriptor_8edd8ce3e1de43b8) }
 
 var fileDescriptor_8edd8ce3e1de43b8 = []byte{
-	// 1095 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x6d, 0x6f, 0xdb, 0x54,
-	0x14, 0xb6, 0x49, 0x9c, 0x26, 0xa7, 0x2f, 0x71, 0x4f, 0xb2, 0x29, 0xf5, 0x06, 0x9a, 0x2e, 0xdb,
-	0xa8, 0x50, 0x75, 0x5b, 0x5a, 0x24, 0x24, 0x24, 0x10, 0xed, 0xa6, 0x51, 0x44, 0x35, 0x3a, 0x0f,
-	0xf1, 0x75, 0xba, 0x8d, 0x6f, 0x6b, 0x53, 0xd7, 0x0e, 0xf6, 0x4d, 0x47, 0xf8, 0x23, 0xfc, 0x17,
-	0x24, 0xfe, 0x1b, 0xba, 0x2f, 0x7e, 0x4d, 0xba, 0xa2, 0x7d, 0xf3, 0x79, 0xb9, 0xcf, 0x7d, 0x7c,
-	0x7c, 0x9e, 0x27, 0x81, 0x61, 0x34, 0xbb, 0xcc, 0xdf, 0xc5, 0x91, 0xe0, 0x74, 0x96, 0xa5, 0x22,
-	0xf5, 0x76, 0xae, 0xd2, 0xf4, 0x2a, 0xe6, 0xfb, 0x2a, 0xba, 0x98, 0x5f, 0xee, 0xb3, 0x64, 0xa1,
-	0x4b, 0xe4, 0x5f, 0x1b, 0x06, 0xc7, 0x41, 0x70, 0xce, 0x32, 0x76, 0x93, 0xe3, 0x43, 0xe8, 0xc5,
-	0x6c, 0x91, 0xce, 0xc5, 0xc4, 0x7e, 0x62, 0xef, 0x0e, 0x7c, 0x13, 0xe1, 0x04, 0xd6, 0xa6, 0xe1,
-	0x3c, 0xb9, 0xe6, 0xd9, 0xe4, 0x13, 0x55, 0x28, 0x42, 0x7c, 0x0c, 0x83, 0x8c, 0xbd, 0x3f, 0xe3,
-	0xec, 0x96, 0xe7, 0x93, 0xce, 0x13, 0x7b, 0xb7, 0xef, 0x57, 0x09, 0x89, 0x17, 0x46, 0x41, 0xc0,
-	0x93, 0x49, 0x57, 0x95, 0x4c, 0x24, 0xf3, 0x79, 0xc8, 0x32, 0x1e, 0x4c, 0x1c, 0x9d, 0xd7, 0x91,
-	0xcc, 0x27, 0xe9, 0x8b, 0x74, 0xb6, 0x98, 0xf4, 0x74, 0x5e, 0x47, 0xf2, 0xfe, 0x90, 0xe5, 0xe1,
-	0xab, 0x79, 0x32, 0x59, 0xd3, 0xf7, 0x9b, 0x90, 0x1c, 0x81, 0x73, 0x12, 0xa7, 0xd3, 0x6b, 0xd9,
-	0x92, 0xb1, 0xf7, 0x2f, 0x99, 0x60, 0x8a, 0xfb, 0x86, 0x5f, 0x84, 0xe8, 0x42, 0x67, 0x1a, 0x05,
-	0x86, 0xb8, 0x7c, 0x24, 0x3f, 0x40, 0xf7, 0x2c, 0x4a, 0xae, 0x11, 0xa1, 0x9b, 0xb0, 0x1b, 0x6e,
-	0x5e, 0x56, 0x3d, 0xcb, 0x5c, 0x1e, 0xfd, 0xc5, 0x55, 0x7b, 0xc7, 0x57, 0xcf, 0x05, 0x42, 0xa7,
-	0x42, 0xf8, 0xc7, 0x86, 0xfe, 0xeb, 0x34, 0xe0, 0x6f, 0x05, 0x13, 0xf2, 0x88, 0xa4, 0x53, 0xc0,
-	0xc8, 0x67, 0xf4, 0xa0, 0x9f, 0xcc, 0x6f, 0xe4, 0x2d, 0xb9, 0x82, 0x72, 0xfc, 0x32, 0x96, 0x33,
-	0xbb, 0x90, 0x9c, 0xdf, 0xca, 0x7b, 0x3a, 0xaa, 0x58, 0x25, 0x64, 0x35, 0x96, 0x6d, 0xaa, 0xda,
-	0xd5, 0xd5, 0x32, 0x21, 0x71, 0x03, 0x26, 0x98, 0x2a, 0x3a, 0x1a, 0xb7, 0x88, 0xf1, 0x39, 0x6c,
-	0x4d, 0xe7, 0x37, 0xf3, 0x98, 0x89, 0xe8, 0x96, 0xab, 0x8e, 0x9e, 0xea, 0x68, 0x65, 0x89, 0x80,
-	0xae, 0xe4, 0x8e, 0x8f, 0xc1, 0x51, 0xd7, 0x2a, 0xe2, 0xeb, 0x87, 0x3d, 0xaa, 0x26, 0xe9, 0xeb,
-	0x24, 0x3e, 0x02, 0x27, 0x36, 0xf4, 0x3b, 0xbb, 0xeb, 0x87, 0x0e, 0x95, 0xe4, 0x7d, 0x9d, 0xc3,
-	0x4f, 0xa1, 0x9b, 0x0b, 0x26, 0x14, 0xfb, 0xf5, 0xc3, 0x01, 0x2d, 0x66, 0xe1, 0xab, 0x74, 0x39,
-	0xc4, 0x6e, 0x35, 0x44, 0xf2, 0x1a, 0xb6, 0x8e, 0x83, 0xe0, 0x55, 0x14, 0x73, 0x9f, 0xff, 0x31,
-	0xe7, 0xb9, 0xc0, 0x5d, 0x18, 0xb0, 0x62, 0xf5, 0x0c, 0x07, 0xa0, 0xe5, 0x32, 0xfa, 0x55, 0x51,
-	0xe2, 0xc9, 0xb7, 0x54, 0x93, 0xdc, 0xf0, 0xd5, 0x33, 0xd9, 0x83, 0x61, 0x89, 0x97, 0xcf, 0xd2,
-	0x24, 0xe7, 0xb8, 0x03, 0xdd, 0x24, 0x0d, 0xb8, 0xc1, 0x72, 0x14, 0x2b, 0x5f, 0xa5, 0x08, 0x81,
-	0xad, 0x1f, 0xb9, 0xa8, 0xdf, 0x6e, 0x3e, 0xaa, 0x5d, 0x7d, 0xd4, 0x67, 0x30, 0x2c, 0x7b, 0x0c,
-	0x62, 0x71, 0xb1, 0x5d, 0xbb, 0x58, 0x43, 0x29, 0xec, 0x3b, 0xa1, 0xf6, 0x14, 0x94, 0xee, 0xb9,
-	0x9f, 0xdc, 0xe7, 0x65, 0x77, 0xbe, 0x04, 0xd9, 0x29, 0x20, 0xdf, 0x80, 0x5b, 0x35, 0x19, 0xcc,
-	0x47, 0x2b, 0x30, 0x4f, 0x2d, 0x8d, 0x8a, 0x0f, 0xc1, 0xe1, 0x59, 0x96, 0x1a, 0xc9, 0x9e, 0x5a,
-	0xbe, 0x0e, 0x4f, 0xfa, 0xd0, 0x4b, 0x67, 0x22, 0x4a, 0x13, 0x72, 0x02, 0xe8, 0xf3, 0x3c, 0x8d,
-	0x6f, 0xb9, 0xfa, 0xb6, 0xe6, 0xea, 0x09, 0xac, 0xc9, 0xf3, 0x2f, 0xca, 0x37, 0x2a, 0x42, 0x39,
-	0x8d, 0x19, 0x13, 0xa1, 0xda, 0x88, 0x81, 0xaf, 0x9e, 0xc9, 0x6f, 0x30, 0x6a, 0x60, 0x54, 0x6f,
-	0x2b, 0x37, 0xa5, 0x64, 0xa6, 0x8a, 0x2a, 0x85, 0x4f, 0x61, 0x33, 0xe3, 0x37, 0x2c, 0x4a, 0xa2,
-	0xe4, 0xea, 0xbc, 0x82, 0x6b, 0x26, 0xc9, 0xf7, 0xb0, 0x65, 0x70, 0x3f, 0x8e, 0x17, 0x87, 0x61,
-	0x79, 0xde, 0x70, 0xda, 0x83, 0x5e, 0x7a, 0xf1, 0x3b, 0x9f, 0x0a, 0xc3, 0x6a, 0x4c, 0xb5, 0x2f,
-	0xd2, 0xc2, 0x17, 0xe9, 0x71, 0xb2, 0xf0, 0x4d, 0xcf, 0xff, 0xa4, 0xf9, 0x06, 0xd6, 0x7f, 0xcd,
-	0xf8, 0xc7, 0x71, 0xc4, 0x31, 0x38, 0x01, 0x9f, 0x89, 0xd0, 0x98, 0x80, 0x0e, 0xc8, 0x53, 0xd8,
-	0xd0, 0x90, 0x86, 0xf6, 0x18, 0x1c, 0xd9, 0x9d, 0x9b, 0x65, 0xd0, 0x01, 0x79, 0x0e, 0xf8, 0x92,
-	0xc7, 0x5c, 0x70, 0x2d, 0xda, 0x3b, 0x37, 0xf1, 0x01, 0x8c, 0x1a, 0x7d, 0x1a, 0x54, 0xae, 0xdc,
-	0x29, 0xcb, 0xef, 0x39, 0x4b, 0xc1, 0xad, 0x9a, 0x0c, 0x1b, 0x0f, 0xfa, 0xa1, 0xc9, 0xa9, 0xd6,
-	0xbe, 0x5f, 0xc6, 0x66, 0x8f, 0xef, 0x01, 0x3d, 0x50, 0x7b, 0xdc, 0x04, 0xfd, 0xa0, 0x13, 0x91,
-	0x2f, 0x60, 0x54, 0x9c, 0x90, 0xfe, 0x75, 0x37, 0xf4, 0x97, 0x30, 0x6e, 0x36, 0x56, 0x2a, 0x56,
-	0x76, 0x64, 0xab, 0x31, 0x6b, 0x3b, 0xda, 0x87, 0xe1, 0xf9, 0xbc, 0xc9, 0xf5, 0xc3, 0x2c, 0x10,
-	0xdc, 0xea, 0x80, 0x99, 0xe2, 0x61, 0x95, 0x2b, 0x95, 0xfb, 0x19, 0xf4, 0xd4, 0x01, 0xfd, 0xbd,
-	0x2a, 0x18, 0x93, 0x25, 0x23, 0xd8, 0xae, 0x9d, 0x31, 0x40, 0x2e, 0x6c, 0x1d, 0xc7, 0xf1, 0xcf,
-	0x7c, 0x51, 0xc0, 0xc8, 0x59, 0x96, 0x19, 0xf3, 0x1a, 0xcb, 0x2f, 0x7c, 0x04, 0xdb, 0xa7, 0x2c,
-	0x0f, 0x7f, 0x49, 0x7c, 0xce, 0x82, 0x8a, 0x00, 0x84, 0x65, 0xd2, 0x7c, 0xa3, 0x5a, 0x86, 0x8c,
-	0x01, 0xeb, 0x87, 0x34, 0xf8, 0xe1, 0xdf, 0x3d, 0xe8, 0xff, 0x34, 0xbb, 0xcc, 0xcf, 0x22, 0xc1,
-	0x91, 0xc2, 0x9a, 0xf1, 0x56, 0x1c, 0xd2, 0xa6, 0x6b, 0x7b, 0x2e, 0x6d, 0xd9, 0x2e, 0xb1, 0x64,
-	0xbf, 0x71, 0x4e, 0x1c, 0xd2, 0xa6, 0xcf, 0x7a, 0x2e, 0x6d, 0x99, 0x6a, 0xd9, 0xaf, 0x7e, 0x84,
-	0x54, 0x7f, 0xcd, 0x4c, 0x75, 0x7f, 0xdd, 0x39, 0x89, 0x85, 0x47, 0xd0, 0x2f, 0xbc, 0x0f, 0xcb,
-	0x7a, 0x31, 0x2a, 0x6f, 0x9b, 0xb6, 0x8d, 0x91, 0x58, 0x07, 0x36, 0x7e, 0x0b, 0xeb, 0x35, 0x67,
-	0xc2, 0x11, 0x5d, 0xf6, 0x3a, 0x6f, 0x4c, 0x57, 0x98, 0x97, 0x26, 0x68, 0x0a, 0x38, 0xa4, 0x4d,
-	0x1f, 0xf2, 0x5c, 0xda, 0x32, 0x16, 0x62, 0xe1, 0x33, 0xe8, 0x4a, 0xcd, 0xe2, 0x06, 0xad, 0xb9,
-	0x81, 0xb7, 0x49, 0xeb, 0x42, 0x26, 0x96, 0xa4, 0x54, 0x13, 0x23, 0x8e, 0xe8, 0xb2, 0x84, 0xbd,
-	0x31, 0x5d, 0xa5, 0x57, 0x0b, 0xbf, 0x82, 0x7e, 0x21, 0x46, 0x74, 0x69, 0x4b, 0xbc, 0xde, 0x36,
-	0x6d, 0x2b, 0x55, 0x1f, 0x29, 0xf4, 0xa0, 0xc7, 0xd6, 0x3a, 0xd2, 0xd6, 0x21, 0xb1, 0xf0, 0x3b,
-	0xd8, 0xa8, 0x4b, 0x08, 0xc7, 0x74, 0x85, 0xf4, 0xbc, 0x07, 0x74, 0x95, 0xce, 0xf4, 0x8d, 0xc5,
-	0x72, 0xa3, 0x4b, 0x5b, 0x02, 0xf3, 0xb6, 0xe9, 0x92, 0x82, 0x2c, 0xfc, 0x1a, 0x06, 0xa5, 0x1e,
-	0xb0, 0xea, 0x28, 0xbf, 0x2e, 0xd2, 0x65, 0xb9, 0x58, 0x78, 0x00, 0x6b, 0x46, 0x1e, 0x72, 0x43,
-	0x1b, 0xd2, 0x91, 0x1b, 0xda, 0x54, 0x8e, 0x5a, 0x87, 0x6f, 0x00, 0xaa, 0xb5, 0x47, 0xa4, 0x4b,
-	0xc2, 0xf1, 0x46, 0x74, 0x59, 0x17, 0xc4, 0x3a, 0xd9, 0x83, 0x9d, 0x28, 0xa5, 0x82, 0xff, 0x29,
-	0xa2, 0x98, 0xd3, 0xab, 0x6c, 0x36, 0x7d, 0x57, 0xfe, 0xc1, 0x3e, 0xd9, 0x2c, 0x34, 0x73, 0x2e,
-	0x7f, 0x43, 0xce, 0xed, 0x8b, 0x9e, 0xfa, 0x31, 0x39, 0xfa, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x3b,
-	0x8d, 0x55, 0xe8, 0x85, 0x0b, 0x00, 0x00,
+	// 1210 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x57, 0xeb, 0x6e, 0x1b, 0x45,
+	0x14, 0xb6, 0xb1, 0xd7, 0x97, 0x93, 0x34, 0xb6, 0x8f, 0x9d, 0xca, 0xd9, 0x14, 0x54, 0x0d, 0x4d,
+	0x89, 0x20, 0x9a, 0x84, 0x04, 0x09, 0x09, 0x09, 0x44, 0xd2, 0xaa, 0x0d, 0x22, 0x2a, 0xe9, 0x16,
+	0xf1, 0xb7, 0x9a, 0x78, 0x27, 0xf1, 0x92, 0xf5, 0xae, 0xd9, 0x5d, 0xa7, 0x84, 0x47, 0x43, 0xe2,
+	0x99, 0x78, 0x05, 0x34, 0xd7, 0xbd, 0xd8, 0x75, 0x51, 0xff, 0xed, 0xb9, 0x7d, 0xe7, 0x9b, 0x33,
+	0x9e, 0xef, 0xc8, 0xd0, 0x0b, 0xe6, 0xd7, 0xe9, 0xdb, 0x30, 0xc8, 0x38, 0x9d, 0x27, 0x71, 0x16,
+	0xbb, 0x3b, 0x37, 0x71, 0x7c, 0x13, 0xf2, 0x43, 0x69, 0x5d, 0x2d, 0xae, 0x0f, 0x59, 0x74, 0xaf,
+	0x42, 0xe4, 0x9f, 0x3a, 0x74, 0x4f, 0x7d, 0xff, 0x92, 0x25, 0x6c, 0x96, 0xe2, 0x43, 0x68, 0x85,
+	0xec, 0x3e, 0x5e, 0x64, 0xe3, 0xfa, 0xe3, 0xfa, 0x7e, 0xd7, 0xd3, 0x16, 0x8e, 0xa1, 0x3d, 0x99,
+	0x2e, 0xa2, 0x5b, 0x9e, 0x8c, 0x3f, 0x91, 0x01, 0x63, 0xe2, 0x23, 0xe8, 0x26, 0xec, 0xdd, 0x05,
+	0x67, 0x77, 0x3c, 0x1d, 0x37, 0x1e, 0xd7, 0xf7, 0x3b, 0x5e, 0xee, 0x10, 0x78, 0xd3, 0xc0, 0xf7,
+	0x79, 0x34, 0x6e, 0xca, 0x90, 0xb6, 0x84, 0x3f, 0x9d, 0xb2, 0x84, 0xfb, 0x63, 0x47, 0xf9, 0x95,
+	0x25, 0xfc, 0x51, 0xfc, 0x2c, 0x9e, 0xdf, 0x8f, 0x5b, 0xca, 0xaf, 0x2c, 0xd1, 0x7f, 0xca, 0xd2,
+	0xe9, 0x8b, 0x45, 0x34, 0x6e, 0xab, 0xfe, 0xda, 0x24, 0x27, 0xe0, 0x9c, 0x85, 0xf1, 0xe4, 0x56,
+	0xa4, 0x24, 0xec, 0xdd, 0x73, 0x96, 0x31, 0xc9, 0x7d, 0xd3, 0x33, 0x26, 0xf6, 0xa1, 0x31, 0x09,
+	0x7c, 0x4d, 0x5c, 0x7c, 0x92, 0x1f, 0xa1, 0x79, 0x11, 0x44, 0xb7, 0x88, 0xd0, 0x8c, 0xd8, 0x8c,
+	0xeb, 0xc3, 0xca, 0x6f, 0xe1, 0x4b, 0x83, 0xbf, 0xb8, 0x4c, 0x6f, 0x78, 0xf2, 0xdb, 0x20, 0x34,
+	0x72, 0x84, 0xbf, 0xeb, 0xd0, 0x79, 0x15, 0xfb, 0xfc, 0x4d, 0xc6, 0x32, 0x51, 0x22, 0xe8, 0x18,
+	0x18, 0xf1, 0x8d, 0x2e, 0x74, 0xa2, 0xc5, 0x4c, 0x74, 0x49, 0x25, 0x94, 0xe3, 0x59, 0x5b, 0xcc,
+	0xec, 0x4a, 0x70, 0x7e, 0x23, 0xfa, 0x34, 0x64, 0x30, 0x77, 0x88, 0x68, 0x28, 0xd2, 0x64, 0xb4,
+	0xa9, 0xa2, 0xd6, 0x21, 0x70, 0x7d, 0x96, 0x31, 0x19, 0x74, 0x14, 0xae, 0xb1, 0xf1, 0x29, 0x6c,
+	0x4d, 0x16, 0xb3, 0x45, 0xc8, 0xb2, 0xe0, 0x8e, 0xcb, 0x8c, 0x96, 0xcc, 0xa8, 0x78, 0x49, 0x06,
+	0x4d, 0xc1, 0x1d, 0x1f, 0x81, 0x23, 0xdb, 0x4a, 0xe2, 0x1b, 0xc7, 0x2d, 0x2a, 0x27, 0xe9, 0x29,
+	0x27, 0xee, 0x82, 0x13, 0x6a, 0xfa, 0x8d, 0xfd, 0x8d, 0x63, 0x87, 0x0a, 0xf2, 0x9e, 0xf2, 0xe1,
+	0xa7, 0xd0, 0x4c, 0x33, 0x96, 0x49, 0xf6, 0x1b, 0xc7, 0x5d, 0x6a, 0x66, 0xe1, 0x49, 0xb7, 0x1d,
+	0x62, 0x33, 0x1f, 0x22, 0x79, 0x05, 0x5b, 0xa7, 0xbe, 0xff, 0x22, 0x08, 0xb9, 0xc7, 0xff, 0x58,
+	0xf0, 0x34, 0xc3, 0x7d, 0xe8, 0x32, 0xf3, 0xd3, 0xd3, 0x1c, 0x80, 0xda, 0x1f, 0xa3, 0x97, 0x07,
+	0x05, 0x9e, 0x38, 0xa5, 0x9c, 0xe4, 0xa6, 0x27, 0xbf, 0xc9, 0x01, 0xf4, 0x2c, 0x5e, 0x3a, 0x8f,
+	0xa3, 0x94, 0xe3, 0x0e, 0x34, 0xa3, 0xd8, 0xe7, 0x1a, 0xcb, 0x91, 0xac, 0x3c, 0xe9, 0x22, 0x04,
+	0xb6, 0x5e, 0xf2, 0xac, 0xd8, 0x5d, 0x5f, 0x6a, 0x3d, 0xbf, 0xd4, 0x3d, 0xe8, 0xd9, 0x1c, 0x8d,
+	0x68, 0x1a, 0xd7, 0x0b, 0x8d, 0xbf, 0x92, 0x07, 0x91, 0xd8, 0x1a, 0x6a, 0x4d, 0xdf, 0x81, 0x64,
+	0xa9, 0x92, 0x15, 0x26, 0xa1, 0xd6, 0x95, 0x1a, 0x80, 0x5d, 0x70, 0x44, 0xb6, 0x98, 0x42, 0x23,
+	0x47, 0x50, 0x3e, 0x82, 0xd0, 0xcf, 0xf3, 0x35, 0x86, 0x3a, 0x4e, 0x91, 0xc3, 0xf2, 0x71, 0x0e,
+	0xe4, 0x71, 0x8a, 0xad, 0xd7, 0x11, 0xdd, 0xb3, 0xd9, 0x96, 0x15, 0x42, 0x73, 0x12, 0xf8, 0x8a,
+	0x54, 0xd7, 0x93, 0xdf, 0xe4, 0x35, 0xf4, 0xf3, 0x34, 0x8d, 0xba, 0xbb, 0x02, 0xf5, 0xbc, 0xa6,
+	0x70, 0xf1, 0x21, 0x38, 0x3c, 0x49, 0x62, 0x2d, 0x1c, 0xe7, 0x35, 0x4f, 0x99, 0x67, 0x1d, 0x68,
+	0xc5, 0xf3, 0x2c, 0x88, 0x23, 0xb2, 0x07, 0x03, 0x8f, 0xcf, 0xe2, 0x3b, 0xbe, 0xfe, 0x38, 0x23,
+	0xc0, 0x62, 0x9a, 0x1e, 0xc4, 0x7e, 0xd1, 0xbb, 0x96, 0xf9, 0x36, 0x0c, 0x4b, 0x99, 0x1a, 0xe0,
+	0x4c, 0x00, 0xa4, 0x71, 0x78, 0xc7, 0xe5, 0xef, 0x5b, 0x03, 0x8c, 0xa1, 0x2d, 0xd8, 0x3f, 0xb3,
+	0x14, 0x8c, 0x29, 0xa0, 0xe7, 0x2c, 0x9b, 0xca, 0x57, 0xd1, 0xf5, 0xe4, 0x37, 0xf9, 0x4d, 0x40,
+	0x17, 0x30, 0xf2, 0x69, 0x8b, 0xd7, 0x62, 0xe7, 0x22, 0x83, 0xd2, 0x85, 0x4f, 0xe0, 0x41, 0xc2,
+	0x67, 0x2c, 0x88, 0x82, 0xe8, 0xe6, 0x32, 0x87, 0x2b, 0x3b, 0xc9, 0x0f, 0xb0, 0xa5, 0x71, 0x3f,
+	0x8e, 0x17, 0x87, 0x9e, 0xad, 0xd7, 0x9c, 0x0e, 0xa0, 0x15, 0x5f, 0xfd, 0xce, 0x27, 0x99, 0x66,
+	0x35, 0xa2, 0x6a, 0x37, 0x50, 0xb3, 0x1b, 0xe8, 0x69, 0x74, 0xef, 0xe9, 0x9c, 0xff, 0x49, 0xf3,
+	0x35, 0x6c, 0xfc, 0x9a, 0xf0, 0x8f, 0xe3, 0x88, 0x23, 0x70, 0x7c, 0x3e, 0xcf, 0xa6, 0x5a, 0x08,
+	0x95, 0x41, 0x9e, 0xc0, 0xa6, 0x82, 0xd4, 0xb4, 0x47, 0xe0, 0x88, 0x6c, 0x73, 0xa3, 0xca, 0x20,
+	0x4f, 0x01, 0x9f, 0xf3, 0x90, 0x67, 0x5c, 0x09, 0xd7, 0x7b, 0x7f, 0x3a, 0xdb, 0x30, 0x2c, 0xe5,
+	0xe9, 0xab, 0xff, 0x1c, 0x7a, 0xe7, 0x2c, 0xfd, 0x40, 0x2d, 0x85, 0x7e, 0x9e, 0xa4, 0xd9, 0xb8,
+	0xd0, 0x99, 0x6a, 0x9f, 0x4c, 0xed, 0x78, 0xd6, 0x16, 0xa0, 0x2f, 0x79, 0xf6, 0x01, 0xd0, 0x23,
+	0xf9, 0x8a, 0xca, 0xa0, 0x6b, 0xd5, 0x98, 0x7c, 0x01, 0x43, 0x53, 0x21, 0x34, 0xfc, 0xfd, 0xd0,
+	0x5f, 0xc2, 0xa8, 0x9c, 0x98, 0x2b, 0x99, 0x94, 0xe4, 0xba, 0x1c, 0xb3, 0x92, 0xe4, 0x43, 0xe8,
+	0x5d, 0x2e, 0xca, 0x5c, 0xd7, 0xb3, 0x40, 0xe8, 0xe7, 0x05, 0x7a, 0x8a, 0xc7, 0xb9, 0xcf, 0xbe,
+	0xbf, 0xcf, 0xa0, 0x25, 0x0b, 0x8c, 0xa0, 0x19, 0x18, 0xed, 0x25, 0x43, 0x18, 0x14, 0x6a, 0x34,
+	0x50, 0x1f, 0xb6, 0x4e, 0xc3, 0xf0, 0x67, 0x7e, 0x6f, 0x60, 0xc4, 0x2c, 0xad, 0x47, 0x1f, 0x63,
+	0xf9, 0xc0, 0x27, 0x30, 0x38, 0x67, 0xe9, 0xf4, 0x97, 0xc8, 0xe3, 0xcc, 0xcf, 0x09, 0xc0, 0xd4,
+	0x3a, 0xf5, 0x1d, 0x15, 0x3c, 0x42, 0x4c, 0x8a, 0x45, 0x0a, 0xfc, 0xf8, 0xdf, 0x36, 0x74, 0x7e,
+	0x9a, 0x5f, 0xa7, 0x17, 0x41, 0xc6, 0x91, 0x42, 0x5b, 0xef, 0x17, 0xec, 0xd1, 0xf2, 0xe6, 0x72,
+	0xfb, 0xb4, 0xb2, 0x7a, 0x48, 0x4d, 0xe4, 0xeb, 0xed, 0x81, 0x3d, 0x5a, 0xde, 0x35, 0x6e, 0x9f,
+	0x56, 0x16, 0x8b, 0xca, 0xd7, 0xb2, 0xae, 0xf0, 0x0b, 0xea, 0xa7, 0xf0, 0x4b, 0x3a, 0x57, 0xc3,
+	0xaf, 0xa1, 0x63, 0xd6, 0x00, 0xda, 0xb8, 0x19, 0x95, 0x3b, 0xa0, 0x4b, 0x3b, 0xc2, 0x50, 0xd2,
+	0x2d, 0xca, 0xfb, 0x42, 0x51, 0xaa, 0xb4, 0x38, 0x81, 0x8e, 0x11, 0x77, 0xb4, 0xf1, 0x42, 0x8b,
+	0xaa, 0xf2, 0x93, 0xda, 0x51, 0x1d, 0xbf, 0x05, 0xc8, 0x75, 0x15, 0x91, 0x2e, 0x69, 0xb9, 0x3b,
+	0xa4, 0x2b, 0x84, 0xbb, 0x86, 0xdf, 0xc1, 0x46, 0x41, 0x90, 0xb1, 0x98, 0x65, 0x7b, 0x8e, 0xe8,
+	0x2a, 0xcd, 0xd6, 0xb5, 0x56, 0x71, 0x65, 0x6d, 0x55, 0xc3, 0x65, 0xed, 0x92, 0x28, 0xab, 0xa9,
+	0xe8, 0x00, 0xf6, 0x68, 0x59, 0x5f, 0xdd, 0x3e, 0xad, 0x08, 0x26, 0xa9, 0xe1, 0x1e, 0x34, 0x85,
+	0x16, 0xe1, 0x26, 0x2d, 0xa8, 0x9c, 0xfb, 0x80, 0x16, 0x05, 0x4a, 0x51, 0x2a, 0x88, 0x0c, 0x0e,
+	0xe9, 0xb2, 0x34, 0xb9, 0x23, 0xba, 0x4a, 0x87, 0xe4, 0xdd, 0x1a, 0x91, 0xc1, 0x3e, 0xad, 0x88,
+	0x92, 0x3b, 0xa0, 0x55, 0x05, 0x52, 0x25, 0xe6, 0x9d, 0xab, 0xbb, 0xaa, 0x94, 0x54, 0xf5, 0x85,
+	0xd4, 0xf0, 0x7b, 0xd8, 0x2c, 0x4a, 0x03, 0x8e, 0xe8, 0x0a, 0x49, 0x71, 0xb7, 0xe9, 0x2a, 0xfd,
+	0x50, 0x1d, 0xcd, 0xa3, 0xc5, 0x3e, 0xad, 0x08, 0x87, 0x3b, 0xa0, 0x4b, 0xca, 0x50, 0xc3, 0x6f,
+	0xa0, 0x6b, 0xdf, 0x39, 0xe6, 0x19, 0xf6, 0x7a, 0x91, 0x2e, 0xcb, 0x40, 0x0d, 0x8f, 0xa0, 0xad,
+	0x9f, 0xbd, 0x78, 0x19, 0x25, 0x49, 0x10, 0x2f, 0xa3, 0xac, 0x08, 0xe6, 0x37, 0x98, 0x3f, 0x67,
+	0x44, 0xba, 0x24, 0x08, 0xee, 0x90, 0x2e, 0xbf, 0x77, 0x52, 0x3b, 0x3b, 0x80, 0x9d, 0x20, 0xa6,
+	0x19, 0xff, 0x33, 0x0b, 0x42, 0x4e, 0x6f, 0x92, 0xf9, 0xe4, 0xad, 0xfd, 0xf3, 0x74, 0xf6, 0xc0,
+	0x68, 0xc1, 0xa5, 0xd8, 0x8d, 0x97, 0xf5, 0xab, 0x96, 0x5c, 0x92, 0x27, 0xff, 0x05, 0x00, 0x00,
+	0xff, 0xff, 0x4e, 0x1a, 0x52, 0x23, 0x61, 0x0d, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1710,8 +2005,12 @@ const _ = grpc.SupportPackageIsVersion4
 type IpfsLiteClient interface {
 	AddFile(ctx context.Context, in *AddFileRequest, opts ...grpc.CallOption) (*AddFileResponse, error)
 	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error)
+	AddNode(ctx context.Context, in *AddNodeRequest, opts ...grpc.CallOption) (*AddNodeResponse, error)
+	AddNodes(ctx context.Context, in *AddNodesRequest, opts ...grpc.CallOption) (*AddNodesResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
 	GetNodes(ctx context.Context, in *GetNodesRequest, opts ...grpc.CallOption) (IpfsLite_GetNodesClient, error)
+	RemoveNode(ctx context.Context, in *RemoveNodeRequest, opts ...grpc.CallOption) (*RemoveNodeResponse, error)
+	RemoveNodes(ctx context.Context, in *RemoveNodesRequest, opts ...grpc.CallOption) (*RemoveNodesResponse, error)
 	ResolveLink(ctx context.Context, in *ResolveLinkRequest, opts ...grpc.CallOption) (*ResolveLinkResponse, error)
 	Resolve(ctx context.Context, in *ResolveRequest, opts ...grpc.CallOption) (*ResolveResponse, error)
 	Tree(ctx context.Context, in *TreeRequest, opts ...grpc.CallOption) (*TreeResponse, error)
@@ -1745,6 +2044,24 @@ func (c *ipfsLiteClient) AddFile(ctx context.Context, in *AddFileRequest, opts .
 func (c *ipfsLiteClient) GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error) {
 	out := new(GetFileResponse)
 	err := c.cc.Invoke(ctx, "/IpfsLite/GetFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) AddNode(ctx context.Context, in *AddNodeRequest, opts ...grpc.CallOption) (*AddNodeResponse, error) {
+	out := new(AddNodeResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/AddNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) AddNodes(ctx context.Context, in *AddNodesRequest, opts ...grpc.CallOption) (*AddNodesResponse, error) {
+	out := new(AddNodesResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/AddNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1790,6 +2107,24 @@ func (x *ipfsLiteGetNodesClient) Recv() (*GetNodesResponse, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (c *ipfsLiteClient) RemoveNode(ctx context.Context, in *RemoveNodeRequest, opts ...grpc.CallOption) (*RemoveNodeResponse, error) {
+	out := new(RemoveNodeResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/RemoveNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) RemoveNodes(ctx context.Context, in *RemoveNodesRequest, opts ...grpc.CallOption) (*RemoveNodesResponse, error) {
+	out := new(RemoveNodesResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/RemoveNodes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *ipfsLiteClient) ResolveLink(ctx context.Context, in *ResolveLinkRequest, opts ...grpc.CallOption) (*ResolveLinkResponse, error) {
@@ -1918,8 +2253,12 @@ func (c *ipfsLiteClient) HashOnRead(ctx context.Context, in *HashOnReadRequest, 
 type IpfsLiteServer interface {
 	AddFile(context.Context, *AddFileRequest) (*AddFileResponse, error)
 	GetFile(context.Context, *GetFileRequest) (*GetFileResponse, error)
+	AddNode(context.Context, *AddNodeRequest) (*AddNodeResponse, error)
+	AddNodes(context.Context, *AddNodesRequest) (*AddNodesResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
 	GetNodes(*GetNodesRequest, IpfsLite_GetNodesServer) error
+	RemoveNode(context.Context, *RemoveNodeRequest) (*RemoveNodeResponse, error)
+	RemoveNodes(context.Context, *RemoveNodesRequest) (*RemoveNodesResponse, error)
 	ResolveLink(context.Context, *ResolveLinkRequest) (*ResolveLinkResponse, error)
 	Resolve(context.Context, *ResolveRequest) (*ResolveResponse, error)
 	Tree(context.Context, *TreeRequest) (*TreeResponse, error)
@@ -1943,11 +2282,23 @@ func (*UnimplementedIpfsLiteServer) AddFile(ctx context.Context, req *AddFileReq
 func (*UnimplementedIpfsLiteServer) GetFile(ctx context.Context, req *GetFileRequest) (*GetFileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFile not implemented")
 }
+func (*UnimplementedIpfsLiteServer) AddNode(ctx context.Context, req *AddNodeRequest) (*AddNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
+}
+func (*UnimplementedIpfsLiteServer) AddNodes(ctx context.Context, req *AddNodesRequest) (*AddNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNodes not implemented")
+}
 func (*UnimplementedIpfsLiteServer) GetNode(ctx context.Context, req *GetNodeRequest) (*GetNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNode not implemented")
 }
 func (*UnimplementedIpfsLiteServer) GetNodes(req *GetNodesRequest, srv IpfsLite_GetNodesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetNodes not implemented")
+}
+func (*UnimplementedIpfsLiteServer) RemoveNode(ctx context.Context, req *RemoveNodeRequest) (*RemoveNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNode not implemented")
+}
+func (*UnimplementedIpfsLiteServer) RemoveNodes(ctx context.Context, req *RemoveNodesRequest) (*RemoveNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNodes not implemented")
 }
 func (*UnimplementedIpfsLiteServer) ResolveLink(ctx context.Context, req *ResolveLinkRequest) (*ResolveLinkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResolveLink not implemented")
@@ -2023,6 +2374,42 @@ func _IpfsLite_GetFile_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IpfsLite_AddNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).AddNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/AddNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).AddNode(ctx, req.(*AddNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IpfsLite_AddNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNodesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).AddNodes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/AddNodes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).AddNodes(ctx, req.(*AddNodesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IpfsLite_GetNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetNodeRequest)
 	if err := dec(in); err != nil {
@@ -2060,6 +2447,42 @@ type ipfsLiteGetNodesServer struct {
 
 func (x *ipfsLiteGetNodesServer) Send(m *GetNodesResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _IpfsLite_RemoveNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).RemoveNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/RemoveNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).RemoveNode(ctx, req.(*RemoveNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IpfsLite_RemoveNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveNodesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).RemoveNodes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/RemoveNodes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).RemoveNodes(ctx, req.(*RemoveNodesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _IpfsLite_ResolveLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2276,8 +2699,24 @@ var _IpfsLite_serviceDesc = grpc.ServiceDesc{
 			Handler:    _IpfsLite_GetFile_Handler,
 		},
 		{
+			MethodName: "AddNode",
+			Handler:    _IpfsLite_AddNode_Handler,
+		},
+		{
+			MethodName: "AddNodes",
+			Handler:    _IpfsLite_AddNodes_Handler,
+		},
+		{
 			MethodName: "GetNode",
 			Handler:    _IpfsLite_GetNode_Handler,
+		},
+		{
+			MethodName: "RemoveNode",
+			Handler:    _IpfsLite_RemoveNode_Handler,
+		},
+		{
+			MethodName: "RemoveNodes",
+			Handler:    _IpfsLite_RemoveNodes_Handler,
 		},
 		{
 			MethodName: "ResolveLink",

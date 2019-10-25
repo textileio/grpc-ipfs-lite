@@ -64,6 +64,22 @@ message GetFileResponse {
     bytes data = 1;
 }
 
+message AddNodeRequest {
+    Node node = 1;
+}
+
+message AddNodeResponse {
+
+}
+
+message AddNodesRequest {
+    repeated Node nodes = 1;
+}
+
+message AddNodesResponse {
+
+}
+
 message GetNodeRequest {
     string cid = 1;
 }
@@ -73,7 +89,7 @@ message GetNodeResponse {
 }
 
 message GetNodesRequest {
-    repeated string cid = 1;
+    repeated string cids = 1;
 }
 
 message GetNodesResponse {
@@ -81,6 +97,22 @@ message GetNodesResponse {
         Node node = 1;
         string error = 2;
     }
+}
+
+message RemoveNodeRequest {
+    string cid = 1;
+}
+
+message RemoveNodeResponse {
+
+}
+
+message RemoveNodesRequest {
+    repeated string cids = 1;
+}
+
+message RemoveNodesResponse {
+
 }
 
 message ResolveLinkRequest {
@@ -182,11 +214,19 @@ service IpfsLite {
 
     rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
 
-    // Session() returns a NodeGetter which provides Get and GetMany methods
+    // DAGService
+
+    rpc AddNode(AddNodeRequest) returns (AddNodeResponse) {}
+
+    rpc AddNodes(AddNodesRequest) returns (AddNodesResponse) {}
 
     rpc GetNode(GetNodeRequest) returns (GetNodeResponse) {}
 
     rpc GetNodes(GetNodesRequest) returns (stream GetNodesResponse) {}
+
+    rpc RemoveNode(RemoveNodeRequest) returns (RemoveNodeResponse) {}
+
+    rpc RemoveNodes(RemoveNodesRequest) returns (RemoveNodesResponse) {}
 
     // Node provides a ResloveLink method and a Resolver prop that provides Resolve and Tree methods
 

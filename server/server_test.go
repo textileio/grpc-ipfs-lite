@@ -2,13 +2,16 @@ package server
 
 import (
 	"context"
+	"io"
 	"testing"
 	"time"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
+	cbor "github.com/ipfs/go-ipld-cbor"
 	"github.com/ipfs/go-log"
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/multiformats/go-multiaddr"
+	multihash "github.com/multiformats/go-multihash"
 	"google.golang.org/grpc"
 	pb "textile.io/grpc-ipfs-lite/ipfs-lite"
 )
@@ -61,6 +64,61 @@ func TestGetFile(t *testing.T) {
 	}
 }
 
+// func TestAddNode(t *testing.T) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancel()
+// 	// client.AddNode(ctx,)
+// }
+
+func TestGetNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: node.Block.GetCid()})
+	if err != nil {
+		t.Fatalf("failed to GetNode: %v", err)
+	}
+	got := resp.GetNode().Block.GetCid()
+	excpected := node.Block.GetCid()
+	if got != excpected {
+		t.Fatalf("excpected cid %s but got: %s", excpected, got)
+	}
+}
+
+func TestGetNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: []string{node.Block.GetCid()}})
+	if err != nil {
+		t.Fatalf("failed to GetNodes: %v", err)
+	}
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("failed to GetNodes: %v", err)
+		}
+		if resp.GetError() != "" {
+			t.Fatalf("received error %s", resp.GetError())
+		}
+		got := resp.GetNode().Block.GetCid()
+		excpected := node.Block.GetCid()
+		if got != excpected {
+			t.Fatalf("excpected cid %s but got: %s", excpected, got)
+		}
+	}
+}
+
+func TestResolveLink(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: node.Block.GetCid(), Path: []string{}})
+	if err != nil {
+		t.Fatalf("failed to ResolveLink: %v", err)
+	}
+}
+
 func TestHashOnRead(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -68,6 +126,31 @@ func TestHashOnRead(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to HashOnRead: %v", err)
 	}
+}
+
+func TestCreateNode(t *testing.T) {
+	m := map[string]string{
+		"akey": "avalue",
+	}
+
+	codec := uint64(multihash.SHA2_256)
+
+	node, err := cbor.WrapObject(m, codec, multihash.DefaultLengths[codec])
+	if err != nil {
+		t.Fatalf("failed to create node: %v", err)
+	}
+
+	n := map[string]interface{}{
+		"foo":  "bar",
+		"link": node.Cid(),
+	}
+
+	node2, err := cbor.WrapObject(n, codec, multihash.DefaultLengths[codec])
+	if err != nil {
+		t.Fatalf("failed to create node2: %v", err)
+	}
+
+	t.Logf("final node: %v", node2)
 }
 
 func newPeer() (*ipfslite.Peer, error) {

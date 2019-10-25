@@ -8,6 +8,7 @@ import (
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-cid"
+	format "github.com/ipfs/go-ipld-format"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -56,48 +57,12 @@ func (s *ipfsLiteServer) AddFile(ctx context.Context, req *pb.AddFileRequest) (*
 		return nil, err
 	}
 
-	respBlock := pb.Block{
-		RawData: node.RawData(),
-		Cid:     node.Cid().String(),
-	}
-
-	respLinks := []*pb.Link{}
-	for _, link := range node.Links() {
-		respLink := pb.Link{
-			Name: link.Name,
-			Size: int64(link.Size),
-			Cid:  link.Cid.String(),
-		}
-		respLinks = append(respLinks, &respLink)
-	}
-
-	stat, err := node.Stat()
+	respNode, err := nodeToPbNode(node)
 	if err != nil {
 		return nil, err
 	}
 
-	respStat := pb.NodeStat{
-		Hash:           stat.Hash,
-		NumLinks:       int32(stat.NumLinks),
-		BlockSize:      int32(stat.BlockSize),
-		LinksSize:      int32(stat.LinksSize),
-		DataSize:       int32(stat.DataSize),
-		CumulativeSize: int32(stat.CumulativeSize),
-	}
-
-	size, err := node.Size()
-	if err != nil {
-		return nil, err
-	}
-
-	respNode := pb.Node{
-		Block: &respBlock,
-		Links: respLinks,
-		Stat:  &respStat,
-		Size:  int64(size),
-	}
-
-	return &pb.AddFileResponse{Node: &respNode}, nil
+	return &pb.AddFileResponse{Node: respNode}, nil
 }
 
 func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*pb.GetFileResponse, error) {
@@ -119,16 +84,103 @@ func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*
 	return &pb.GetFileResponse{Data: buffer}, nil
 }
 
+func (s *ipfsLiteServer) AddNode(ctx context.Context, req *pb.AddNodeRequest) (*pb.AddNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
+}
+
+func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) (*pb.AddNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNodes not implemented")
+}
+
 func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*pb.GetNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetNode not implemented")
+	cid, err := cid.Decode(req.GetCid())
+	if err != nil {
+		return nil, err
+	}
+	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
+	node, err := s.peer.Get(ctx, cid)
+	if err != nil {
+		return nil, err
+	}
+
+	respNode, err := nodeToPbNode(node)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetNodeResponse{Node: respNode}, nil
 }
 
 func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNodesServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetNodes not implemented")
+	ctx := context.TODO()
+	cids := []cid.Cid{}
+	for _, cidString := range req.GetCids() {
+		cid, err := cid.Decode(cidString)
+		if err != nil {
+			return err
+		}
+		cids = append(cids, cid)
+	}
+	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
+	ch := s.peer.GetMany(ctx, cids)
+	for {
+		result, ok := <-ch
+		if ok == false {
+			break
+		} else {
+			resp := pb.GetNodesResponse{}
+			if result.Err != nil {
+				resp.Option = &pb.GetNodesResponse_Error{Error: result.Err.Error()}
+			} else {
+				node, err := nodeToPbNode(result.Node)
+				if err != nil {
+					resp.Option = &pb.GetNodesResponse_Error{Error: err.Error()}
+				} else {
+					resp.Option = &pb.GetNodesResponse_Node{Node: node}
+				}
+			}
+			srv.Send(&resp)
+		}
+	}
+	return nil
+}
+
+func (s *ipfsLiteServer) RemoveNode(ctx context.Context, req *pb.RemoveNodeRequest) (*pb.RemoveNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNode not implemented")
+}
+
+func (s *ipfsLiteServer) RemoveNodes(ctx context.Context, req *pb.RemoveNodesRequest) (*pb.RemoveNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNodes not implemented")
 }
 
 func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkRequest) (*pb.ResolveLinkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResolveLink not implemented")
+	cid, err := cid.Decode(req.GetNodeCid())
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.peer.Get(ctx, cid)
+	if err != nil {
+		return nil, err
+	}
+
+	link, remainingPath, err := node.ResolveLink(req.GetPath())
+	if err != nil {
+		return nil, err
+	}
+
+	respLink := pb.Link{
+		Name: link.Name,
+		Size: int64(link.Size),
+		Cid:  link.Cid.String(),
+	}
+
+	resp := pb.ResolveLinkResponse{
+		Link:          &respLink,
+		RemainingPath: remainingPath,
+	}
+
+	return &resp, nil
 }
 
 func (s *ipfsLiteServer) Resolve(ctx context.Context, req *pb.ResolveRequest) (*pb.ResolveResponse, error) {
@@ -170,4 +222,47 @@ func (s *ipfsLiteServer) AllKeys(req *pb.AllKeysRequest, srv pb.IpfsLite_AllKeys
 func (s *ipfsLiteServer) HashOnRead(ctx context.Context, req *pb.HashOnReadRequest) (*pb.HashOnReadResponse, error) {
 	s.peer.BlockStore().HashOnRead(req.GetHashOnRead())
 	return &pb.HashOnReadResponse{}, nil
+}
+
+func nodeToPbNode(node format.Node) (*pb.Node, error) {
+	respBlock := pb.Block{
+		RawData: node.RawData(),
+		Cid:     node.Cid().String(),
+	}
+
+	respLinks := []*pb.Link{}
+	for _, link := range node.Links() {
+		respLink := pb.Link{
+			Name: link.Name,
+			Size: int64(link.Size),
+			Cid:  link.Cid.String(),
+		}
+		respLinks = append(respLinks, &respLink)
+	}
+
+	stat, err := node.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	respStat := pb.NodeStat{
+		Hash:           stat.Hash,
+		NumLinks:       int32(stat.NumLinks),
+		BlockSize:      int32(stat.BlockSize),
+		LinksSize:      int32(stat.LinksSize),
+		DataSize:       int32(stat.DataSize),
+		CumulativeSize: int32(stat.CumulativeSize),
+	}
+
+	size, err := node.Size()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Node{
+		Block: &respBlock,
+		Links: respLinks,
+		Stat:  &respStat,
+		Size:  int64(size),
+	}, nil
 }
