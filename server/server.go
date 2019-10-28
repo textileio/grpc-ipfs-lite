@@ -7,6 +7,7 @@ import (
 	"net"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
+	blocks "github.com/ipfs/go-block-format"
 	"github.com/ipfs/go-cid"
 	format "github.com/ipfs/go-ipld-format"
 	"google.golang.org/grpc"
@@ -85,11 +86,59 @@ func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*
 }
 
 func (s *ipfsLiteServer) AddNode(ctx context.Context, req *pb.AddNodeRequest) (*pb.AddNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
+	cid, err := cid.Decode(req.Block.GetCid())
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: there is also just blocks.NewBlock()
+	block, err := blocks.NewBlockWithCid(req.Block.GetRawData(), cid)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := format.Decode(block)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.peer.Add(ctx, node)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.AddNodeResponse{}, nil
 }
 
 func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) (*pb.AddNodesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddNodes not implemented")
+	nodes := []format.Node{}
+
+	for _, pbBlock := range req.GetBlocks() {
+		cid, err := cid.Decode(pbBlock.GetCid())
+		if err != nil {
+			return nil, err
+		}
+
+		// TODO: there is also just blocks.NewBlock()
+		block, err := blocks.NewBlockWithCid(pbBlock.GetRawData(), cid)
+		if err != nil {
+			return nil, err
+		}
+
+		node, err := format.Decode(block)
+		if err != nil {
+			return nil, err
+		}
+
+		nodes = append(nodes, node)
+	}
+
+	err := s.peer.AddMany(ctx, nodes)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.AddNodesResponse{}, nil
 }
 
 func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*pb.GetNodeResponse, error) {

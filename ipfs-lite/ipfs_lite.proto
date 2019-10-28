@@ -65,7 +65,7 @@ message GetFileResponse {
 }
 
 message AddNodeRequest {
-    Node node = 1;
+    Block block = 1;
 }
 
 message AddNodeResponse {
@@ -73,7 +73,7 @@ message AddNodeResponse {
 }
 
 message AddNodesRequest {
-    repeated Node nodes = 1;
+    repeated Block blocks = 1;
 }
 
 message AddNodesResponse {

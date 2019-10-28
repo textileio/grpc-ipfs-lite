@@ -64,11 +64,76 @@ func TestGetFile(t *testing.T) {
 	}
 }
 
-// func TestAddNode(t *testing.T) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-// 	// client.AddNode(ctx,)
-// }
+func TestAddNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	m := map[string]interface{}{
+		"firstkey": "firstvalue",
+	}
+	node, err := createNode(m)
+	if err != nil {
+		t.Fatalf("failed to create node: %v", err)
+	}
+
+	block := pb.Block{
+		Cid:     node.Cid().String(),
+		RawData: node.RawData(),
+	}
+
+	_, err = client.AddNode(ctx, &pb.AddNodeRequest{Block: &block})
+	if err != nil {
+		t.Fatalf("failed to add node: %v", err)
+	}
+}
+
+func TestAddNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	nodeData0 := map[string]interface{}{
+		"akey": "avalue",
+	}
+	node0, err := createNode(nodeData0)
+	if err != nil {
+		t.Fatalf("failed to create node0: %v", err)
+	}
+	block0 := pb.Block{
+		Cid:     node0.Cid().String(),
+		RawData: node0.RawData(),
+	}
+
+	nodeData1 := map[string]interface{}{
+		"anotherkey": "anothervalue",
+		"link":       node0.Cid(),
+	}
+	node1, err := createNode(nodeData1)
+	if err != nil {
+		t.Fatalf("failed to create node2: %v", err)
+	}
+	block1 := pb.Block{
+		Cid:     node1.Cid().String(),
+		RawData: node1.RawData(),
+	}
+
+	nodeData2 := map[string]interface{}{
+		"lastkey": "lastvalue",
+		"link":    node1.Cid(),
+	}
+	node2, err := createNode(nodeData2)
+	if err != nil {
+		t.Fatalf("failed to create node2: %v", err)
+	}
+	block2 := pb.Block{
+		Cid:     node2.Cid().String(),
+		RawData: node2.RawData(),
+	}
+
+	_, err = client.AddNodes(ctx, &pb.AddNodesRequest{Blocks: []*pb.Block{&block0, &block1, &block2}})
+	if err != nil {
+		t.Fatalf("failed to add node: %v", err)
+	}
+}
 
 func TestGetNode(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -110,14 +175,14 @@ func TestGetNodes(t *testing.T) {
 	}
 }
 
-func TestResolveLink(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	_, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: node.Block.GetCid(), Path: []string{}})
-	if err != nil {
-		t.Fatalf("failed to ResolveLink: %v", err)
-	}
-}
+// func TestResolveLink(t *testing.T) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancel()
+// 	_, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: node.Block.GetCid(), Path: []string{}})
+// 	if err != nil {
+// 		t.Fatalf("failed to ResolveLink: %v", err)
+// 	}
+// }
 
 func TestHashOnRead(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -188,4 +253,9 @@ func newPeer() (*ipfslite.Peer, error) {
 
 	lite.Bootstrap(ipfslite.DefaultBootstrapPeers())
 	return lite, nil
+}
+
+func createNode(data map[string]interface{}) (*cbor.Node, error) {
+	codec := uint64(multihash.SHA2_256)
+	return cbor.WrapObject(data, codec, multihash.DefaultLengths[codec])
 }
