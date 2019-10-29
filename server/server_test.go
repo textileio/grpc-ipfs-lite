@@ -187,6 +187,30 @@ func TestGetNodes(t *testing.T) {
 	}
 }
 
+func TestRemoveNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	_, err := client.RemoveNode(ctx, &pb.RemoveNodeRequest{Cid: refNode.Cid().String()})
+	if err != nil {
+		t.Fatalf("failed to RemoveNode: %v", err)
+	}
+}
+
+func TestRemoveNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cids := make([]string, len(refNodes))
+	for i, node := range refNodes {
+		cids[i] = node.Cid().String()
+	}
+	_, err := client.RemoveNodes(ctx, &pb.RemoveNodesRequest{Cids: cids})
+	if err != nil {
+		t.Fatalf("failed to RemoveNodes: %v", err)
+	}
+}
+
 // func TestResolveLink(t *testing.T) {
 // 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 // 	defer cancel()

@@ -192,11 +192,31 @@ func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNo
 }
 
 func (s *ipfsLiteServer) RemoveNode(ctx context.Context, req *pb.RemoveNodeRequest) (*pb.RemoveNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveNode not implemented")
+	cid, err := cid.Decode(req.GetCid())
+	if err != nil {
+		return nil, err
+	}
+	err = s.peer.Remove(ctx, cid)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RemoveNodeResponse{}, nil
 }
 
 func (s *ipfsLiteServer) RemoveNodes(ctx context.Context, req *pb.RemoveNodesRequest) (*pb.RemoveNodesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveNodes not implemented")
+	cids := make([]cid.Cid, len(req.GetCids()))
+	for i, reqCid := range req.GetCids() {
+		cid, err := cid.Decode(reqCid)
+		if err != nil {
+			return nil, err
+		}
+		cids[i] = cid
+	}
+	err := s.peer.RemoveMany(ctx, cids)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RemoveNodesResponse{}, nil
 }
 
 func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkRequest) (*pb.ResolveLinkResponse, error) {
