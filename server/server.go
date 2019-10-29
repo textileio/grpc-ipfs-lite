@@ -35,11 +35,7 @@ func StartServer(peer *ipfslite.Peer, host string) error {
 		peer: peer,
 	}
 	pb.RegisterIpfsLiteServer(grpcServer, server)
-	err = grpcServer.Serve(lis)
-	if err != nil {
-		return err
-	}
-	return nil
+	return grpcServer.Serve(lis)
 }
 
 func (s *ipfsLiteServer) AddFile(ctx context.Context, req *pb.AddFileRequest) (*pb.AddFileResponse, error) {
@@ -77,6 +73,7 @@ func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*
 		return nil, err
 	}
 
+	// ToDo: don't read all the data into memory at once
 	buffer, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
@@ -111,9 +108,9 @@ func (s *ipfsLiteServer) AddNode(ctx context.Context, req *pb.AddNodeRequest) (*
 }
 
 func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) (*pb.AddNodesResponse, error) {
-	nodes := []format.Node{}
+	nodes := make([]format.Node, len(req.GetBlocks()))
 
-	for _, pbBlock := range req.GetBlocks() {
+	for i, pbBlock := range req.GetBlocks() {
 		cid, err := cid.Decode(pbBlock.GetCid())
 		if err != nil {
 			return nil, err
@@ -130,7 +127,7 @@ func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) 
 			return nil, err
 		}
 
-		nodes = append(nodes, node)
+		nodes[i] = node
 	}
 
 	err := s.peer.AddMany(ctx, nodes)
@@ -162,13 +159,13 @@ func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*
 
 func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNodesServer) error {
 	ctx := context.TODO()
-	cids := []cid.Cid{}
-	for _, cidString := range req.GetCids() {
+	cids := make([]cid.Cid, len(req.GetCids()))
+	for i, cidString := range req.GetCids() {
 		cid, err := cid.Decode(cidString)
 		if err != nil {
 			return err
 		}
-		cids = append(cids, cid)
+		cids[i] = cid
 	}
 	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
 	ch := s.peer.GetMany(ctx, cids)
@@ -279,14 +276,14 @@ func nodeToPbNode(node format.Node) (*pb.Node, error) {
 		Cid:     node.Cid().String(),
 	}
 
-	respLinks := []*pb.Link{}
-	for _, link := range node.Links() {
+	respLinks := make([]*pb.Link, len(node.Links()))
+	for i, link := range node.Links() {
 		respLink := pb.Link{
 			Name: link.Name,
 			Size: int64(link.Size),
 			Cid:  link.Cid.String(),
 		}
-		respLinks = append(respLinks, &respLink)
+		respLinks[i] = &respLink
 	}
 
 	stat, err := node.Stat()

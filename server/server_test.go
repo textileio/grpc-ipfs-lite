@@ -19,7 +19,8 @@ import (
 var (
 	client      pb.IpfsLiteClient
 	stringToAdd string = "hola"
-	node        pb.Node
+	refFile     *pb.Node
+	refNode     *cbor.Node
 )
 
 func TestSetup(t *testing.T) {
@@ -43,17 +44,17 @@ func TestAddFile(t *testing.T) {
 	req := pb.AddFileRequest{
 		Data: []byte(stringToAdd),
 	}
-	resp, err := client.AddFile(ctx, &req)
+	node, err := client.AddFile(ctx, &req)
 	if err != nil {
 		t.Fatalf("failed to AddFile: %v", err)
 	}
-	node = *resp.GetNode()
+	refFile = node.GetNode()
 }
 
 func TestGetFile(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	resp, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: node.Block.GetCid()})
+	resp, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refFile.Block.GetCid()})
 	if err != nil {
 		t.Fatalf("failed to GetFile: %v", err)
 	}
@@ -85,6 +86,7 @@ func TestAddNode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to add node: %v", err)
 	}
+	refNode = node
 }
 
 func TestAddNodes(t *testing.T) {
@@ -138,12 +140,12 @@ func TestAddNodes(t *testing.T) {
 func TestGetNode(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: node.Block.GetCid()})
+	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refNode.Cid().String()})
 	if err != nil {
 		t.Fatalf("failed to GetNode: %v", err)
 	}
 	got := resp.GetNode().Block.GetCid()
-	excpected := node.Block.GetCid()
+	excpected := refNode.Cid().String()
 	if got != excpected {
 		t.Fatalf("excpected cid %s but got: %s", excpected, got)
 	}
@@ -152,7 +154,7 @@ func TestGetNode(t *testing.T) {
 func TestGetNodes(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: []string{node.Block.GetCid()}})
+	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: []string{refNode.Cid().String()}})
 	if err != nil {
 		t.Fatalf("failed to GetNodes: %v", err)
 	}
@@ -168,7 +170,7 @@ func TestGetNodes(t *testing.T) {
 			t.Fatalf("received error %s", resp.GetError())
 		}
 		got := resp.GetNode().Block.GetCid()
-		excpected := node.Block.GetCid()
+		excpected := refNode.Cid().String()
 		if got != excpected {
 			t.Fatalf("excpected cid %s but got: %s", excpected, got)
 		}
