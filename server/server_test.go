@@ -21,6 +21,7 @@ var (
 	stringToAdd string = "hola"
 	refFile     *pb.Node
 	refNode     *cbor.Node
+	refNodes    []*cbor.Node
 )
 
 func TestSetup(t *testing.T) {
@@ -135,6 +136,7 @@ func TestAddNodes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to add node: %v", err)
 	}
+	refNodes = append(refNodes, node0, node1, node2)
 }
 
 func TestGetNode(t *testing.T) {
@@ -154,10 +156,17 @@ func TestGetNode(t *testing.T) {
 func TestGetNodes(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: []string{refNode.Cid().String()}})
+
+	cids := make([]string, len(refNodes))
+	for i, node := range refNodes {
+		cids[i] = node.Cid().String()
+	}
+
+	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: cids})
 	if err != nil {
 		t.Fatalf("failed to GetNodes: %v", err)
 	}
+	results := []*pb.Node{}
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
@@ -169,11 +178,12 @@ func TestGetNodes(t *testing.T) {
 		if resp.GetError() != "" {
 			t.Fatalf("received error %s", resp.GetError())
 		}
-		got := resp.GetNode().Block.GetCid()
-		excpected := refNode.Cid().String()
-		if got != excpected {
-			t.Fatalf("excpected cid %s but got: %s", excpected, got)
-		}
+		results = append(results, resp.GetNode())
+	}
+	expected := len(refNodes)
+	got := len(results)
+	if got != expected {
+		t.Fatalf("excpected %d results but got: %d", expected, got)
 	}
 }
 
