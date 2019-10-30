@@ -214,6 +214,8 @@ service IpfsLite {
 
     rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
 
+    rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
+
     // DAGService
 
     rpc AddNode(AddNodeRequest) returns (AddNodeResponse) {}
@@ -228,29 +230,11 @@ service IpfsLite {
 
     rpc RemoveNodes(RemoveNodesRequest) returns (RemoveNodesResponse) {}
 
-    // Node provides a ResloveLink method and a Resolver prop that provides Resolve and Tree methods
+    // Node provides a ResloveLink method and the Resolver methods Resolve and Tree
 
     rpc ResolveLink(ResolveLinkRequest) returns (ResolveLinkResponse) {}
 
     rpc Resolve(ResolveRequest) returns (ResolveResponse) {}
 
     rpc Tree(TreeRequest) returns (TreeResponse) {}
-
-    // BlockStore() returns a blockstore.Blockstore that provides the following
-
-    rpc DeleteBlock(DeleteBlockRequest) returns (DeleteBlockResponse) {}
-
-    rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
-
-    rpc GetBlock(GetBlockRequest) returns (GetBlockResponse) {}
-
-    rpc GetBlockSize(GetBlockSizeRequest) returns (GetBlockSizeResponse) {}
-
-    rpc PutBlock(PutBlockRequest) returns (PutBlockResponse) {}
-
-    rpc PutBlocks(PutBlocksRequest) returns (PutBlocksResponse) {}
-
-    rpc AllKeys(AllKeysRequest) returns (stream AllKeysResponse) {}
-
-    rpc HashOnRead(HashOnReadRequest) returns (HashOnReadResponse) {}
 }

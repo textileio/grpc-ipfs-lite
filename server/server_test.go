@@ -65,6 +65,18 @@ func TestGetFile(t *testing.T) {
 	}
 }
 
+func TestHasBlock(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := client.HasBlock(ctx, &pb.HasBlockRequest{Cid: refFile.Block.GetCid()})
+	if err != nil {
+		t.Fatalf("failed to HasBlock: %v", err)
+	}
+	if !resp.GetHasBlock() {
+		t.Fatal("should have found block but didn't")
+	}
+}
+
 func TestAddNode(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -232,15 +244,6 @@ func TestTree(t *testing.T) {
 
 	if len(resp.GetPaths()) != 6 {
 		t.Fatal("unexpected number of tree paths")
-	}
-}
-
-func TestHashOnRead(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	_, err := client.HashOnRead(ctx, &pb.HashOnReadRequest{HashOnRead: true})
-	if err != nil {
-		t.Fatalf("failed to HashOnRead: %v", err)
 	}
 }
 

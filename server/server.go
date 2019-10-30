@@ -11,15 +11,12 @@ import (
 	"github.com/ipfs/go-cid"
 	format "github.com/ipfs/go-ipld-format"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	pb "textile.io/grpc-ipfs-lite/ipfs-lite"
 )
 
 type ipfsLiteServer struct {
 	pb.UnimplementedIpfsLiteServer
 
-	// should this be a file var or here?
 	peer *ipfslite.Peer
 }
 
@@ -80,6 +77,18 @@ func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*
 	}
 
 	return &pb.GetFileResponse{Data: buffer}, nil
+}
+
+func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) (*pb.HasBlockResponse, error) {
+	cid, err := cid.Decode(req.GetCid())
+	if err != nil {
+		return nil, err
+	}
+	hasBlock, err := s.peer.HasBlock(cid)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.HasBlockResponse{HasBlock: hasBlock}, nil
 }
 
 func (s *ipfsLiteServer) AddNode(ctx context.Context, req *pb.AddNodeRequest) (*pb.AddNodeResponse, error) {
@@ -282,39 +291,6 @@ func (s *ipfsLiteServer) Tree(ctx context.Context, req *pb.TreeRequest) (*pb.Tre
 	paths := node.Tree(req.GetPath(), int(req.GetDepth()))
 
 	return &pb.TreeResponse{Paths: paths}, nil
-}
-
-func (s *ipfsLiteServer) DeleteBlock(ctx context.Context, req *pb.DeleteBlockRequest) (*pb.DeleteBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlock not implemented")
-}
-
-func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) (*pb.HasBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasBlock not implemented")
-}
-
-func (s *ipfsLiteServer) GetBlock(ctx context.Context, req *pb.GetBlockRequest) (*pb.GetBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
-}
-
-func (s *ipfsLiteServer) GetBlockSize(ctx context.Context, req *pb.GetBlockSizeRequest) (*pb.GetBlockSizeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlockSize not implemented")
-}
-
-func (s *ipfsLiteServer) PutBlock(ctx context.Context, req *pb.PutBlockRequest) (*pb.PutBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutBlock not implemented")
-}
-
-func (s *ipfsLiteServer) PutBlocks(ctx context.Context, req *pb.PutBlocksRequest) (*pb.PutBlocksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutBlocks not implemented")
-}
-
-func (s *ipfsLiteServer) AllKeys(req *pb.AllKeysRequest, srv pb.IpfsLite_AllKeysServer) error {
-	return status.Errorf(codes.Unimplemented, "method AllKeys not implemented")
-}
-
-func (s *ipfsLiteServer) HashOnRead(ctx context.Context, req *pb.HashOnReadRequest) (*pb.HashOnReadResponse, error) {
-	s.peer.BlockStore().HashOnRead(req.GetHashOnRead())
-	return &pb.HashOnReadResponse{}, nil
 }
 
 func nodeToPbNode(node format.Node) (*pb.Node, error) {
