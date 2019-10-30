@@ -137,7 +137,7 @@ message ResolveResponse {
 
 message TreeRequest {
     string nodeCid = 1;
-    repeated string path = 2;
+    string path = 2;
     int32 depth = 3;
 }
 

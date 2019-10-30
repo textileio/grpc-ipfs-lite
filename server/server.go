@@ -250,11 +250,38 @@ func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkReq
 }
 
 func (s *ipfsLiteServer) Resolve(ctx context.Context, req *pb.ResolveRequest) (*pb.ResolveResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Resolve not implemented")
+	cid, err := cid.Decode(req.GetNodeCid())
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.peer.Get(ctx, cid)
+	if err != nil {
+		return nil, err
+	}
+
+	// ToDo: Figure out how to use this _ interface{} data
+	_, remainingPath, err := node.Resolve(req.GetPath())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ResolveResponse{RemainingPath: remainingPath}, nil
 }
 
 func (s *ipfsLiteServer) Tree(ctx context.Context, req *pb.TreeRequest) (*pb.TreeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Tree not implemented")
+	cid, err := cid.Decode(req.GetNodeCid())
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := s.peer.Get(ctx, cid)
+	if err != nil {
+		return nil, err
+	}
+
+	paths := node.Tree(req.GetPath(), int(req.GetDepth()))
+
+	return &pb.TreeResponse{Paths: paths}, nil
 }
 
 func (s *ipfsLiteServer) DeleteBlock(ctx context.Context, req *pb.DeleteBlockRequest) (*pb.DeleteBlockResponse, error) {

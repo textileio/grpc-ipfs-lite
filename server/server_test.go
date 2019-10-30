@@ -17,11 +17,10 @@ import (
 )
 
 var (
-	client      pb.IpfsLiteClient
-	stringToAdd string = "hola"
-	refFile     *pb.Node
-	refNode     *cbor.Node
-	refNodes    []*cbor.Node
+	client                                 pb.IpfsLiteClient
+	stringToAdd                            string = "hola"
+	refFile                                *pb.Node
+	refNode0, refNode1, refNode2, refNode3 *cbor.Node
 )
 
 func TestSetup(t *testing.T) {
@@ -70,60 +69,48 @@ func TestAddNode(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	m := map[string]interface{}{
-		"firstkey": "firstvalue",
+	node0data := map[string]interface{}{
+		"name": "node0",
 	}
-	node, err := createNode(m)
+	node0, err := createNode(node0data)
 	if err != nil {
 		t.Fatalf("failed to create node: %v", err)
 	}
 
-	block := pb.Block{
-		Cid:     node.Cid().String(),
-		RawData: node.RawData(),
+	block0 := pb.Block{
+		Cid:     node0.Cid().String(),
+		RawData: node0.RawData(),
 	}
 
-	_, err = client.AddNode(ctx, &pb.AddNodeRequest{Block: &block})
+	_, err = client.AddNode(ctx, &pb.AddNodeRequest{Block: &block0})
 	if err != nil {
 		t.Fatalf("failed to add node: %v", err)
 	}
-	refNode = node
+	refNode0 = node0
 }
 
 func TestAddNodes(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	nodeData0 := map[string]interface{}{
-		"akey": "avalue",
+	node1Data := map[string]interface{}{
+		"name": "node1",
+		"link": refNode0.Cid(),
 	}
-	node0, err := createNode(nodeData0)
+	node1, err := createNode(node1Data)
 	if err != nil {
 		t.Fatalf("failed to create node0: %v", err)
-	}
-	block0 := pb.Block{
-		Cid:     node0.Cid().String(),
-		RawData: node0.RawData(),
-	}
-
-	nodeData1 := map[string]interface{}{
-		"anotherkey": "anothervalue",
-		"link":       node0.Cid(),
-	}
-	node1, err := createNode(nodeData1)
-	if err != nil {
-		t.Fatalf("failed to create node2: %v", err)
 	}
 	block1 := pb.Block{
 		Cid:     node1.Cid().String(),
 		RawData: node1.RawData(),
 	}
 
-	nodeData2 := map[string]interface{}{
-		"lastkey": "lastvalue",
-		"link":    node1.Cid(),
+	node2Data := map[string]interface{}{
+		"name": "node2",
+		"link": node1.Cid(),
 	}
-	node2, err := createNode(nodeData2)
+	node2, err := createNode(node2Data)
 	if err != nil {
 		t.Fatalf("failed to create node2: %v", err)
 	}
@@ -132,22 +119,43 @@ func TestAddNodes(t *testing.T) {
 		RawData: node2.RawData(),
 	}
 
-	_, err = client.AddNodes(ctx, &pb.AddNodesRequest{Blocks: []*pb.Block{&block0, &block1, &block2}})
+	node3Data := map[string]interface{}{
+		"name": "node3",
+		"link": node2.Cid(),
+		"foo": map[string]interface{}{
+			"bar": map[string]interface{}{
+				"baz": "hi",
+			},
+			"what": "boom",
+		},
+	}
+	node3, err := createNode(node3Data)
+	if err != nil {
+		t.Fatalf("failed to create node2: %v", err)
+	}
+	block3 := pb.Block{
+		Cid:     node3.Cid().String(),
+		RawData: node3.RawData(),
+	}
+
+	_, err = client.AddNodes(ctx, &pb.AddNodesRequest{Blocks: []*pb.Block{&block1, &block2, &block3}})
 	if err != nil {
 		t.Fatalf("failed to add node: %v", err)
 	}
-	refNodes = append(refNodes, node0, node1, node2)
+	refNode1 = node1
+	refNode2 = node2
+	refNode3 = node3
 }
 
 func TestGetNode(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refNode.Cid().String()})
+	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refNode0.Cid().String()})
 	if err != nil {
 		t.Fatalf("failed to GetNode: %v", err)
 	}
 	got := resp.GetNode().Block.GetCid()
-	excpected := refNode.Cid().String()
+	excpected := refNode0.Cid().String()
 	if got != excpected {
 		t.Fatalf("excpected cid %s but got: %s", excpected, got)
 	}
@@ -157,10 +165,7 @@ func TestGetNodes(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cids := make([]string, len(refNodes))
-	for i, node := range refNodes {
-		cids[i] = node.Cid().String()
-	}
+	cids := []string{refNode0.Cid().String(), refNode1.Cid().String(), refNode2.Cid().String(), refNode3.Cid().String()}
 
 	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: cids})
 	if err != nil {
@@ -180,45 +185,55 @@ func TestGetNodes(t *testing.T) {
 		}
 		results = append(results, resp.GetNode())
 	}
-	expected := len(refNodes)
+	expected := len(cids)
 	got := len(results)
 	if got != expected {
 		t.Fatalf("excpected %d results but got: %d", expected, got)
 	}
 }
 
-func TestRemoveNode(t *testing.T) {
+func TestResolveLink(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
-	_, err := client.RemoveNode(ctx, &pb.RemoveNodeRequest{Cid: refNode.Cid().String()})
+	resp, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: refNode3.Cid().String(), Path: []string{"link", "name"}})
 	if err != nil {
-		t.Fatalf("failed to RemoveNode: %v", err)
+		t.Fatalf("failed to ResolveLink: %v", err)
+	}
+	if len(resp.GetRemainingPath()) != 1 || resp.GetRemainingPath()[0] != "name" {
+		t.Fatal("unexpected remaining path")
+	}
+	if resp.GetLink().GetCid() != refNode2.Cid().String() {
+		t.Fatal("unexpected link cid")
 	}
 }
 
-func TestRemoveNodes(t *testing.T) {
+func TestResolve(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cids := make([]string, len(refNodes))
-	for i, node := range refNodes {
-		cids[i] = node.Cid().String()
-	}
-	_, err := client.RemoveNodes(ctx, &pb.RemoveNodesRequest{Cids: cids})
+	resp, err := client.Resolve(ctx, &pb.ResolveRequest{NodeCid: refNode3.Cid().String(), Path: []string{"link", "name"}})
 	if err != nil {
-		t.Fatalf("failed to RemoveNodes: %v", err)
+		t.Fatalf("failed to Resolve: %v", err)
 	}
+	if len(resp.GetRemainingPath()) != 1 || resp.GetRemainingPath()[0] != "name" {
+		t.Fatal("unexpected remaining path")
+	}
+	// ToDo: something with resp.Object
 }
 
-// func TestResolveLink(t *testing.T) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-// 	_, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: node.Block.GetCid(), Path: []string{}})
-// 	if err != nil {
-// 		t.Fatalf("failed to ResolveLink: %v", err)
-// 	}
-// }
+func TestTree(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	resp, err := client.Tree(ctx, &pb.TreeRequest{NodeCid: refNode3.Cid().String(), Path: "", Depth: -1})
+	if err != nil {
+		t.Fatalf("failed to Tree: %v", err)
+	}
+
+	if len(resp.GetPaths()) != 6 {
+		t.Fatal("unexpected number of tree paths")
+	}
+}
 
 func TestHashOnRead(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -229,29 +244,26 @@ func TestHashOnRead(t *testing.T) {
 	}
 }
 
-func TestCreateNode(t *testing.T) {
-	m := map[string]string{
-		"akey": "avalue",
-	}
+func TestRemoveNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	codec := uint64(multihash.SHA2_256)
-
-	node, err := cbor.WrapObject(m, codec, multihash.DefaultLengths[codec])
+	_, err := client.RemoveNode(ctx, &pb.RemoveNodeRequest{Cid: refNode3.Cid().String()})
 	if err != nil {
-		t.Fatalf("failed to create node: %v", err)
+		t.Fatalf("failed to RemoveNode: %v", err)
 	}
+}
 
-	n := map[string]interface{}{
-		"foo":  "bar",
-		"link": node.Cid(),
-	}
+func TestRemoveNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	node2, err := cbor.WrapObject(n, codec, multihash.DefaultLengths[codec])
+	cids := []string{refNode0.Cid().String(), refNode0.Cid().String(), refNode1.Cid().String(), refNode2.Cid().String()}
+
+	_, err := client.RemoveNodes(ctx, &pb.RemoveNodesRequest{Cids: cids})
 	if err != nil {
-		t.Fatalf("failed to create node2: %v", err)
+		t.Fatalf("failed to RemoveNodes: %v", err)
 	}
-
-	t.Logf("final node: %v", node2)
 }
 
 func newPeer() (*ipfslite.Peer, error) {
