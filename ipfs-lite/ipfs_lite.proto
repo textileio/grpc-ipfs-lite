@@ -48,8 +48,10 @@ message Node {
 // Request and Response messages
 
 message AddFileRequest {
-    AddParams addParams = 1;
-    bytes data = 2;
+    oneof payload {
+        AddParams addParams = 1;
+        bytes chunk = 2;
+    }
 }
 
 message AddFileResponse {
@@ -61,7 +63,7 @@ message GetFileRequest {
 }
 
 message GetFileResponse {
-    bytes data = 1;
+    bytes chunk = 1;
 }
 
 message AddNodeRequest {
@@ -210,9 +212,9 @@ message HashOnReadResponse {
 }
 
 service IpfsLite {
-    rpc AddFile(AddFileRequest) returns (AddFileResponse) {}
+    rpc AddFile(stream AddFileRequest) returns (AddFileResponse) {}
 
-    rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
+    rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
 
     rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
 

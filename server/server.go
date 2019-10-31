@@ -1,9 +1,9 @@
 package server
 
 import (
-	"bytes"
 	"context"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
@@ -35,49 +35,100 @@ func StartServer(peer *ipfslite.Peer, host string) error {
 	return grpcServer.Serve(lis)
 }
 
-func (s *ipfsLiteServer) AddFile(ctx context.Context, req *pb.AddFileRequest) (*pb.AddFileResponse, error) {
-	reader := bytes.NewReader(req.GetData())
-	addParams := ipfslite.AddParams{
-		Layout:    req.AddParams.GetLayout(),
-		Chunker:   req.AddParams.GetChunker(),
-		RawLeaves: req.AddParams.GetRawLeaves(),
-		Hidden:    req.AddParams.GetHidden(),
-		Shard:     req.AddParams.GetShared(),
-		NoCopy:    req.AddParams.GetNoCopy(),
-		HashFun:   req.AddParams.GetHashFun(),
-	}
-	node, err := s.peer.AddFile(ctx, reader, &addParams)
-	if err != nil {
-		return nil, err
-	}
-
-	respNode, err := nodeToPbNode(node)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.AddFileResponse{Node: respNode}, nil
+type addFileResult struct {
+	Node format.Node
+	Err  error
 }
 
-func (s *ipfsLiteServer) GetFile(ctx context.Context, req *pb.GetFileRequest) (*pb.GetFileResponse, error) {
-	cid, err := cid.Decode(req.GetCid())
-	if err != nil {
-		return nil, err
+func addFile(ctx context.Context, peer *ipfslite.Peer, addParams *pb.AddParams, reader io.Reader, ch chan addFileResult) {
+	defer close(ch)
+	params := &ipfslite.AddParams{
+		Layout:    addParams.GetLayout(),
+		Chunker:   addParams.GetChunker(),
+		RawLeaves: addParams.GetRawLeaves(),
+		Hidden:    addParams.GetHidden(),
+		Shard:     addParams.GetShared(),
+		NoCopy:    addParams.GetNoCopy(),
+		HashFun:   addParams.GetHashFun(),
 	}
-
-	reader, err := s.peer.GetFile(ctx, cid)
+	node, err := peer.AddFile(ctx, reader, params)
 	if err != nil {
-		return nil, err
+		ch <- addFileResult{Err: err}
+		return
 	}
-
-	// ToDo: don't read all the data into memory at once
-	buffer, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.GetFileResponse{Data: buffer}, nil
+	ch <- addFileResult{Node: node}
 }
+
+func (s *ipfsLiteServer) AddFile(srv pb.IpfsLite_AddFileServer) error {
+	req, err := srv.Recv()
+	if err != nil {
+		return err
+	}
+	var addParams *pb.AddParams
+	switch payload := req.GetPayload().(type) {
+	case *pb.AddFileRequest_AddParams:
+		addParams = payload.AddParams
+	default:
+		return fmt.Errorf("expexted AddParams for AddFileRequest.Payload but got %T", payload)
+	}
+
+	reader, writer := io.Pipe()
+
+	addFileChannel := make(chan addFileResult)
+	go addFile(srv.Context(), s.peer, addParams, reader, addFileChannel)
+
+	for {
+		req, err := srv.Recv()
+		if err == io.EOF {
+			writer.Close()
+			break
+		} else if err != nil {
+			writer.CloseWithError(err)
+			break
+		}
+		switch payload := req.GetPayload().(type) {
+		case *pb.AddFileRequest_Chunk:
+			_, writeErr := writer.Write(payload.Chunk)
+			if writeErr != nil {
+				return writeErr
+			}
+		default:
+			return fmt.Errorf("expected Chunk for AddFileRequest.Payload but got %T", payload)
+		}
+	}
+
+	addFileResult := <-addFileChannel
+	if addFileResult.Err != nil {
+		return addFileResult.Err
+	}
+
+	respNode, err := nodeToPbNode(addFileResult.Node)
+	if err != nil {
+		return err
+	}
+
+	return srv.SendAndClose(&pb.AddFileResponse{Node: respNode})
+}
+
+// func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFileServer) error {
+// 	cid, err := cid.Decode(req.GetCid())
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	reader, err := s.peer.GetFile(ctx, cid)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// ToDo: don't read all the data into memory at once
+// 	buffer, err := ioutil.ReadAll(reader)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &pb.GetFileResponse{Data: buffer}, nil
+// }
 
 func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) (*pb.HasBlockResponse, error) {
 	cid, err := cid.Decode(req.GetCid())
