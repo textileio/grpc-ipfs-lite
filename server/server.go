@@ -224,7 +224,6 @@ func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*
 }
 
 func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNodesServer) error {
-	ctx := context.TODO()
 	cids := make([]cid.Cid, len(req.GetCids()))
 	for i, cidString := range req.GetCids() {
 		cid, err := cid.Decode(cidString)
@@ -234,7 +233,7 @@ func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNo
 		cids[i] = cid
 	}
 	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
-	ch := s.peer.GetMany(ctx, cids)
+	ch := s.peer.GetMany(srv.Context(), cids)
 	for {
 		result, ok := <-ch
 		if ok == false {
