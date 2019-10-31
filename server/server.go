@@ -123,8 +123,8 @@ func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFile
 		return err
 	}
 
+	buffer := make([]byte, getFileChunkSize)
 	for {
-		buffer := make([]byte, getFileChunkSize)
 		size, err := reader.Read(buffer)
 		if err != nil && err != io.EOF {
 			return err
