@@ -293,7 +293,7 @@ func newPeer() (*ipfslite.Peer, error) {
 
 	log.SetLogLevel("*", "warn")
 
-	ds, err := ipfslite.BadgerDatastore("test")
+	ds, err := ipfslite.BadgerDatastore("/tmp/test")
 	if err != nil {
 		return nil, err
 	}
