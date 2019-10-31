@@ -20,6 +20,8 @@ type ipfsLiteServer struct {
 	peer *ipfslite.Peer
 }
 
+const getFileChunkSize = 1024
+
 // StartServer starts the gRPC server
 func StartServer(peer *ipfslite.Peer, host string) error {
 	lis, err := net.Listen("tcp", host)
@@ -110,25 +112,29 @@ func (s *ipfsLiteServer) AddFile(srv pb.IpfsLite_AddFileServer) error {
 	return srv.SendAndClose(&pb.AddFileResponse{Node: respNode})
 }
 
-// func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFileServer) error {
-// 	cid, err := cid.Decode(req.GetCid())
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFileServer) error {
+	cid, err := cid.Decode(req.GetCid())
+	if err != nil {
+		return err
+	}
 
-// 	reader, err := s.peer.GetFile(ctx, cid)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	reader, err := s.peer.GetFile(srv.Context(), cid)
+	if err != nil {
+		return err
+	}
 
-// 	// ToDo: don't read all the data into memory at once
-// 	buffer, err := ioutil.ReadAll(reader)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &pb.GetFileResponse{Data: buffer}, nil
-// }
+	for {
+		buffer := make([]byte, getFileChunkSize)
+		size, err := reader.Read(buffer)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		srv.Send(&pb.GetFileResponse{Chunk: buffer[:size]})
+		if err == io.EOF {
+			return nil
+		}
+	}
+}
 
 func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) (*pb.HasBlockResponse, error) {
 	cid, err := cid.Decode(req.GetCid())

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"testing"
@@ -56,19 +57,31 @@ func TestAddFile(t *testing.T) {
 	refFile = resp.GetNode()
 }
 
-// func TestGetFile(t *testing.T) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-// 	resp, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refFile.Block.GetCid()})
-// 	if err != nil {
-// 		t.Fatalf("failed to GetFile: %v", err)
-// 	}
+func TestGetFile(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	stream, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refFile.Block.GetCid()})
+	if err != nil {
+		t.Fatalf("failed to GetFile: %v", err)
+	}
 
-// 	val := string(resp.GetData())
-// 	if val != stringToAdd {
-// 		t.Fatalf("wanted %s but got: %s", stringToAdd, val)
-// 	}
-// }
+	buffer := bytes.NewBuffer([]byte{})
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("failed to receive file chunk: %v", err)
+		}
+		buffer.Write(resp.GetChunk())
+	}
+
+	val := string(buffer.Bytes())
+	if val != stringToAdd {
+		t.Fatalf("wanted %s but got: %s", stringToAdd, val)
+	}
+}
 
 func TestHasBlock(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
