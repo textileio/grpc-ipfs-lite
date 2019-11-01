@@ -1,4 +1,4 @@
-module textile.io/grpc-ipfs-lite
+module github.com/textileio/grpc-ipfs-lite
 
 go 1.13
 

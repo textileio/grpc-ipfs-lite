@@ -13,8 +13,8 @@ import (
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/multiformats/go-multiaddr"
 	multihash "github.com/multiformats/go-multihash"
+	pb "github.com/textileio/grpc-ipfs-lite/ipfs-lite"
 	"google.golang.org/grpc"
-	pb "textile.io/grpc-ipfs-lite/ipfs-lite"
 )
 
 var (
