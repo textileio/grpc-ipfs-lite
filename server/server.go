@@ -209,7 +209,6 @@ func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
 	node, err := s.peer.Get(ctx, cid)
 	if err != nil {
 		return nil, err
@@ -232,7 +231,6 @@ func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNo
 		}
 		cids[i] = cid
 	}
-	// TODO: use session() NodeGetter or Peer NodeGetter methods directly?
 	ch := s.peer.GetMany(srv.Context(), cids)
 	for {
 		result, ok := <-ch
@@ -312,25 +310,6 @@ func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkReq
 	}
 
 	return &resp, nil
-}
-
-func (s *ipfsLiteServer) Resolve(ctx context.Context, req *pb.ResolveRequest) (*pb.ResolveResponse, error) {
-	cid, err := cid.Decode(req.GetNodeCid())
-	if err != nil {
-		return nil, err
-	}
-
-	node, err := s.peer.Get(ctx, cid)
-	if err != nil {
-		return nil, err
-	}
-
-	// ToDo: Figure out how to use this _ interface{} data
-	_, remainingPath, err := node.Resolve(req.GetPath())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.ResolveResponse{RemainingPath: remainingPath}, nil
 }
 
 func (s *ipfsLiteServer) Tree(ctx context.Context, req *pb.TreeRequest) (*pb.TreeResponse, error) {

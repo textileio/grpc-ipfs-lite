@@ -237,20 +237,6 @@ func TestResolveLink(t *testing.T) {
 	}
 }
 
-func TestResolve(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	resp, err := client.Resolve(ctx, &pb.ResolveRequest{NodeCid: refNode3.Cid().String(), Path: []string{"link", "name"}})
-	if err != nil {
-		t.Fatalf("failed to Resolve: %v", err)
-	}
-	if len(resp.GetRemainingPath()) != 1 || resp.GetRemainingPath()[0] != "name" {
-		t.Fatal("unexpected remaining path")
-	}
-	// ToDo: something with resp.Object
-}
-
 func TestTree(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

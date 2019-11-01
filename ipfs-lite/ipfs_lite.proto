@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/any.proto";
-
 option java_multiple_files = true;
 option java_package = "io.textile.grpc_ipfs_lite";
 option java_outer_classname = "IpfsLiteProto";
@@ -127,16 +125,6 @@ message ResolveLinkResponse {
     repeated string remainingPath = 2;
 }
 
-message ResolveRequest {
-    string nodeCid = 1;
-    repeated string path = 2;
-}
-
-message ResolveResponse {
-    google.protobuf.Any object = 1;
-    repeated string remainingPath = 2;
-}
-
 message TreeRequest {
     string nodeCid = 1;
     string path = 2;
@@ -235,8 +223,6 @@ service IpfsLite {
     // Node provides a ResloveLink method and the Resolver methods Resolve and Tree
 
     rpc ResolveLink(ResolveLinkRequest) returns (ResolveLinkResponse) {}
-
-    rpc Resolve(ResolveRequest) returns (ResolveResponse) {}
 
     rpc Tree(TreeRequest) returns (TreeResponse) {}
 }
