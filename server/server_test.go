@@ -108,7 +108,7 @@ func TestAddNode(t *testing.T) {
 	}
 
 	block0 := pb.Block{
-		Cid:     node0.Cid().String(),
+		// Cid:     node0.Cid().String(),
 		RawData: node0.RawData(),
 	}
 

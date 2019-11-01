@@ -149,13 +149,7 @@ func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) 
 }
 
 func (s *ipfsLiteServer) AddNode(ctx context.Context, req *pb.AddNodeRequest) (*pb.AddNodeResponse, error) {
-	cid, err := cid.Decode(req.Block.GetCid())
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: there is also just blocks.NewBlock()
-	block, err := blocks.NewBlockWithCid(req.Block.GetRawData(), cid)
+	block, err := pbBlockToBlock(req.GetBlock())
 	if err != nil {
 		return nil, err
 	}
@@ -177,13 +171,7 @@ func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) 
 	nodes := make([]format.Node, len(req.GetBlocks()))
 
 	for i, pbBlock := range req.GetBlocks() {
-		cid, err := cid.Decode(pbBlock.GetCid())
-		if err != nil {
-			return nil, err
-		}
-
-		// TODO: there is also just blocks.NewBlock()
-		block, err := blocks.NewBlockWithCid(pbBlock.GetRawData(), cid)
+		block, err := pbBlockToBlock(pbBlock)
 		if err != nil {
 			return nil, err
 		}
@@ -326,6 +314,23 @@ func (s *ipfsLiteServer) Tree(ctx context.Context, req *pb.TreeRequest) (*pb.Tre
 	paths := node.Tree(req.GetPath(), int(req.GetDepth()))
 
 	return &pb.TreeResponse{Paths: paths}, nil
+}
+
+func pbBlockToBlock(pbBlock *pb.Block) (blocks.Block, error) {
+	var block *blocks.BasicBlock
+	if len(pbBlock.GetCid()) == 0 {
+		block = blocks.NewBlock(pbBlock.GetRawData())
+	} else {
+		cid, err := cid.Decode(pbBlock.GetCid())
+		if err != nil {
+			return nil, err
+		}
+		block, err = blocks.NewBlockWithCid(pbBlock.GetRawData(), cid)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return block, nil
 }
 
 func nodeToPbNode(node format.Node) (*pb.Node, error) {
