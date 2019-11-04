@@ -10,6 +10,7 @@ import (
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	cbor "github.com/ipfs/go-ipld-cbor"
 	"github.com/ipfs/go-log"
+	"github.com/ipfs/go-merkledag"
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/multiformats/go-multiaddr"
 	multihash "github.com/multiformats/go-multihash"
@@ -18,10 +19,11 @@ import (
 )
 
 var (
-	client                                 pb.IpfsLiteClient
-	stringToAdd                            string = "hola"
-	refFile                                *pb.Node
-	refNode0, refNode1, refNode2, refNode3 *cbor.Node
+	client                                                     pb.IpfsLiteClient
+	stringToAdd                                                string = "hola"
+	refFile                                                    *pb.Node
+	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
+	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
 )
 
 func TestSetup(t *testing.T) {
@@ -108,7 +110,7 @@ func TestAddNode(t *testing.T) {
 	}
 
 	block0 := pb.Block{
-		// Cid:     node0.Cid().String(),
+		Cid:     node0.Cid().String(),
 		RawData: node0.RawData(),
 	}
 
@@ -170,7 +172,7 @@ func TestAddNodes(t *testing.T) {
 
 	_, err = client.AddNodes(ctx, &pb.AddNodesRequest{Blocks: []*pb.Block{&block1, &block2, &block3}})
 	if err != nil {
-		t.Fatalf("failed to add node: %v", err)
+		t.Fatalf("failed to add nodes: %v", err)
 	}
 	refNode1 = node1
 	refNode2 = node2
@@ -209,6 +211,97 @@ func TestGetNodes(t *testing.T) {
 		}
 		if err != nil {
 			t.Fatalf("failed to GetNodes: %v", err)
+		}
+		if resp.GetError() != "" {
+			t.Fatalf("received error %s", resp.GetError())
+		}
+		results = append(results, resp.GetNode())
+	}
+	expected := len(cids)
+	got := len(results)
+	if got != expected {
+		t.Fatalf("excpected %d results but got: %d", expected, got)
+	}
+}
+
+func TestAddProtoNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	node := merkledag.NodeWithData([]byte(stringToAdd))
+
+	// Don't need to provide Cid for ProtoNode
+	block := pb.Block{
+		RawData: node.RawData(),
+	}
+
+	_, err := client.AddNode(ctx, &pb.AddNodeRequest{Block: &block})
+	if err != nil {
+		t.Fatalf("failed to add node: %v", err)
+	}
+	refProtoNode0 = node
+}
+
+func TestAddProtoNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	node1 := merkledag.NodeWithData([]byte(stringToAdd))
+	node1.AddNodeLink("link", refProtoNode0)
+	block1 := pb.Block{
+		RawData: node1.RawData(),
+	}
+	node2 := merkledag.NodeWithData([]byte(stringToAdd))
+	node2.AddNodeLink("link", node1)
+	block2 := pb.Block{
+		RawData: node2.RawData(),
+	}
+	node3 := merkledag.NodeWithData([]byte(stringToAdd))
+	node3.AddNodeLink("link", node2)
+	block3 := pb.Block{
+		RawData: node3.RawData(),
+	}
+	_, err := client.AddNodes(ctx, &pb.AddNodesRequest{Blocks: []*pb.Block{&block1, &block2, &block3}})
+	if err != nil {
+		t.Fatalf("failed to add nodes: %v", err)
+	}
+	refProtoNode1 = node1
+	refProtoNode2 = node2
+	refProtoNode3 = node3
+}
+
+func TestGetProtoNode(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refProtoNode0.Cid().String()})
+	if err != nil {
+		t.Fatalf("failed to GetProtoNode: %v", err)
+	}
+	got := resp.GetNode().Block.GetCid()
+	excpected := refProtoNode0.Cid().String()
+	if got != excpected {
+		t.Fatalf("excpected cid %s but got: %s", excpected, got)
+	}
+}
+
+func TestGetProtoNodes(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cids := []string{refProtoNode0.Cid().String(), refProtoNode1.Cid().String(), refProtoNode2.Cid().String(), refProtoNode3.Cid().String()}
+
+	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: cids})
+	if err != nil {
+		t.Fatalf("failed to GetProtoNodes: %v", err)
+	}
+	results := []*pb.Node{}
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("failed to GetProtoNodes: %v", err)
 		}
 		if resp.GetError() != "" {
 			t.Fatalf("received error %s", resp.GetError())
