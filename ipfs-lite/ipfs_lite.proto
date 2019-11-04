@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/any.proto";
-
 option java_multiple_files = true;
 option java_package = "io.textile.grpc_ipfs_lite";
 option java_outer_classname = "IpfsLiteProto";
@@ -41,14 +39,14 @@ message NodeStat {
 message Node {
     Block block = 1;
     repeated Link links = 2;
-    NodeStat state = 3;
+    NodeStat stat = 3;
     int64 size = 4;
 }
 
 // Request and Response messages
 
 message AddFileRequest {
-    oneof msgtype {
+    oneof payload {
         AddParams addParams = 1;
         bytes chunk = 2;
     }
@@ -63,7 +61,23 @@ message GetFileRequest {
 }
 
 message GetFileResponse {
-    bytes data = 1;
+    bytes chunk = 1;
+}
+
+message AddNodeRequest {
+    Block block = 1;
+}
+
+message AddNodeResponse {
+
+}
+
+message AddNodesRequest {
+    repeated Block blocks = 1;
+}
+
+message AddNodesResponse {
+
 }
 
 message GetNodeRequest {
@@ -75,7 +89,7 @@ message GetNodeResponse {
 }
 
 message GetNodesRequest {
-    repeated string cid = 1;
+    repeated string cids = 1;
 }
 
 message GetNodesResponse {
@@ -83,6 +97,22 @@ message GetNodesResponse {
         Node node = 1;
         string error = 2;
     }
+}
+
+message RemoveNodeRequest {
+    string cid = 1;
+}
+
+message RemoveNodeResponse {
+
+}
+
+message RemoveNodesRequest {
+    repeated string cids = 1;
+}
+
+message RemoveNodesResponse {
+
 }
 
 message ResolveLinkRequest {
@@ -95,19 +125,9 @@ message ResolveLinkResponse {
     repeated string remainingPath = 2;
 }
 
-message ResolveRequest {
-    string nodeCid = 1;
-    repeated string path = 2;
-}
-
-message ResolveResponse {
-    google.protobuf.Any object = 1;
-    repeated string remainingPath = 2;
-}
-
 message TreeRequest {
     string nodeCid = 1;
-    repeated string path = 2;
+    string path = 2;
     int32 depth = 3;
 }
 
@@ -182,37 +202,27 @@ message HashOnReadResponse {
 service IpfsLite {
     rpc AddFile(stream AddFileRequest) returns (AddFileResponse) {}
 
-    rpc GetFile(GetFileRequest) returns (GetFileResponse) {}
+    rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
 
-    // Session() returns a NodeGetter which provides Get and GetMany methods
+    rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
+
+    // DAGService
+
+    rpc AddNode(AddNodeRequest) returns (AddNodeResponse) {}
+
+    rpc AddNodes(AddNodesRequest) returns (AddNodesResponse) {}
 
     rpc GetNode(GetNodeRequest) returns (GetNodeResponse) {}
 
     rpc GetNodes(GetNodesRequest) returns (stream GetNodesResponse) {}
 
-    // Node provides a ResloveLink method and a Resolver prop that provides Resolve and Tree methods
+    rpc RemoveNode(RemoveNodeRequest) returns (RemoveNodeResponse) {}
+
+    rpc RemoveNodes(RemoveNodesRequest) returns (RemoveNodesResponse) {}
+
+    // Node provides a ResloveLink method and the Resolver methods Resolve and Tree
 
     rpc ResolveLink(ResolveLinkRequest) returns (ResolveLinkResponse) {}
 
-    rpc Resolve(ResolveRequest) returns (ResolveResponse) {}
-
     rpc Tree(TreeRequest) returns (TreeResponse) {}
-
-    // BlockStore() returns a blockstore.Blockstore that provides the following
-
-    rpc DeleteBlock(DeleteBlockRequest) returns (DeleteBlockResponse) {}
-
-    rpc HasBlock(HasBlockRequest) returns (HasBlockResponse) {}
-
-    rpc GetBlock(GetBlockRequest) returns (GetBlockResponse) {}
-
-    rpc GetBlockSize(GetBlockSizeRequest) returns (GetBlockSizeResponse) {}
-
-    rpc PutBlock(PutBlockRequest) returns (PutBlockResponse) {}
-
-    rpc PutBlocks(PutBlocksRequest) returns (PutBlocksResponse) {}
-
-    rpc AllKeys(AllKeysRequest) returns (stream AllKeysResponse) {}
-
-    rpc HashOnRead(HashOnReadRequest) returns (HashOnReadResponse) {}
 }

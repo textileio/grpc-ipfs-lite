@@ -7,7 +7,6 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	any "github.com/golang/protobuf/ptypes/any"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -296,7 +295,7 @@ func (m *NodeStat) GetCumulativeSize() int32 {
 type Node struct {
 	Block                *Block    `protobuf:"bytes,1,opt,name=block,proto3" json:"block,omitempty"`
 	Links                []*Link   `protobuf:"bytes,2,rep,name=links,proto3" json:"links,omitempty"`
-	State                *NodeStat `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
+	Stat                 *NodeStat `protobuf:"bytes,3,opt,name=stat,proto3" json:"stat,omitempty"`
 	Size                 int64     `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
@@ -342,9 +341,9 @@ func (m *Node) GetLinks() []*Link {
 	return nil
 }
 
-func (m *Node) GetState() *NodeStat {
+func (m *Node) GetStat() *NodeStat {
 	if m != nil {
-		return m.State
+		return m.Stat
 	}
 	return nil
 }
@@ -357,10 +356,10 @@ func (m *Node) GetSize() int64 {
 }
 
 type AddFileRequest struct {
-	// Types that are valid to be assigned to Msgtype:
+	// Types that are valid to be assigned to Payload:
 	//	*AddFileRequest_AddParams
 	//	*AddFileRequest_Chunk
-	Msgtype              isAddFileRequest_Msgtype `protobuf_oneof:"msgtype"`
+	Payload              isAddFileRequest_Payload `protobuf_oneof:"payload"`
 	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
 	XXX_unrecognized     []byte                   `json:"-"`
 	XXX_sizecache        int32                    `json:"-"`
@@ -391,8 +390,8 @@ func (m *AddFileRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AddFileRequest proto.InternalMessageInfo
 
-type isAddFileRequest_Msgtype interface {
-	isAddFileRequest_Msgtype()
+type isAddFileRequest_Payload interface {
+	isAddFileRequest_Payload()
 }
 
 type AddFileRequest_AddParams struct {
@@ -403,26 +402,26 @@ type AddFileRequest_Chunk struct {
 	Chunk []byte `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
 }
 
-func (*AddFileRequest_AddParams) isAddFileRequest_Msgtype() {}
+func (*AddFileRequest_AddParams) isAddFileRequest_Payload() {}
 
-func (*AddFileRequest_Chunk) isAddFileRequest_Msgtype() {}
+func (*AddFileRequest_Chunk) isAddFileRequest_Payload() {}
 
-func (m *AddFileRequest) GetMsgtype() isAddFileRequest_Msgtype {
+func (m *AddFileRequest) GetPayload() isAddFileRequest_Payload {
 	if m != nil {
-		return m.Msgtype
+		return m.Payload
 	}
 	return nil
 }
 
 func (m *AddFileRequest) GetAddParams() *AddParams {
-	if x, ok := m.GetMsgtype().(*AddFileRequest_AddParams); ok {
+	if x, ok := m.GetPayload().(*AddFileRequest_AddParams); ok {
 		return x.AddParams
 	}
 	return nil
 }
 
 func (m *AddFileRequest) GetChunk() []byte {
-	if x, ok := m.GetMsgtype().(*AddFileRequest_Chunk); ok {
+	if x, ok := m.GetPayload().(*AddFileRequest_Chunk); ok {
 		return x.Chunk
 	}
 	return nil
@@ -515,7 +514,7 @@ func (m *GetFileRequest) GetCid() string {
 }
 
 type GetFileResponse struct {
-	Data                 []byte   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Chunk                []byte   `protobuf:"bytes,1,opt,name=chunk,proto3" json:"chunk,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -546,12 +545,152 @@ func (m *GetFileResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetFileResponse proto.InternalMessageInfo
 
-func (m *GetFileResponse) GetData() []byte {
+func (m *GetFileResponse) GetChunk() []byte {
 	if m != nil {
-		return m.Data
+		return m.Chunk
 	}
 	return nil
 }
+
+type AddNodeRequest struct {
+	Block                *Block   `protobuf:"bytes,1,opt,name=block,proto3" json:"block,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodeRequest) Reset()         { *m = AddNodeRequest{} }
+func (m *AddNodeRequest) String() string { return proto.CompactTextString(m) }
+func (*AddNodeRequest) ProtoMessage()    {}
+func (*AddNodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{9}
+}
+
+func (m *AddNodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodeRequest.Unmarshal(m, b)
+}
+func (m *AddNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodeRequest.Marshal(b, m, deterministic)
+}
+func (m *AddNodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodeRequest.Merge(m, src)
+}
+func (m *AddNodeRequest) XXX_Size() int {
+	return xxx_messageInfo_AddNodeRequest.Size(m)
+}
+func (m *AddNodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodeRequest proto.InternalMessageInfo
+
+func (m *AddNodeRequest) GetBlock() *Block {
+	if m != nil {
+		return m.Block
+	}
+	return nil
+}
+
+type AddNodeResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodeResponse) Reset()         { *m = AddNodeResponse{} }
+func (m *AddNodeResponse) String() string { return proto.CompactTextString(m) }
+func (*AddNodeResponse) ProtoMessage()    {}
+func (*AddNodeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{10}
+}
+
+func (m *AddNodeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodeResponse.Unmarshal(m, b)
+}
+func (m *AddNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodeResponse.Marshal(b, m, deterministic)
+}
+func (m *AddNodeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodeResponse.Merge(m, src)
+}
+func (m *AddNodeResponse) XXX_Size() int {
+	return xxx_messageInfo_AddNodeResponse.Size(m)
+}
+func (m *AddNodeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodeResponse proto.InternalMessageInfo
+
+type AddNodesRequest struct {
+	Blocks               []*Block `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodesRequest) Reset()         { *m = AddNodesRequest{} }
+func (m *AddNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*AddNodesRequest) ProtoMessage()    {}
+func (*AddNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{11}
+}
+
+func (m *AddNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodesRequest.Unmarshal(m, b)
+}
+func (m *AddNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodesRequest.Marshal(b, m, deterministic)
+}
+func (m *AddNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodesRequest.Merge(m, src)
+}
+func (m *AddNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_AddNodesRequest.Size(m)
+}
+func (m *AddNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodesRequest proto.InternalMessageInfo
+
+func (m *AddNodesRequest) GetBlocks() []*Block {
+	if m != nil {
+		return m.Blocks
+	}
+	return nil
+}
+
+type AddNodesResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddNodesResponse) Reset()         { *m = AddNodesResponse{} }
+func (m *AddNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*AddNodesResponse) ProtoMessage()    {}
+func (*AddNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{12}
+}
+
+func (m *AddNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddNodesResponse.Unmarshal(m, b)
+}
+func (m *AddNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddNodesResponse.Marshal(b, m, deterministic)
+}
+func (m *AddNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddNodesResponse.Merge(m, src)
+}
+func (m *AddNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_AddNodesResponse.Size(m)
+}
+func (m *AddNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddNodesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddNodesResponse proto.InternalMessageInfo
 
 type GetNodeRequest struct {
 	Cid                  string   `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
@@ -564,7 +703,7 @@ func (m *GetNodeRequest) Reset()         { *m = GetNodeRequest{} }
 func (m *GetNodeRequest) String() string { return proto.CompactTextString(m) }
 func (*GetNodeRequest) ProtoMessage()    {}
 func (*GetNodeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{9}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{13}
 }
 
 func (m *GetNodeRequest) XXX_Unmarshal(b []byte) error {
@@ -603,7 +742,7 @@ func (m *GetNodeResponse) Reset()         { *m = GetNodeResponse{} }
 func (m *GetNodeResponse) String() string { return proto.CompactTextString(m) }
 func (*GetNodeResponse) ProtoMessage()    {}
 func (*GetNodeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{10}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{14}
 }
 
 func (m *GetNodeResponse) XXX_Unmarshal(b []byte) error {
@@ -632,7 +771,7 @@ func (m *GetNodeResponse) GetNode() *Node {
 }
 
 type GetNodesRequest struct {
-	Cid                  []string `protobuf:"bytes,1,rep,name=cid,proto3" json:"cid,omitempty"`
+	Cids                 []string `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -642,7 +781,7 @@ func (m *GetNodesRequest) Reset()         { *m = GetNodesRequest{} }
 func (m *GetNodesRequest) String() string { return proto.CompactTextString(m) }
 func (*GetNodesRequest) ProtoMessage()    {}
 func (*GetNodesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{11}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{15}
 }
 
 func (m *GetNodesRequest) XXX_Unmarshal(b []byte) error {
@@ -663,9 +802,9 @@ func (m *GetNodesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetNodesRequest proto.InternalMessageInfo
 
-func (m *GetNodesRequest) GetCid() []string {
+func (m *GetNodesRequest) GetCids() []string {
 	if m != nil {
-		return m.Cid
+		return m.Cids
 	}
 	return nil
 }
@@ -684,7 +823,7 @@ func (m *GetNodesResponse) Reset()         { *m = GetNodesResponse{} }
 func (m *GetNodesResponse) String() string { return proto.CompactTextString(m) }
 func (*GetNodesResponse) ProtoMessage()    {}
 func (*GetNodesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{12}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{16}
 }
 
 func (m *GetNodesResponse) XXX_Unmarshal(b []byte) error {
@@ -750,6 +889,146 @@ func (*GetNodesResponse) XXX_OneofWrappers() []interface{} {
 	}
 }
 
+type RemoveNodeRequest struct {
+	Cid                  string   `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodeRequest) Reset()         { *m = RemoveNodeRequest{} }
+func (m *RemoveNodeRequest) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodeRequest) ProtoMessage()    {}
+func (*RemoveNodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{17}
+}
+
+func (m *RemoveNodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodeRequest.Unmarshal(m, b)
+}
+func (m *RemoveNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodeRequest.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodeRequest.Merge(m, src)
+}
+func (m *RemoveNodeRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodeRequest.Size(m)
+}
+func (m *RemoveNodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodeRequest proto.InternalMessageInfo
+
+func (m *RemoveNodeRequest) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+type RemoveNodeResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodeResponse) Reset()         { *m = RemoveNodeResponse{} }
+func (m *RemoveNodeResponse) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodeResponse) ProtoMessage()    {}
+func (*RemoveNodeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{18}
+}
+
+func (m *RemoveNodeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodeResponse.Unmarshal(m, b)
+}
+func (m *RemoveNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodeResponse.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodeResponse.Merge(m, src)
+}
+func (m *RemoveNodeResponse) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodeResponse.Size(m)
+}
+func (m *RemoveNodeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodeResponse proto.InternalMessageInfo
+
+type RemoveNodesRequest struct {
+	Cids                 []string `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodesRequest) Reset()         { *m = RemoveNodesRequest{} }
+func (m *RemoveNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodesRequest) ProtoMessage()    {}
+func (*RemoveNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{19}
+}
+
+func (m *RemoveNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodesRequest.Unmarshal(m, b)
+}
+func (m *RemoveNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodesRequest.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodesRequest.Merge(m, src)
+}
+func (m *RemoveNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodesRequest.Size(m)
+}
+func (m *RemoveNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodesRequest proto.InternalMessageInfo
+
+func (m *RemoveNodesRequest) GetCids() []string {
+	if m != nil {
+		return m.Cids
+	}
+	return nil
+}
+
+type RemoveNodesResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RemoveNodesResponse) Reset()         { *m = RemoveNodesResponse{} }
+func (m *RemoveNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*RemoveNodesResponse) ProtoMessage()    {}
+func (*RemoveNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8edd8ce3e1de43b8, []int{20}
+}
+
+func (m *RemoveNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveNodesResponse.Unmarshal(m, b)
+}
+func (m *RemoveNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveNodesResponse.Marshal(b, m, deterministic)
+}
+func (m *RemoveNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveNodesResponse.Merge(m, src)
+}
+func (m *RemoveNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_RemoveNodesResponse.Size(m)
+}
+func (m *RemoveNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveNodesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RemoveNodesResponse proto.InternalMessageInfo
+
 type ResolveLinkRequest struct {
 	NodeCid              string   `protobuf:"bytes,1,opt,name=nodeCid,proto3" json:"nodeCid,omitempty"`
 	Path                 []string `protobuf:"bytes,2,rep,name=path,proto3" json:"path,omitempty"`
@@ -762,7 +1041,7 @@ func (m *ResolveLinkRequest) Reset()         { *m = ResolveLinkRequest{} }
 func (m *ResolveLinkRequest) String() string { return proto.CompactTextString(m) }
 func (*ResolveLinkRequest) ProtoMessage()    {}
 func (*ResolveLinkRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{13}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{21}
 }
 
 func (m *ResolveLinkRequest) XXX_Unmarshal(b []byte) error {
@@ -809,7 +1088,7 @@ func (m *ResolveLinkResponse) Reset()         { *m = ResolveLinkResponse{} }
 func (m *ResolveLinkResponse) String() string { return proto.CompactTextString(m) }
 func (*ResolveLinkResponse) ProtoMessage()    {}
 func (*ResolveLinkResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{14}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{22}
 }
 
 func (m *ResolveLinkResponse) XXX_Unmarshal(b []byte) error {
@@ -844,103 +1123,9 @@ func (m *ResolveLinkResponse) GetRemainingPath() []string {
 	return nil
 }
 
-type ResolveRequest struct {
-	NodeCid              string   `protobuf:"bytes,1,opt,name=nodeCid,proto3" json:"nodeCid,omitempty"`
-	Path                 []string `protobuf:"bytes,2,rep,name=path,proto3" json:"path,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ResolveRequest) Reset()         { *m = ResolveRequest{} }
-func (m *ResolveRequest) String() string { return proto.CompactTextString(m) }
-func (*ResolveRequest) ProtoMessage()    {}
-func (*ResolveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{15}
-}
-
-func (m *ResolveRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResolveRequest.Unmarshal(m, b)
-}
-func (m *ResolveRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResolveRequest.Marshal(b, m, deterministic)
-}
-func (m *ResolveRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResolveRequest.Merge(m, src)
-}
-func (m *ResolveRequest) XXX_Size() int {
-	return xxx_messageInfo_ResolveRequest.Size(m)
-}
-func (m *ResolveRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResolveRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ResolveRequest proto.InternalMessageInfo
-
-func (m *ResolveRequest) GetNodeCid() string {
-	if m != nil {
-		return m.NodeCid
-	}
-	return ""
-}
-
-func (m *ResolveRequest) GetPath() []string {
-	if m != nil {
-		return m.Path
-	}
-	return nil
-}
-
-type ResolveResponse struct {
-	Object               *any.Any `protobuf:"bytes,1,opt,name=object,proto3" json:"object,omitempty"`
-	RemainingPath        []string `protobuf:"bytes,2,rep,name=remainingPath,proto3" json:"remainingPath,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ResolveResponse) Reset()         { *m = ResolveResponse{} }
-func (m *ResolveResponse) String() string { return proto.CompactTextString(m) }
-func (*ResolveResponse) ProtoMessage()    {}
-func (*ResolveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{16}
-}
-
-func (m *ResolveResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResolveResponse.Unmarshal(m, b)
-}
-func (m *ResolveResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResolveResponse.Marshal(b, m, deterministic)
-}
-func (m *ResolveResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResolveResponse.Merge(m, src)
-}
-func (m *ResolveResponse) XXX_Size() int {
-	return xxx_messageInfo_ResolveResponse.Size(m)
-}
-func (m *ResolveResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResolveResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ResolveResponse proto.InternalMessageInfo
-
-func (m *ResolveResponse) GetObject() *any.Any {
-	if m != nil {
-		return m.Object
-	}
-	return nil
-}
-
-func (m *ResolveResponse) GetRemainingPath() []string {
-	if m != nil {
-		return m.RemainingPath
-	}
-	return nil
-}
-
 type TreeRequest struct {
 	NodeCid              string   `protobuf:"bytes,1,opt,name=nodeCid,proto3" json:"nodeCid,omitempty"`
-	Path                 []string `protobuf:"bytes,2,rep,name=path,proto3" json:"path,omitempty"`
+	Path                 string   `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
 	Depth                int32    `protobuf:"varint,3,opt,name=depth,proto3" json:"depth,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -951,7 +1136,7 @@ func (m *TreeRequest) Reset()         { *m = TreeRequest{} }
 func (m *TreeRequest) String() string { return proto.CompactTextString(m) }
 func (*TreeRequest) ProtoMessage()    {}
 func (*TreeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{17}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{23}
 }
 
 func (m *TreeRequest) XXX_Unmarshal(b []byte) error {
@@ -979,11 +1164,11 @@ func (m *TreeRequest) GetNodeCid() string {
 	return ""
 }
 
-func (m *TreeRequest) GetPath() []string {
+func (m *TreeRequest) GetPath() string {
 	if m != nil {
 		return m.Path
 	}
-	return nil
+	return ""
 }
 
 func (m *TreeRequest) GetDepth() int32 {
@@ -1004,7 +1189,7 @@ func (m *TreeResponse) Reset()         { *m = TreeResponse{} }
 func (m *TreeResponse) String() string { return proto.CompactTextString(m) }
 func (*TreeResponse) ProtoMessage()    {}
 func (*TreeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{18}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{24}
 }
 
 func (m *TreeResponse) XXX_Unmarshal(b []byte) error {
@@ -1043,7 +1228,7 @@ func (m *DeleteBlockRequest) Reset()         { *m = DeleteBlockRequest{} }
 func (m *DeleteBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteBlockRequest) ProtoMessage()    {}
 func (*DeleteBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{19}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{25}
 }
 
 func (m *DeleteBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1081,7 +1266,7 @@ func (m *DeleteBlockResponse) Reset()         { *m = DeleteBlockResponse{} }
 func (m *DeleteBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteBlockResponse) ProtoMessage()    {}
 func (*DeleteBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{20}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{26}
 }
 
 func (m *DeleteBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1113,7 +1298,7 @@ func (m *HasBlockRequest) Reset()         { *m = HasBlockRequest{} }
 func (m *HasBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*HasBlockRequest) ProtoMessage()    {}
 func (*HasBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{21}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{27}
 }
 
 func (m *HasBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1152,7 +1337,7 @@ func (m *HasBlockResponse) Reset()         { *m = HasBlockResponse{} }
 func (m *HasBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*HasBlockResponse) ProtoMessage()    {}
 func (*HasBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{22}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{28}
 }
 
 func (m *HasBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1191,7 +1376,7 @@ func (m *GetBlockRequest) Reset()         { *m = GetBlockRequest{} }
 func (m *GetBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBlockRequest) ProtoMessage()    {}
 func (*GetBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{23}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{29}
 }
 
 func (m *GetBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1230,7 +1415,7 @@ func (m *GetBlockResponse) Reset()         { *m = GetBlockResponse{} }
 func (m *GetBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*GetBlockResponse) ProtoMessage()    {}
 func (*GetBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{24}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{30}
 }
 
 func (m *GetBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1269,7 +1454,7 @@ func (m *GetBlockSizeRequest) Reset()         { *m = GetBlockSizeRequest{} }
 func (m *GetBlockSizeRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBlockSizeRequest) ProtoMessage()    {}
 func (*GetBlockSizeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{25}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{31}
 }
 
 func (m *GetBlockSizeRequest) XXX_Unmarshal(b []byte) error {
@@ -1308,7 +1493,7 @@ func (m *GetBlockSizeResponse) Reset()         { *m = GetBlockSizeResponse{} }
 func (m *GetBlockSizeResponse) String() string { return proto.CompactTextString(m) }
 func (*GetBlockSizeResponse) ProtoMessage()    {}
 func (*GetBlockSizeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{26}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{32}
 }
 
 func (m *GetBlockSizeResponse) XXX_Unmarshal(b []byte) error {
@@ -1347,7 +1532,7 @@ func (m *PutBlockRequest) Reset()         { *m = PutBlockRequest{} }
 func (m *PutBlockRequest) String() string { return proto.CompactTextString(m) }
 func (*PutBlockRequest) ProtoMessage()    {}
 func (*PutBlockRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{27}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{33}
 }
 
 func (m *PutBlockRequest) XXX_Unmarshal(b []byte) error {
@@ -1385,7 +1570,7 @@ func (m *PutBlockResponse) Reset()         { *m = PutBlockResponse{} }
 func (m *PutBlockResponse) String() string { return proto.CompactTextString(m) }
 func (*PutBlockResponse) ProtoMessage()    {}
 func (*PutBlockResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{28}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{34}
 }
 
 func (m *PutBlockResponse) XXX_Unmarshal(b []byte) error {
@@ -1417,7 +1602,7 @@ func (m *PutBlocksRequest) Reset()         { *m = PutBlocksRequest{} }
 func (m *PutBlocksRequest) String() string { return proto.CompactTextString(m) }
 func (*PutBlocksRequest) ProtoMessage()    {}
 func (*PutBlocksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{29}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{35}
 }
 
 func (m *PutBlocksRequest) XXX_Unmarshal(b []byte) error {
@@ -1455,7 +1640,7 @@ func (m *PutBlocksResponse) Reset()         { *m = PutBlocksResponse{} }
 func (m *PutBlocksResponse) String() string { return proto.CompactTextString(m) }
 func (*PutBlocksResponse) ProtoMessage()    {}
 func (*PutBlocksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{30}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{36}
 }
 
 func (m *PutBlocksResponse) XXX_Unmarshal(b []byte) error {
@@ -1486,7 +1671,7 @@ func (m *AllKeysRequest) Reset()         { *m = AllKeysRequest{} }
 func (m *AllKeysRequest) String() string { return proto.CompactTextString(m) }
 func (*AllKeysRequest) ProtoMessage()    {}
 func (*AllKeysRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{31}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{37}
 }
 
 func (m *AllKeysRequest) XXX_Unmarshal(b []byte) error {
@@ -1518,7 +1703,7 @@ func (m *AllKeysResponse) Reset()         { *m = AllKeysResponse{} }
 func (m *AllKeysResponse) String() string { return proto.CompactTextString(m) }
 func (*AllKeysResponse) ProtoMessage()    {}
 func (*AllKeysResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{32}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{38}
 }
 
 func (m *AllKeysResponse) XXX_Unmarshal(b []byte) error {
@@ -1557,7 +1742,7 @@ func (m *HashOnReadRequest) Reset()         { *m = HashOnReadRequest{} }
 func (m *HashOnReadRequest) String() string { return proto.CompactTextString(m) }
 func (*HashOnReadRequest) ProtoMessage()    {}
 func (*HashOnReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{33}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{39}
 }
 
 func (m *HashOnReadRequest) XXX_Unmarshal(b []byte) error {
@@ -1595,7 +1780,7 @@ func (m *HashOnReadResponse) Reset()         { *m = HashOnReadResponse{} }
 func (m *HashOnReadResponse) String() string { return proto.CompactTextString(m) }
 func (*HashOnReadResponse) ProtoMessage()    {}
 func (*HashOnReadResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8edd8ce3e1de43b8, []int{34}
+	return fileDescriptor_8edd8ce3e1de43b8, []int{40}
 }
 
 func (m *HashOnReadResponse) XXX_Unmarshal(b []byte) error {
@@ -1626,14 +1811,20 @@ func init() {
 	proto.RegisterType((*AddFileResponse)(nil), "AddFileResponse")
 	proto.RegisterType((*GetFileRequest)(nil), "GetFileRequest")
 	proto.RegisterType((*GetFileResponse)(nil), "GetFileResponse")
+	proto.RegisterType((*AddNodeRequest)(nil), "AddNodeRequest")
+	proto.RegisterType((*AddNodeResponse)(nil), "AddNodeResponse")
+	proto.RegisterType((*AddNodesRequest)(nil), "AddNodesRequest")
+	proto.RegisterType((*AddNodesResponse)(nil), "AddNodesResponse")
 	proto.RegisterType((*GetNodeRequest)(nil), "GetNodeRequest")
 	proto.RegisterType((*GetNodeResponse)(nil), "GetNodeResponse")
 	proto.RegisterType((*GetNodesRequest)(nil), "GetNodesRequest")
 	proto.RegisterType((*GetNodesResponse)(nil), "GetNodesResponse")
+	proto.RegisterType((*RemoveNodeRequest)(nil), "RemoveNodeRequest")
+	proto.RegisterType((*RemoveNodeResponse)(nil), "RemoveNodeResponse")
+	proto.RegisterType((*RemoveNodesRequest)(nil), "RemoveNodesRequest")
+	proto.RegisterType((*RemoveNodesResponse)(nil), "RemoveNodesResponse")
 	proto.RegisterType((*ResolveLinkRequest)(nil), "ResolveLinkRequest")
 	proto.RegisterType((*ResolveLinkResponse)(nil), "ResolveLinkResponse")
-	proto.RegisterType((*ResolveRequest)(nil), "ResolveRequest")
-	proto.RegisterType((*ResolveResponse)(nil), "ResolveResponse")
 	proto.RegisterType((*TreeRequest)(nil), "TreeRequest")
 	proto.RegisterType((*TreeResponse)(nil), "TreeResponse")
 	proto.RegisterType((*DeleteBlockRequest)(nil), "DeleteBlockRequest")
@@ -1657,77 +1848,74 @@ func init() {
 func init() { proto.RegisterFile("ipfs_lite.proto", fileDescriptor_8edd8ce3e1de43b8) }
 
 var fileDescriptor_8edd8ce3e1de43b8 = []byte{
-	// 1113 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x6d, 0x6f, 0xdb, 0x54,
-	0x14, 0x76, 0x48, 0x9c, 0x97, 0xd3, 0xae, 0x49, 0x4f, 0xb2, 0x29, 0xf5, 0x26, 0x98, 0x2e, 0xdb,
-	0xa8, 0xa6, 0xea, 0xb6, 0xb4, 0x48, 0x48, 0x48, 0x20, 0x9a, 0x4d, 0xa3, 0x88, 0x0a, 0x3a, 0x0f,
-	0xf1, 0xb5, 0xba, 0x8d, 0x6f, 0x6b, 0x53, 0xc7, 0x36, 0xf6, 0x4d, 0x47, 0xf8, 0x27, 0xfc, 0x15,
-	0x24, 0xfe, 0x1b, 0xba, 0x2f, 0x7e, 0x4d, 0xbb, 0xa2, 0x7d, 0xf3, 0x79, 0xb9, 0xcf, 0x7d, 0x7c,
-	0x7c, 0x9e, 0x27, 0x81, 0x61, 0x90, 0x5c, 0x66, 0xe7, 0x61, 0x20, 0x38, 0x4d, 0xd2, 0x58, 0xc4,
-	0xce, 0xce, 0x55, 0x1c, 0x5f, 0x85, 0x7c, 0x5f, 0x45, 0x17, 0xcb, 0xcb, 0x7d, 0x16, 0xad, 0x74,
-	0x89, 0xfc, 0xdb, 0x82, 0xc1, 0xb1, 0xe7, 0x9d, 0xb1, 0x94, 0x2d, 0x32, 0x7c, 0x04, 0xdd, 0x90,
-	0xad, 0xe2, 0xa5, 0x98, 0xb6, 0x9e, 0xb6, 0x76, 0x07, 0xae, 0x89, 0x70, 0x0a, 0xbd, 0xb9, 0xbf,
-	0x8c, 0xae, 0x79, 0x3a, 0xfd, 0x44, 0x15, 0xf2, 0x10, 0x9f, 0xc0, 0x20, 0x65, 0xef, 0x4f, 0x39,
-	0xbb, 0xe1, 0xd9, 0xb4, 0xfd, 0xb4, 0xb5, 0xdb, 0x77, 0xcb, 0x84, 0xc4, 0xf3, 0x03, 0xcf, 0xe3,
-	0xd1, 0xb4, 0xa3, 0x4a, 0x26, 0x92, 0xf9, 0xcc, 0x67, 0x29, 0xf7, 0xa6, 0xb6, 0xce, 0xeb, 0x48,
-	0xe6, 0xa3, 0xf8, 0x55, 0x9c, 0xac, 0xa6, 0x5d, 0x9d, 0xd7, 0x91, 0xbc, 0xdf, 0x67, 0x99, 0xff,
-	0x66, 0x19, 0x4d, 0x7b, 0xfa, 0x7e, 0x13, 0x92, 0x23, 0xb0, 0x67, 0x61, 0x3c, 0xbf, 0x96, 0x2d,
-	0x29, 0x7b, 0xff, 0x9a, 0x09, 0xa6, 0xb8, 0x6f, 0xba, 0x79, 0x88, 0x23, 0x68, 0xcf, 0x03, 0xcf,
-	0x10, 0x97, 0x8f, 0xe4, 0x7b, 0xe8, 0x9c, 0x06, 0xd1, 0x35, 0x22, 0x74, 0x22, 0xb6, 0xe0, 0xe6,
-	0x65, 0xd5, 0xb3, 0xcc, 0x65, 0xc1, 0x5f, 0x5c, 0xb5, 0xb7, 0x5d, 0xf5, 0x9c, 0x23, 0xb4, 0x4b,
-	0x84, 0x7f, 0x5a, 0xd0, 0xff, 0x39, 0xf6, 0xf8, 0x3b, 0xc1, 0x84, 0x3c, 0x22, 0xe9, 0xe4, 0x30,
-	0xf2, 0x19, 0x1d, 0xe8, 0x47, 0xcb, 0x85, 0xbc, 0x25, 0x53, 0x50, 0xb6, 0x5b, 0xc4, 0x72, 0x66,
-	0x17, 0x92, 0xf3, 0x3b, 0x79, 0x4f, 0x5b, 0x15, 0xcb, 0x84, 0xac, 0x86, 0xb2, 0x4d, 0x55, 0x3b,
-	0xba, 0x5a, 0x24, 0x24, 0xae, 0xc7, 0x04, 0x53, 0x45, 0x5b, 0xe3, 0xe6, 0x31, 0xbe, 0x80, 0xad,
-	0xf9, 0x72, 0xb1, 0x0c, 0x99, 0x08, 0x6e, 0xb8, 0xea, 0xe8, 0xaa, 0x8e, 0x46, 0x96, 0xdc, 0x40,
-	0x47, 0x72, 0xc7, 0x27, 0x60, 0xab, 0x6b, 0x15, 0xf1, 0x8d, 0xc3, 0x2e, 0x55, 0x93, 0x74, 0x75,
-	0x12, 0x1f, 0x83, 0x1d, 0x1a, 0xfa, 0xed, 0xdd, 0x8d, 0x43, 0x9b, 0x4a, 0xf2, 0xae, 0xce, 0xe1,
-	0x67, 0x60, 0x67, 0x82, 0x09, 0x4d, 0x7f, 0xe3, 0x70, 0x40, 0xf3, 0x61, 0xb8, 0x3a, 0x5f, 0x8c,
-	0xb1, 0x53, 0x8e, 0x91, 0x9c, 0xc3, 0xd6, 0xb1, 0xe7, 0xbd, 0x09, 0x42, 0xee, 0xf2, 0x3f, 0x96,
-	0x3c, 0x13, 0xf8, 0x12, 0x06, 0x2c, 0x5f, 0x3e, 0xc3, 0x02, 0x68, 0xb1, 0x8e, 0x27, 0x96, 0x5b,
-	0x96, 0xf1, 0x11, 0xd8, 0x6a, 0xe9, 0xd4, 0x38, 0x37, 0x4f, 0x2c, 0x57, 0x87, 0xb3, 0x01, 0xf4,
-	0x16, 0xd9, 0x95, 0x58, 0x25, 0x9c, 0xec, 0xc1, 0xb0, 0xb8, 0x20, 0x4b, 0xe2, 0x28, 0xe3, 0xb8,
-	0x03, 0x9d, 0x28, 0xf6, 0xb8, 0x01, 0xb7, 0x15, 0x4f, 0x57, 0xa5, 0x08, 0x81, 0xad, 0x1f, 0xb8,
-	0xa8, 0xd2, 0x31, 0xdf, 0xb9, 0x55, 0x7e, 0xe7, 0xe7, 0x30, 0x2c, 0x7a, 0x0c, 0x22, 0x42, 0xc7,
-	0x2b, 0xb7, 0x4c, 0x3d, 0x1b, 0x28, 0x85, 0x7d, 0x27, 0xd4, 0x9e, 0x82, 0xd2, 0x3d, 0xf7, 0x93,
-	0xfb, 0xbc, 0xe8, 0xce, 0xd6, 0x20, 0xdb, 0x39, 0xe4, 0x5b, 0x18, 0x95, 0x4d, 0x06, 0xf3, 0xf1,
-	0x2d, 0x98, 0x27, 0x96, 0x46, 0x95, 0x33, 0xe4, 0x69, 0x1a, 0x1b, 0x15, 0xcb, 0x19, 0xaa, 0x70,
-	0xd6, 0x87, 0x6e, 0x9c, 0x88, 0x20, 0x8e, 0xc8, 0x0c, 0xd0, 0xe5, 0x59, 0x1c, 0xde, 0x70, 0xf5,
-	0xb9, 0xcd, 0xd5, 0x53, 0xe8, 0xc9, 0xf3, 0xaf, 0x8a, 0x37, 0xca, 0x43, 0x39, 0x8d, 0x84, 0x09,
-	0x5f, 0x2d, 0xc9, 0xc0, 0x55, 0xcf, 0xe4, 0x37, 0x18, 0xd7, 0x30, 0xca, 0xb7, 0x95, 0xcb, 0x53,
-	0x30, 0x53, 0x45, 0x95, 0xc2, 0x67, 0xf0, 0x20, 0xe5, 0x0b, 0x16, 0x44, 0x41, 0x74, 0x75, 0x56,
-	0xc2, 0xd5, 0x93, 0xe4, 0x3b, 0xd8, 0x32, 0xb8, 0x1f, 0xc7, 0x8b, 0xc3, 0xb0, 0x38, 0x6f, 0x38,
-	0xed, 0x41, 0x37, 0xbe, 0xf8, 0x9d, 0xcf, 0x85, 0x61, 0x35, 0xa1, 0xda, 0x2a, 0x69, 0x6e, 0x95,
-	0xf4, 0x38, 0x5a, 0xb9, 0xa6, 0xe7, 0x7f, 0xd2, 0x7c, 0x0b, 0x1b, 0xbf, 0xa6, 0xfc, 0xe3, 0x38,
-	0xe2, 0x04, 0x6c, 0x8f, 0x27, 0xc2, 0x37, 0xbe, 0xa0, 0x03, 0xf2, 0x0c, 0x36, 0x35, 0xa4, 0xa1,
-	0x3d, 0x01, 0x5b, 0x76, 0x67, 0x66, 0x19, 0x74, 0x40, 0x5e, 0x00, 0xbe, 0xe6, 0x21, 0x17, 0x5c,
-	0xeb, 0xf8, 0xce, 0x4d, 0x7c, 0x08, 0xe3, 0x5a, 0x9f, 0x06, 0x95, 0x2b, 0x77, 0xc2, 0xb2, 0x7b,
-	0xce, 0x52, 0x18, 0x95, 0x4d, 0x86, 0x8d, 0x03, 0x7d, 0xdf, 0xe4, 0x54, 0x6b, 0xdf, 0x2d, 0x62,
-	0xb3, 0xc7, 0xf7, 0x80, 0x1e, 0xa8, 0x3d, 0xae, 0x83, 0x7e, 0xd0, 0x9c, 0xc8, 0x17, 0x30, 0xce,
-	0x4f, 0x48, 0x4b, 0xbb, 0x1b, 0xfa, 0x25, 0x4c, 0xea, 0x8d, 0xa5, 0x8a, 0x95, 0x3f, 0xb5, 0xd4,
-	0x98, 0xb5, 0x3f, 0xed, 0xc3, 0xf0, 0x6c, 0x59, 0xe7, 0xfa, 0x61, 0x16, 0x08, 0xa3, 0xf2, 0x80,
-	0x99, 0xe2, 0x61, 0x99, 0x2b, 0x94, 0xfb, 0x29, 0x74, 0xd5, 0x01, 0xfd, 0xbd, 0x4a, 0x18, 0x93,
-	0x25, 0x63, 0xd8, 0xae, 0x9c, 0x31, 0x40, 0x23, 0xd8, 0x3a, 0x0e, 0xc3, 0x9f, 0xf8, 0x2a, 0x87,
-	0x91, 0xb3, 0x2c, 0x32, 0xe6, 0x35, 0xd6, 0x5f, 0xf8, 0x08, 0xb6, 0x4f, 0x58, 0xe6, 0xff, 0x12,
-	0xb9, 0x9c, 0x79, 0x25, 0x01, 0xf0, 0x8b, 0xa4, 0xf9, 0x46, 0x95, 0x0c, 0x99, 0x00, 0x56, 0x0f,
-	0x69, 0xf0, 0xc3, 0xbf, 0xbb, 0xd0, 0xff, 0x31, 0xb9, 0xcc, 0x4e, 0x03, 0xc1, 0xf1, 0x00, 0x7a,
-	0xc6, 0x5b, 0x71, 0x48, 0xeb, 0x36, 0xee, 0x8c, 0x68, 0xc3, 0x76, 0x89, 0xb5, 0xdb, 0x42, 0x0a,
-	0x3d, 0xe3, 0x9d, 0x38, 0xa4, 0x75, 0xa7, 0x75, 0x46, 0xb4, 0x61, 0xab, 0xc4, 0x32, 0xfd, 0xea,
-	0x97, 0x49, 0xf5, 0x57, 0xec, 0x54, 0xf7, 0x57, 0xbd, 0x93, 0x58, 0x78, 0x04, 0xfd, 0xdc, 0xfd,
-	0xb0, 0xa8, 0xe7, 0xc3, 0x72, 0xb6, 0x69, 0xd3, 0x1a, 0x89, 0x75, 0xd0, 0xc2, 0x6f, 0x60, 0xa3,
-	0xe2, 0x4d, 0x38, 0xa6, 0xeb, 0x6e, 0xe7, 0x4c, 0xe8, 0x2d, 0xf6, 0xa5, 0x09, 0x9a, 0x02, 0x0e,
-	0x69, 0xdd, 0x89, 0x9c, 0x11, 0x6d, 0x58, 0x0b, 0xb1, 0xf0, 0x39, 0x74, 0xa4, 0x6a, 0x71, 0x93,
-	0x56, 0xfc, 0xc0, 0x79, 0x40, 0xab, 0x52, 0x26, 0x96, 0xa4, 0x54, 0x91, 0x23, 0x8e, 0xe9, 0xba,
-	0x88, 0x9d, 0x09, 0xbd, 0x4d, 0xb1, 0x16, 0x7e, 0x09, 0xfd, 0x5c, 0x8e, 0x38, 0xa2, 0x0d, 0xf9,
-	0x3a, 0xdb, 0xb4, 0xa9, 0x55, 0x7d, 0x24, 0x57, 0x84, 0x1e, 0x5b, 0xe3, 0x48, 0x53, 0x89, 0xc4,
-	0xc2, 0x6f, 0x61, 0xb3, 0x2a, 0x22, 0x9c, 0xd0, 0x5b, 0xc4, 0xe7, 0x3c, 0xa4, 0xb7, 0x29, 0x4d,
-	0xdf, 0x98, 0xaf, 0x37, 0x8e, 0x68, 0x43, 0x62, 0xce, 0x36, 0x5d, 0xd3, 0x90, 0x85, 0x5f, 0xc1,
-	0xa0, 0x50, 0x04, 0x96, 0x1d, 0xc5, 0xd7, 0x45, 0xba, 0x2e, 0x18, 0x4b, 0xed, 0xa8, 0x16, 0x88,
-	0xdc, 0xd1, 0x9a, 0x78, 0xe4, 0x8e, 0xd6, 0xb5, 0xa3, 0xd6, 0xe1, 0x6b, 0x80, 0x72, 0xf1, 0x11,
-	0xe9, 0x9a, 0x74, 0x9c, 0x31, 0x5d, 0x57, 0x06, 0xb1, 0x66, 0x7b, 0xb0, 0x13, 0xc4, 0x54, 0xf0,
-	0x3f, 0x45, 0x10, 0x72, 0x7a, 0x95, 0x26, 0xf3, 0xf3, 0xe2, 0x5f, 0xf7, 0xec, 0x41, 0xae, 0x9a,
-	0x33, 0xf9, 0x2b, 0x72, 0xd6, 0xba, 0xe8, 0xaa, 0x9f, 0x93, 0xa3, 0xff, 0x02, 0x00, 0x00, 0xff,
-	0xff, 0x49, 0xb1, 0xd1, 0xd2, 0x9a, 0x0b, 0x00, 0x00,
+	// 1057 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x5f, 0x6f, 0xdb, 0xb6,
+	0x17, 0x95, 0x7e, 0x96, 0xff, 0x5d, 0x27, 0xb1, 0x4d, 0xa7, 0x85, 0xeb, 0xf6, 0x37, 0x14, 0x5c,
+	0xd3, 0x1a, 0x45, 0xc0, 0xa5, 0xce, 0xc3, 0x80, 0x3d, 0x2d, 0x6e, 0xd1, 0x7a, 0x58, 0xb0, 0xb9,
+	0xea, 0xb0, 0xd7, 0x80, 0xb5, 0xd8, 0x4a, 0x88, 0x2c, 0x69, 0x12, 0x9d, 0x2e, 0xfb, 0x68, 0x03,
+	0xf6, 0xb0, 0x6f, 0x36, 0xf0, 0x92, 0xfa, 0x67, 0xa7, 0xee, 0xf6, 0xc6, 0x7b, 0x78, 0x79, 0xee,
+	0xe1, 0xe5, 0xd5, 0xb1, 0xa1, 0x1f, 0x24, 0x1f, 0xb2, 0xab, 0x30, 0x90, 0x82, 0x25, 0x69, 0x2c,
+	0x63, 0xfa, 0x97, 0x0d, 0xdd, 0x0b, 0xcf, 0x5b, 0xf2, 0x94, 0xaf, 0x33, 0x72, 0x1f, 0x5a, 0x21,
+	0xbf, 0x8d, 0x37, 0x72, 0x6c, 0x3f, 0xb6, 0xa7, 0x5d, 0xd7, 0x44, 0x64, 0x0c, 0xed, 0x95, 0xbf,
+	0x89, 0xae, 0x45, 0x3a, 0xfe, 0x1f, 0x6e, 0xe4, 0x21, 0x79, 0x04, 0xdd, 0x94, 0x7f, 0xba, 0x14,
+	0xfc, 0x46, 0x64, 0xe3, 0xc6, 0x63, 0x7b, 0xda, 0x71, 0x4b, 0x40, 0xf1, 0xf9, 0x81, 0xe7, 0x89,
+	0x68, 0xec, 0xe0, 0x96, 0x89, 0x14, 0x9e, 0xf9, 0x3c, 0x15, 0xde, 0xb8, 0xa9, 0x71, 0x1d, 0x29,
+	0x3c, 0x8a, 0x5f, 0xc6, 0xc9, 0xed, 0xb8, 0xa5, 0x71, 0x1d, 0xa9, 0xfa, 0x3e, 0xcf, 0xfc, 0xd7,
+	0x9b, 0x68, 0xdc, 0xd6, 0xf5, 0x4d, 0x48, 0xcf, 0xa1, 0x39, 0x0f, 0xe3, 0xd5, 0xb5, 0x4a, 0x49,
+	0xf9, 0xa7, 0x57, 0x5c, 0x72, 0xd4, 0x7e, 0xe0, 0xe6, 0x21, 0x19, 0x40, 0x63, 0x15, 0x78, 0x46,
+	0xb8, 0x5a, 0xd2, 0xef, 0xc1, 0xb9, 0x0c, 0xa2, 0x6b, 0x42, 0xc0, 0x89, 0xf8, 0x5a, 0x98, 0xcb,
+	0xe2, 0x5a, 0x61, 0x59, 0xf0, 0x87, 0xc0, 0xf4, 0x86, 0x8b, 0xeb, 0x9c, 0xa1, 0x51, 0x32, 0xfc,
+	0x69, 0x43, 0xe7, 0xa7, 0xd8, 0x13, 0xef, 0x24, 0x97, 0xea, 0x88, 0x92, 0x93, 0xd3, 0xa8, 0x35,
+	0x99, 0x40, 0x27, 0xda, 0xac, 0x55, 0x95, 0x0c, 0xa9, 0x9a, 0x6e, 0x11, 0xab, 0x9e, 0xbd, 0x57,
+	0x9a, 0xdf, 0xa9, 0x3a, 0x0d, 0xdc, 0x2c, 0x01, 0xb5, 0x1b, 0xaa, 0x34, 0xdc, 0x75, 0xf4, 0x6e,
+	0x01, 0x28, 0x5e, 0x8f, 0x4b, 0x8e, 0x9b, 0x4d, 0xcd, 0x9b, 0xc7, 0xe4, 0x29, 0x1c, 0xad, 0x36,
+	0xeb, 0x4d, 0xc8, 0x65, 0x70, 0x23, 0x30, 0xa3, 0x85, 0x19, 0x5b, 0x28, 0x95, 0xe0, 0x28, 0xed,
+	0xe4, 0x11, 0x34, 0xb1, 0x2c, 0x0a, 0xef, 0xcd, 0x5a, 0x0c, 0x3b, 0xe9, 0x6a, 0x90, 0x3c, 0x84,
+	0x66, 0x68, 0xe4, 0x37, 0xa6, 0xbd, 0x59, 0x93, 0x29, 0xf1, 0xae, 0xc6, 0xc8, 0xff, 0xc1, 0xc9,
+	0x24, 0x97, 0xa8, 0xbe, 0x37, 0xeb, 0xb2, 0xbc, 0x17, 0x2e, 0xc2, 0x45, 0x13, 0x9d, 0xb2, 0x89,
+	0xf4, 0x0a, 0x8e, 0x2e, 0x3c, 0xef, 0x75, 0x10, 0x0a, 0x57, 0xfc, 0xb6, 0x11, 0x99, 0x24, 0xcf,
+	0xa1, 0xcb, 0xf3, 0xd1, 0x33, 0x1a, 0x80, 0x15, 0xc3, 0xb8, 0xb0, 0xdc, 0x72, 0x9b, 0xdc, 0x87,
+	0x26, 0x8e, 0x1c, 0x36, 0xf3, 0x60, 0x61, 0xb9, 0x3a, 0x9c, 0x77, 0xa1, 0x9d, 0xf0, 0xdb, 0x30,
+	0xe6, 0x1e, 0x3d, 0x85, 0x7e, 0x51, 0x20, 0x4b, 0xe2, 0x28, 0x13, 0xe4, 0x01, 0x38, 0x51, 0xec,
+	0x09, 0x43, 0xde, 0x44, 0x99, 0x2e, 0x42, 0x94, 0xc2, 0xd1, 0x1b, 0x21, 0xab, 0x72, 0xcc, 0x2b,
+	0xdb, 0xe5, 0x2b, 0x3f, 0x83, 0x7e, 0x91, 0x63, 0x18, 0x8f, 0x73, 0x1d, 0x7a, 0xc8, 0x74, 0x40,
+	0x19, 0xde, 0x0d, 0xd9, 0x0d, 0xd9, 0xde, 0xde, 0xd2, 0x21, 0x4a, 0xd5, 0xf9, 0x9a, 0x98, 0xbe,
+	0x28, 0xa0, 0x2c, 0xe7, 0xf8, 0x0a, 0x5a, 0x98, 0xae, 0x9a, 0xd3, 0xa8, 0x90, 0x18, 0x94, 0x12,
+	0x18, 0x94, 0x47, 0x0c, 0x8d, 0xbe, 0x56, 0x55, 0xc9, 0xee, 0xb5, 0x4e, 0xf1, 0x5a, 0xd5, 0xea,
+	0xfb, 0x1a, 0x75, 0x52, 0x64, 0x17, 0xc2, 0x08, 0x38, 0xab, 0xc0, 0xd3, 0xb2, 0xba, 0x2e, 0xae,
+	0xe9, 0x5b, 0x18, 0x94, 0x69, 0x86, 0xf5, 0xe1, 0x1d, 0xac, 0x0b, 0x4b, 0xf3, 0xaa, 0x17, 0x15,
+	0x69, 0x1a, 0x1b, 0x47, 0x51, 0x2f, 0x8a, 0xe1, 0xbc, 0x03, 0xad, 0x38, 0x91, 0x41, 0x1c, 0xd1,
+	0x13, 0x18, 0xba, 0x62, 0x1d, 0xdf, 0x88, 0xfd, 0xd7, 0x39, 0x06, 0x52, 0x4d, 0x33, 0x8d, 0x98,
+	0x56, 0xd1, 0xbd, 0xca, 0xef, 0xc1, 0xa8, 0x96, 0x69, 0x08, 0xe6, 0x8a, 0x20, 0x8b, 0xc3, 0x1b,
+	0x81, 0x83, 0x6f, 0x08, 0xc6, 0xd0, 0x56, 0xea, 0x5f, 0x16, 0x12, 0xf2, 0x50, 0x51, 0x27, 0x5c,
+	0xfa, 0xf8, 0xb9, 0x74, 0x5d, 0x5c, 0xd3, 0x5f, 0x15, 0x75, 0x85, 0xa3, 0xec, 0xb6, 0xfa, 0x8c,
+	0x8a, 0xbe, 0xe0, 0x26, 0x42, 0xe4, 0x09, 0x1c, 0xa6, 0x62, 0xcd, 0x83, 0x28, 0x88, 0x3e, 0x2e,
+	0x4b, 0xba, 0x3a, 0x48, 0xdf, 0x42, 0xef, 0x97, 0x54, 0x88, 0xff, 0x22, 0xca, 0xce, 0x45, 0xa9,
+	0x11, 0xf6, 0x44, 0x22, 0x7d, 0x63, 0x3d, 0x3a, 0xa0, 0x4f, 0xe0, 0x40, 0x53, 0x96, 0x83, 0xae,
+	0xb2, 0xf3, 0x56, 0xe9, 0x80, 0x3e, 0x05, 0xf2, 0x4a, 0x84, 0x42, 0x0a, 0x3d, 0x89, 0x9f, 0x7d,
+	0x93, 0x7b, 0x30, 0xaa, 0xe5, 0x99, 0x9e, 0x7e, 0x0d, 0xfd, 0x05, 0xcf, 0xbe, 0x70, 0x96, 0xc1,
+	0xa0, 0x4c, 0x32, 0x6a, 0x26, 0xd0, 0xf1, 0x0d, 0x86, 0xa9, 0x1d, 0xb7, 0x88, 0x15, 0xe9, 0x1b,
+	0x21, 0xbf, 0x40, 0x7a, 0x86, 0xe3, 0x59, 0x27, 0xdd, 0xff, 0x8d, 0x3e, 0x83, 0x51, 0x7e, 0x42,
+	0xb9, 0xe6, 0xe7, 0xa9, 0x9f, 0xc3, 0x71, 0x3d, 0xd1, 0xd0, 0xe7, 0x26, 0x68, 0x63, 0x9b, 0xb5,
+	0x09, 0x7e, 0x03, 0xfd, 0xe5, 0xa6, 0xae, 0x75, 0xbf, 0x0a, 0x02, 0x83, 0xf2, 0x80, 0xe9, 0xe2,
+	0xac, 0xc4, 0xfe, 0xb5, 0x57, 0x8c, 0x60, 0x58, 0x39, 0x63, 0x88, 0x06, 0x70, 0x74, 0x11, 0x86,
+	0x3f, 0x8a, 0xdb, 0x9c, 0x46, 0xf5, 0xb2, 0x40, 0xcc, 0x35, 0x76, 0x2f, 0x7c, 0x0e, 0xc3, 0x05,
+	0xcf, 0xfc, 0x9f, 0x23, 0x57, 0x70, 0xaf, 0x14, 0x00, 0x7e, 0x01, 0x9a, 0x37, 0xaa, 0x20, 0xea,
+	0x2b, 0xad, 0x1e, 0xd2, 0xe4, 0xb3, 0xbf, 0x1d, 0xe8, 0xfc, 0x90, 0x7c, 0xc8, 0x2e, 0x03, 0x29,
+	0xc8, 0x19, 0xb4, 0x8d, 0x81, 0x93, 0x3e, 0xab, 0xff, 0x56, 0x4c, 0x06, 0x6c, 0xcb, 0xdb, 0xa9,
+	0x35, 0xb5, 0xd5, 0x09, 0x63, 0xd0, 0xa4, 0xcf, 0xea, 0x76, 0x3e, 0x19, 0xb0, 0x2d, 0xef, 0xa6,
+	0xd6, 0x99, 0x4d, 0x5e, 0x40, 0x27, 0x1f, 0x2e, 0x32, 0x60, 0x5b, 0xc3, 0x38, 0x19, 0xb2, 0xed,
+	0xc9, 0xa3, 0x16, 0x61, 0x28, 0x0b, 0x7f, 0x31, 0x51, 0x56, 0xc5, 0x8d, 0xb4, 0xac, 0x9a, 0xef,
+	0x58, 0xaa, 0x44, 0x6e, 0xcb, 0xa4, 0xd8, 0xcf, 0xca, 0x12, 0x3b, 0x9e, 0x8d, 0x25, 0x8c, 0x79,
+	0xea, 0x7b, 0xd4, 0x4b, 0x6c, 0x99, 0x35, 0xb5, 0xc8, 0x39, 0x74, 0x72, 0xb3, 0x25, 0xc5, 0x7e,
+	0xa5, 0xc4, 0xb6, 0x13, 0xe3, 0xd5, 0xbf, 0x05, 0x28, 0x7d, 0x8e, 0x10, 0xb6, 0xe3, 0xad, 0x93,
+	0x11, 0xbb, 0xc3, 0x48, 0x2d, 0xf2, 0x1d, 0xf4, 0x2a, 0x06, 0x49, 0xaa, 0x59, 0x45, 0xcd, 0x63,
+	0x76, 0x97, 0x87, 0x9a, 0xb3, 0x85, 0x03, 0xe2, 0xd9, 0x6d, 0x4f, 0xc5, 0xb3, 0x3b, 0x26, 0x49,
+	0x2d, 0x72, 0x02, 0x8e, 0xb2, 0x24, 0x72, 0xc0, 0x2a, 0x66, 0x37, 0x39, 0x64, 0x55, 0x9f, 0xa2,
+	0xd6, 0xfc, 0x14, 0x1e, 0x04, 0x31, 0x93, 0xe2, 0x77, 0x19, 0x84, 0x82, 0x7d, 0x4c, 0x93, 0xd5,
+	0x55, 0xf1, 0x2f, 0x77, 0x7e, 0x98, 0x4f, 0xd7, 0x52, 0xfd, 0xdd, 0x5d, 0xda, 0xef, 0x5b, 0xf8,
+	0xbf, 0xf7, 0xfc, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x1a, 0x5b, 0x0c, 0x63, 0x0a, 0x0b, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1743,20 +1931,16 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IpfsLiteClient interface {
 	AddFile(ctx context.Context, opts ...grpc.CallOption) (IpfsLite_AddFileClient, error)
-	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error)
+	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (IpfsLite_GetFileClient, error)
+	HasBlock(ctx context.Context, in *HasBlockRequest, opts ...grpc.CallOption) (*HasBlockResponse, error)
+	AddNode(ctx context.Context, in *AddNodeRequest, opts ...grpc.CallOption) (*AddNodeResponse, error)
+	AddNodes(ctx context.Context, in *AddNodesRequest, opts ...grpc.CallOption) (*AddNodesResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
 	GetNodes(ctx context.Context, in *GetNodesRequest, opts ...grpc.CallOption) (IpfsLite_GetNodesClient, error)
+	RemoveNode(ctx context.Context, in *RemoveNodeRequest, opts ...grpc.CallOption) (*RemoveNodeResponse, error)
+	RemoveNodes(ctx context.Context, in *RemoveNodesRequest, opts ...grpc.CallOption) (*RemoveNodesResponse, error)
 	ResolveLink(ctx context.Context, in *ResolveLinkRequest, opts ...grpc.CallOption) (*ResolveLinkResponse, error)
-	Resolve(ctx context.Context, in *ResolveRequest, opts ...grpc.CallOption) (*ResolveResponse, error)
 	Tree(ctx context.Context, in *TreeRequest, opts ...grpc.CallOption) (*TreeResponse, error)
-	DeleteBlock(ctx context.Context, in *DeleteBlockRequest, opts ...grpc.CallOption) (*DeleteBlockResponse, error)
-	HasBlock(ctx context.Context, in *HasBlockRequest, opts ...grpc.CallOption) (*HasBlockResponse, error)
-	GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error)
-	GetBlockSize(ctx context.Context, in *GetBlockSizeRequest, opts ...grpc.CallOption) (*GetBlockSizeResponse, error)
-	PutBlock(ctx context.Context, in *PutBlockRequest, opts ...grpc.CallOption) (*PutBlockResponse, error)
-	PutBlocks(ctx context.Context, in *PutBlocksRequest, opts ...grpc.CallOption) (*PutBlocksResponse, error)
-	AllKeys(ctx context.Context, in *AllKeysRequest, opts ...grpc.CallOption) (IpfsLite_AllKeysClient, error)
-	HashOnRead(ctx context.Context, in *HashOnReadRequest, opts ...grpc.CallOption) (*HashOnReadResponse, error)
 }
 
 type ipfsLiteClient struct {
@@ -1801,9 +1985,59 @@ func (x *ipfsLiteAddFileClient) CloseAndRecv() (*AddFileResponse, error) {
 	return m, nil
 }
 
-func (c *ipfsLiteClient) GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error) {
-	out := new(GetFileResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/GetFile", in, out, opts...)
+func (c *ipfsLiteClient) GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (IpfsLite_GetFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_IpfsLite_serviceDesc.Streams[1], "/IpfsLite/GetFile", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &ipfsLiteGetFileClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type IpfsLite_GetFileClient interface {
+	Recv() (*GetFileResponse, error)
+	grpc.ClientStream
+}
+
+type ipfsLiteGetFileClient struct {
+	grpc.ClientStream
+}
+
+func (x *ipfsLiteGetFileClient) Recv() (*GetFileResponse, error) {
+	m := new(GetFileResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *ipfsLiteClient) HasBlock(ctx context.Context, in *HasBlockRequest, opts ...grpc.CallOption) (*HasBlockResponse, error) {
+	out := new(HasBlockResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/HasBlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) AddNode(ctx context.Context, in *AddNodeRequest, opts ...grpc.CallOption) (*AddNodeResponse, error) {
+	out := new(AddNodeResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/AddNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) AddNodes(ctx context.Context, in *AddNodesRequest, opts ...grpc.CallOption) (*AddNodesResponse, error) {
+	out := new(AddNodesResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/AddNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1820,7 +2054,7 @@ func (c *ipfsLiteClient) GetNode(ctx context.Context, in *GetNodeRequest, opts .
 }
 
 func (c *ipfsLiteClient) GetNodes(ctx context.Context, in *GetNodesRequest, opts ...grpc.CallOption) (IpfsLite_GetNodesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_IpfsLite_serviceDesc.Streams[1], "/IpfsLite/GetNodes", opts...)
+	stream, err := c.cc.NewStream(ctx, &_IpfsLite_serviceDesc.Streams[2], "/IpfsLite/GetNodes", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1851,18 +2085,27 @@ func (x *ipfsLiteGetNodesClient) Recv() (*GetNodesResponse, error) {
 	return m, nil
 }
 
-func (c *ipfsLiteClient) ResolveLink(ctx context.Context, in *ResolveLinkRequest, opts ...grpc.CallOption) (*ResolveLinkResponse, error) {
-	out := new(ResolveLinkResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/ResolveLink", in, out, opts...)
+func (c *ipfsLiteClient) RemoveNode(ctx context.Context, in *RemoveNodeRequest, opts ...grpc.CallOption) (*RemoveNodeResponse, error) {
+	out := new(RemoveNodeResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/RemoveNode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *ipfsLiteClient) Resolve(ctx context.Context, in *ResolveRequest, opts ...grpc.CallOption) (*ResolveResponse, error) {
-	out := new(ResolveResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/Resolve", in, out, opts...)
+func (c *ipfsLiteClient) RemoveNodes(ctx context.Context, in *RemoveNodesRequest, opts ...grpc.CallOption) (*RemoveNodesResponse, error) {
+	out := new(RemoveNodesResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/RemoveNodes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ipfsLiteClient) ResolveLink(ctx context.Context, in *ResolveLinkRequest, opts ...grpc.CallOption) (*ResolveLinkResponse, error) {
+	out := new(ResolveLinkResponse)
+	err := c.cc.Invoke(ctx, "/IpfsLite/ResolveLink", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1878,118 +2121,19 @@ func (c *ipfsLiteClient) Tree(ctx context.Context, in *TreeRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *ipfsLiteClient) DeleteBlock(ctx context.Context, in *DeleteBlockRequest, opts ...grpc.CallOption) (*DeleteBlockResponse, error) {
-	out := new(DeleteBlockResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/DeleteBlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) HasBlock(ctx context.Context, in *HasBlockRequest, opts ...grpc.CallOption) (*HasBlockResponse, error) {
-	out := new(HasBlockResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/HasBlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error) {
-	out := new(GetBlockResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/GetBlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) GetBlockSize(ctx context.Context, in *GetBlockSizeRequest, opts ...grpc.CallOption) (*GetBlockSizeResponse, error) {
-	out := new(GetBlockSizeResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/GetBlockSize", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) PutBlock(ctx context.Context, in *PutBlockRequest, opts ...grpc.CallOption) (*PutBlockResponse, error) {
-	out := new(PutBlockResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/PutBlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) PutBlocks(ctx context.Context, in *PutBlocksRequest, opts ...grpc.CallOption) (*PutBlocksResponse, error) {
-	out := new(PutBlocksResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/PutBlocks", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ipfsLiteClient) AllKeys(ctx context.Context, in *AllKeysRequest, opts ...grpc.CallOption) (IpfsLite_AllKeysClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_IpfsLite_serviceDesc.Streams[2], "/IpfsLite/AllKeys", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &ipfsLiteAllKeysClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type IpfsLite_AllKeysClient interface {
-	Recv() (*AllKeysResponse, error)
-	grpc.ClientStream
-}
-
-type ipfsLiteAllKeysClient struct {
-	grpc.ClientStream
-}
-
-func (x *ipfsLiteAllKeysClient) Recv() (*AllKeysResponse, error) {
-	m := new(AllKeysResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *ipfsLiteClient) HashOnRead(ctx context.Context, in *HashOnReadRequest, opts ...grpc.CallOption) (*HashOnReadResponse, error) {
-	out := new(HashOnReadResponse)
-	err := c.cc.Invoke(ctx, "/IpfsLite/HashOnRead", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // IpfsLiteServer is the server API for IpfsLite service.
 type IpfsLiteServer interface {
 	AddFile(IpfsLite_AddFileServer) error
-	GetFile(context.Context, *GetFileRequest) (*GetFileResponse, error)
+	GetFile(*GetFileRequest, IpfsLite_GetFileServer) error
+	HasBlock(context.Context, *HasBlockRequest) (*HasBlockResponse, error)
+	AddNode(context.Context, *AddNodeRequest) (*AddNodeResponse, error)
+	AddNodes(context.Context, *AddNodesRequest) (*AddNodesResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
 	GetNodes(*GetNodesRequest, IpfsLite_GetNodesServer) error
+	RemoveNode(context.Context, *RemoveNodeRequest) (*RemoveNodeResponse, error)
+	RemoveNodes(context.Context, *RemoveNodesRequest) (*RemoveNodesResponse, error)
 	ResolveLink(context.Context, *ResolveLinkRequest) (*ResolveLinkResponse, error)
-	Resolve(context.Context, *ResolveRequest) (*ResolveResponse, error)
 	Tree(context.Context, *TreeRequest) (*TreeResponse, error)
-	DeleteBlock(context.Context, *DeleteBlockRequest) (*DeleteBlockResponse, error)
-	HasBlock(context.Context, *HasBlockRequest) (*HasBlockResponse, error)
-	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
-	GetBlockSize(context.Context, *GetBlockSizeRequest) (*GetBlockSizeResponse, error)
-	PutBlock(context.Context, *PutBlockRequest) (*PutBlockResponse, error)
-	PutBlocks(context.Context, *PutBlocksRequest) (*PutBlocksResponse, error)
-	AllKeys(*AllKeysRequest, IpfsLite_AllKeysServer) error
-	HashOnRead(context.Context, *HashOnReadRequest) (*HashOnReadResponse, error)
 }
 
 // UnimplementedIpfsLiteServer can be embedded to have forward compatible implementations.
@@ -1999,8 +2143,17 @@ type UnimplementedIpfsLiteServer struct {
 func (*UnimplementedIpfsLiteServer) AddFile(srv IpfsLite_AddFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method AddFile not implemented")
 }
-func (*UnimplementedIpfsLiteServer) GetFile(ctx context.Context, req *GetFileRequest) (*GetFileResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFile not implemented")
+func (*UnimplementedIpfsLiteServer) GetFile(req *GetFileRequest, srv IpfsLite_GetFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetFile not implemented")
+}
+func (*UnimplementedIpfsLiteServer) HasBlock(ctx context.Context, req *HasBlockRequest) (*HasBlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasBlock not implemented")
+}
+func (*UnimplementedIpfsLiteServer) AddNode(ctx context.Context, req *AddNodeRequest) (*AddNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
+}
+func (*UnimplementedIpfsLiteServer) AddNodes(ctx context.Context, req *AddNodesRequest) (*AddNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNodes not implemented")
 }
 func (*UnimplementedIpfsLiteServer) GetNode(ctx context.Context, req *GetNodeRequest) (*GetNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNode not implemented")
@@ -2008,38 +2161,17 @@ func (*UnimplementedIpfsLiteServer) GetNode(ctx context.Context, req *GetNodeReq
 func (*UnimplementedIpfsLiteServer) GetNodes(req *GetNodesRequest, srv IpfsLite_GetNodesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetNodes not implemented")
 }
+func (*UnimplementedIpfsLiteServer) RemoveNode(ctx context.Context, req *RemoveNodeRequest) (*RemoveNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNode not implemented")
+}
+func (*UnimplementedIpfsLiteServer) RemoveNodes(ctx context.Context, req *RemoveNodesRequest) (*RemoveNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNodes not implemented")
+}
 func (*UnimplementedIpfsLiteServer) ResolveLink(ctx context.Context, req *ResolveLinkRequest) (*ResolveLinkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResolveLink not implemented")
 }
-func (*UnimplementedIpfsLiteServer) Resolve(ctx context.Context, req *ResolveRequest) (*ResolveResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Resolve not implemented")
-}
 func (*UnimplementedIpfsLiteServer) Tree(ctx context.Context, req *TreeRequest) (*TreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tree not implemented")
-}
-func (*UnimplementedIpfsLiteServer) DeleteBlock(ctx context.Context, req *DeleteBlockRequest) (*DeleteBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlock not implemented")
-}
-func (*UnimplementedIpfsLiteServer) HasBlock(ctx context.Context, req *HasBlockRequest) (*HasBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasBlock not implemented")
-}
-func (*UnimplementedIpfsLiteServer) GetBlock(ctx context.Context, req *GetBlockRequest) (*GetBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
-}
-func (*UnimplementedIpfsLiteServer) GetBlockSize(ctx context.Context, req *GetBlockSizeRequest) (*GetBlockSizeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlockSize not implemented")
-}
-func (*UnimplementedIpfsLiteServer) PutBlock(ctx context.Context, req *PutBlockRequest) (*PutBlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutBlock not implemented")
-}
-func (*UnimplementedIpfsLiteServer) PutBlocks(ctx context.Context, req *PutBlocksRequest) (*PutBlocksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutBlocks not implemented")
-}
-func (*UnimplementedIpfsLiteServer) AllKeys(req *AllKeysRequest, srv IpfsLite_AllKeysServer) error {
-	return status.Errorf(codes.Unimplemented, "method AllKeys not implemented")
-}
-func (*UnimplementedIpfsLiteServer) HashOnRead(ctx context.Context, req *HashOnReadRequest) (*HashOnReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HashOnRead not implemented")
 }
 
 func RegisterIpfsLiteServer(s *grpc.Server, srv IpfsLiteServer) {
@@ -2072,20 +2204,77 @@ func (x *ipfsLiteAddFileServer) Recv() (*AddFileRequest, error) {
 	return m, nil
 }
 
-func _IpfsLite_GetFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFileRequest)
+func _IpfsLite_GetFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetFileRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(IpfsLiteServer).GetFile(m, &ipfsLiteGetFileServer{stream})
+}
+
+type IpfsLite_GetFileServer interface {
+	Send(*GetFileResponse) error
+	grpc.ServerStream
+}
+
+type ipfsLiteGetFileServer struct {
+	grpc.ServerStream
+}
+
+func (x *ipfsLiteGetFileServer) Send(m *GetFileResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _IpfsLite_HasBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HasBlockRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IpfsLiteServer).GetFile(ctx, in)
+		return srv.(IpfsLiteServer).HasBlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/IpfsLite/GetFile",
+		FullMethod: "/IpfsLite/HasBlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).GetFile(ctx, req.(*GetFileRequest))
+		return srv.(IpfsLiteServer).HasBlock(ctx, req.(*HasBlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IpfsLite_AddNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).AddNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/AddNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).AddNode(ctx, req.(*AddNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IpfsLite_AddNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNodesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).AddNodes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/AddNodes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).AddNodes(ctx, req.(*AddNodesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2129,6 +2318,42 @@ func (x *ipfsLiteGetNodesServer) Send(m *GetNodesResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _IpfsLite_RemoveNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).RemoveNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/RemoveNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).RemoveNode(ctx, req.(*RemoveNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IpfsLite_RemoveNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveNodesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IpfsLiteServer).RemoveNodes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/IpfsLite/RemoveNodes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IpfsLiteServer).RemoveNodes(ctx, req.(*RemoveNodesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IpfsLite_ResolveLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResolveLinkRequest)
 	if err := dec(in); err != nil {
@@ -2143,24 +2368,6 @@ func _IpfsLite_ResolveLink_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IpfsLiteServer).ResolveLink(ctx, req.(*ResolveLinkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_Resolve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResolveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).Resolve(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/Resolve",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).Resolve(ctx, req.(*ResolveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2183,204 +2390,41 @@ func _IpfsLite_Tree_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IpfsLite_DeleteBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteBlockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).DeleteBlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/DeleteBlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).DeleteBlock(ctx, req.(*DeleteBlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_HasBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HasBlockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).HasBlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/HasBlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).HasBlock(ctx, req.(*HasBlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBlockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).GetBlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/GetBlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).GetBlock(ctx, req.(*GetBlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_GetBlockSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBlockSizeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).GetBlockSize(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/GetBlockSize",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).GetBlockSize(ctx, req.(*GetBlockSizeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_PutBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutBlockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).PutBlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/PutBlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).PutBlock(ctx, req.(*PutBlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_PutBlocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutBlocksRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).PutBlocks(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/PutBlocks",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).PutBlocks(ctx, req.(*PutBlocksRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IpfsLite_AllKeys_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(AllKeysRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(IpfsLiteServer).AllKeys(m, &ipfsLiteAllKeysServer{stream})
-}
-
-type IpfsLite_AllKeysServer interface {
-	Send(*AllKeysResponse) error
-	grpc.ServerStream
-}
-
-type ipfsLiteAllKeysServer struct {
-	grpc.ServerStream
-}
-
-func (x *ipfsLiteAllKeysServer) Send(m *AllKeysResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _IpfsLite_HashOnRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HashOnReadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IpfsLiteServer).HashOnRead(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/IpfsLite/HashOnRead",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IpfsLiteServer).HashOnRead(ctx, req.(*HashOnReadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _IpfsLite_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "IpfsLite",
 	HandlerType: (*IpfsLiteServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetFile",
-			Handler:    _IpfsLite_GetFile_Handler,
+			MethodName: "HasBlock",
+			Handler:    _IpfsLite_HasBlock_Handler,
+		},
+		{
+			MethodName: "AddNode",
+			Handler:    _IpfsLite_AddNode_Handler,
+		},
+		{
+			MethodName: "AddNodes",
+			Handler:    _IpfsLite_AddNodes_Handler,
 		},
 		{
 			MethodName: "GetNode",
 			Handler:    _IpfsLite_GetNode_Handler,
 		},
 		{
+			MethodName: "RemoveNode",
+			Handler:    _IpfsLite_RemoveNode_Handler,
+		},
+		{
+			MethodName: "RemoveNodes",
+			Handler:    _IpfsLite_RemoveNodes_Handler,
+		},
+		{
 			MethodName: "ResolveLink",
 			Handler:    _IpfsLite_ResolveLink_Handler,
 		},
 		{
-			MethodName: "Resolve",
-			Handler:    _IpfsLite_Resolve_Handler,
-		},
-		{
 			MethodName: "Tree",
 			Handler:    _IpfsLite_Tree_Handler,
-		},
-		{
-			MethodName: "DeleteBlock",
-			Handler:    _IpfsLite_DeleteBlock_Handler,
-		},
-		{
-			MethodName: "HasBlock",
-			Handler:    _IpfsLite_HasBlock_Handler,
-		},
-		{
-			MethodName: "GetBlock",
-			Handler:    _IpfsLite_GetBlock_Handler,
-		},
-		{
-			MethodName: "GetBlockSize",
-			Handler:    _IpfsLite_GetBlockSize_Handler,
-		},
-		{
-			MethodName: "PutBlock",
-			Handler:    _IpfsLite_PutBlock_Handler,
-		},
-		{
-			MethodName: "PutBlocks",
-			Handler:    _IpfsLite_PutBlocks_Handler,
-		},
-		{
-			MethodName: "HashOnRead",
-			Handler:    _IpfsLite_HashOnRead_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -2390,13 +2434,13 @@ var _IpfsLite_serviceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "GetNodes",
-			Handler:       _IpfsLite_GetNodes_Handler,
+			StreamName:    "GetFile",
+			Handler:       _IpfsLite_GetFile_Handler,
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "AllKeys",
-			Handler:       _IpfsLite_AllKeys_Handler,
+			StreamName:    "GetNodes",
+			Handler:       _IpfsLite_GetNodes_Handler,
 			ServerStreams: true,
 		},
 	},
