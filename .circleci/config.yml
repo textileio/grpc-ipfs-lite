@@ -152,12 +152,12 @@ jobs:
             OUT=~/dist/android_aar
             mkdir -p ${OUT}
             cd ~/go/src/github.com/textileio/grpc-ipfs-lite/build/android
-            tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ipfs.aar
+            tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar
             mv grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ${OUT}/
       - persist_to_workspace:
           root: ~/go/src/github.com/textileio/grpc-ipfs-lite/build/android
           paths:
-            - ipfs.aar
+            - mobile.aar
       - persist_to_workspace:
           root: ~/dist
           paths:
@@ -201,8 +201,8 @@ jobs:
                 VERSION=${CIRCLE_TAG}
                 VERSION=$(echo $VERSION | cut -c 2-)
             fi
-            sed -i.bak "s/<version>/${VERSION}/g" gomobile-ipfs.podspec
-            pod trunk push gomobile-ipfs.podspec --allow-warnings
+            sed -i.bak "s/<version>/${VERSION}/g" grpc-ipfs-lite.podspec
+            pod trunk push grpc-ipfs-lite.podspec --allow-warnings
 
   publish-aar:
     docker:
@@ -220,15 +220,15 @@ jobs:
                 VERSION=${CIRCLE_TAG}
                 VERSION=$(echo $VERSION | cut -c 2-)
             fi
-            sed "s/<VERSION>/${VERSION}/g" gomobile-ipfs-template.pom > gomobile-ipfs-${VERSION}.pom
-            cp ~/ipfs.aar gomobile-ipfs-${VERSION}.aar
-            curl -i -X PUT -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} -T gomobile-ipfs-${VERSION}.pom https://api.bintray.com/maven/textile/maven/gomobile-ipfs/io/textile/gomobile-ipfs/${VERSION}/gomobile-ipfs-${VERSION}.pom;publish=1
-            curl -i -X PUT -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} -T gomobile-ipfs-${VERSION}.aar https://api.bintray.com/maven/textile/maven/gomobile-ipfs/io/textile/gomobile-ipfs/${VERSION}/gomobile-ipfs-${VERSION}.aar;publish=1
-            curl -i -X POST -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} https://api.bintray.com/content/textile/maven/gomobile-ipfs/${VERSION}/publish
+            sed "s/<VERSION>/${VERSION}/g" grpc-ipfs-lite-template.pom > grpc-ipfs-lite-${VERSION}.pom
+            cp ~/mobile.aar grpc-ipfs-lite-${VERSION}.aar
+            curl -i -X PUT -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} -T grpc-ipfs-lite-${VERSION}.pom https://api.bintray.com/maven/textile/maven/grpc-ipfs-lite/io/textile/grpc-ipfs-lite/${VERSION}/grpc-ipfs-lite-${VERSION}.pom;publish=1
+            curl -i -X PUT -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} -T grpc-ipfs-lite-${VERSION}.aar https://api.bintray.com/maven/textile/maven/grpc-ipfs-lite/io/textile/grpc-ipfs-lite/${VERSION}/grpc-ipfs-lite-${VERSION}.aar;publish=1
+            curl -i -X POST -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} https://api.bintray.com/content/textile/maven/grpc-ipfs-lite/${VERSION}/publish
 
 workflows:
   version: 2
-  gomobile-ipfs:
+  grpc-ipfs-lite:
     jobs:
       - persist-checkout:
           filters:

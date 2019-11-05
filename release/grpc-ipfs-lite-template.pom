@@ -3,12 +3,12 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <modelVersion>4.0.0</modelVersion>
    <groupId>io.textile</groupId>
-   <artifactId>gomobile-ipfs</artifactId>
+   <artifactId>grpc-ipfs-lite</artifactId>
    <version><VERSION></version>
    <packaging>aar</packaging>
-   <name>gomobile-ipfs</name>
-   <description>Generated core API for Textile</description>
-   <url>https://github.com/textileio/gomobile-ipfs</url>
+   <name>grpc-ipfs-lite</name>
+   <description>gRPC server exposing API for ipfs-lite</description>
+   <url>https://github.com/textileio/grpc-ipfs-lite</url>
    <licenses>
      <license>
        <name>The Apache Software License, Version 2.0</name>
@@ -23,8 +23,8 @@
      </developer>
    </developers>
    <scm>
-     <connection>https://github.com/textileio/gomobile-ipfs.git</connection>
-     <developerConnection>https://github.com/textileio/gomobile-ipfs.git</developerConnection>
-     <url>https://github.com/textileio/gomobile-ipfs</url>
+     <connection>https://github.com/textileio/grpc-ipfs-lite.git</connection>
+     <developerConnection>https://github.com/textileio/grpc-ipfs-lite.git</developerConnection>
+     <url>https://github.com/textileio/grpc-ipfs-lite</url>
    </scm>
  </project>
