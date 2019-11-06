@@ -23,6 +23,7 @@ var (
 	client                                                     pb.IpfsLiteClient
 	stringToAdd                                                string = "hola"
 	refFile, refLargeFile                                      *pb.Node
+	refSize                                                           int32
 	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
 	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
 )
