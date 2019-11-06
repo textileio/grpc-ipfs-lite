@@ -142,7 +142,20 @@ jobs:
           name: build android framework
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-            make android
+            go mod vendor
+            mkdir -p ~/go/src/github.com/textileio
+            cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
+            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
+            export GO111MODULE=off
+            go get golang.org/x/mobile/cmd/...
+            COMMIT=$(echo $CIRCLE_SHA1 | cut -c -7)
+            SUMMARY=$CIRCLE_SHA1
+            if [ "${CIRCLE_TAG}" != "" ]; then
+                SUMMARY=${CIRCLE_TAG}
+            fi
+            DATE=$(date --iso-8601=seconds)
+            FLAGS="-X github.com/textileio/grpc-ipfs-lite/common.GitSummary=${SUMMARY} -X github.com/textileio/grpc-ipfs-lite/common.BuildDate=${DATE} -X github.com/textileio/grpc-ipfs-lite/common.GitCommit=${COMMIT} -X github.com/textileio/grpc-ipfs-lite/common.GitBranch=${CIRCLE_BRANCH} -X github.com/textileio/grpc-ipfs-lite/common.GitState=clean"
+            gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
       - run:
           name: collect artifacts
           command: |
@@ -152,7 +165,8 @@ jobs:
             fi
             OUT=~/dist/android_aar
             mkdir -p ${OUT}
-            tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar
+            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
+            tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar protos
             mv grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ${OUT}/
       - persist_to_workspace:
           root: ~/go/src/github.com/textileio/grpc-ipfs-lite/build/android
