@@ -168,7 +168,6 @@ func TestGetLargeFile(t *testing.T) {
 	out.Sync()
 
 	got := int32(len(buffer.Bytes()))
-	expected := refLargeFile.GetStat().GetCumulativeSize() - refLargeFile.GetStat().GetLinksSize()
 	if got != expected {
 		t.Fatalf("wanted %d but got: %d", expected, got)
 	}
