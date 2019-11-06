@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"os"
 	"testing"
 	"time"
 
@@ -21,7 +22,8 @@ import (
 var (
 	client                                                     pb.IpfsLiteClient
 	stringToAdd                                                string = "hola"
-	refFile                                                    *pb.Node
+	refFile, refLargeFile                                      *pb.Node
+	refSize                                                           int32
 	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
 	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
 )
@@ -82,6 +84,92 @@ func TestGetFile(t *testing.T) {
 	val := string(buffer.Bytes())
 	if val != stringToAdd {
 		t.Fatalf("wanted %s but got: %s", stringToAdd, val)
+	}
+}
+
+func TestAddLargeFile(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	stream, err := client.AddFile(ctx)
+	if err != nil {
+		t.Fatalf("failed to AddLargeFile: %v", err)
+	}
+
+	file, err := os.Open("test-data/IMG_2293.jpeg")
+	if err != nil {
+		t.Fatalf("failed to open file: %v", err)
+	}
+	defer file.Close()
+	fi, err := file.Stat()
+	if err != nil {
+		t.Fatalf("failed to stat file: %v", err)
+	}
+	refSize = int32(fi.Size())
+	const BufferSize = 1024
+
+	buffer := make([]byte, BufferSize)
+
+	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
+
+	for {
+		bytesread, err := file.Read(buffer)
+
+		if err != nil {
+			if err != io.EOF {
+				t.Fatalf("failed while reading file: %v", err)
+			}
+			break
+		}
+		stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: buffer[:bytesread]}})
+	}
+
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		t.Fatalf("failed to CloseAndRecv AddLargeFile: %v", err)
+	}
+	refLargeFile = resp.GetNode()
+}
+
+func TestGetLargeFile(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	stream, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refLargeFile.Block.GetCid()})
+	if err != nil {
+		t.Fatalf("failed to GetFile: %v", err)
+	}
+
+	out, err := os.Create("/tmp/out.jpeg")
+	defer out.Close()
+	if err != nil {
+		t.Fatalf("failed to create out file: %v", err)
+	}
+
+	buffer := bytes.NewBuffer([]byte{})
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("failed to receive file chunk: %v", err)
+		}
+		_, err = out.Write(resp.GetChunk())
+		if err != nil {
+			t.Fatalf("failed to write chunk to file: %v", err)
+		}
+
+		_, err = buffer.Write(resp.GetChunk())
+		if err != nil {
+			t.Fatalf("failed to write chunk to buffer: %v", err)
+		}
+	}
+
+	out.Sync()
+
+	got := int32(len(buffer.Bytes()))
+	if got != refSize {
+		t.Fatalf("wanted %d but got: %d", refSize, got)
 	}
 }
 
