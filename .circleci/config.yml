@@ -73,12 +73,6 @@ jobs:
           name: build ios framework
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-            go mod vendor
-            mkdir -p ~/go/src/github.com/textileio
-            cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
-            export GO111MODULE=off
-            go get golang.org/x/mobile/cmd/...
             make ios
       - run:
           name: collect artifacts
@@ -89,7 +83,6 @@ jobs:
             fi
             OUT=~/dist/ios_framework
             mkdir -p ${OUT}
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
             tar -czvf grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz Mobile.framework
             mv grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz ${OUT}/
       - persist_to_workspace:
@@ -135,12 +128,6 @@ jobs:
           name: build android framework
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-            go mod vendor
-            mkdir -p ~/go/src/github.com/textileio
-            cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
-            export GO111MODULE=off
-            go get golang.org/x/mobile/cmd/...
             make android
       - run:
           name: collect artifacts
@@ -151,7 +138,6 @@ jobs:
             fi
             OUT=~/dist/android_aar
             mkdir -p ${OUT}
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
             tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar
             mv grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ${OUT}/
       - persist_to_workspace:
