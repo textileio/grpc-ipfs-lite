@@ -101,7 +101,11 @@ func TestAddLargeFile(t *testing.T) {
 		t.Fatalf("failed to open file: %v", err)
 	}
 	defer file.Close()
-
+	fi, err := file.Stat()
+	if err != nil {
+		t.Fatalf("failed to stat file: %v", err)
+	}
+	refSize = int32(fi.Size())
 	const BufferSize = 1024
 
 	buffer := make([]byte, BufferSize)
