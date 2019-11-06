@@ -89,7 +89,7 @@ jobs:
             fi
             OUT=~/dist/ios_framework
             mkdir -p ${OUT}
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite/build/ios
+            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
             tar -czvf grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz Mobile.framework
             mv grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz ${OUT}/
       - persist_to_workspace:
@@ -151,7 +151,7 @@ jobs:
             fi
             OUT=~/dist/android_aar
             mkdir -p ${OUT}
-            cd ~/go/src/github.com/textileio/grpc-ipfs-lite/build/android
+            cd ~/go/src/github.com/textileio/grpc-ipfs-lite
             tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar
             mv grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ${OUT}/
       - persist_to_workspace:
