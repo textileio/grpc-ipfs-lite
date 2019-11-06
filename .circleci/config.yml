@@ -169,7 +169,7 @@ jobs:
             tar -czvf grpc-ipfs-lite_${VERSION}_android-aar.tar.gz mobile.aar
             mv grpc-ipfs-lite_${VERSION}_android-aar.tar.gz ${OUT}/
       - persist_to_workspace:
-          root: ~/go/src/github.com/textileio/grpc-ipfs-lite/build/android
+          root: ~/go/src/github.com/textileio/grpc-ipfs-lite
           paths:
             - mobile.aar
       - persist_to_workspace:
