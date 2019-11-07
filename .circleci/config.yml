@@ -97,7 +97,8 @@ jobs:
             OUT=~/dist/ios_framework
             mkdir -p ${OUT}
             cd ~/go/src/github.com/textileio/grpc-ipfs-lite
-            tar -czvf grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz Mobile.framework
+            touch dummy
+            tar -czvf grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz Mobile.framework dummy
             mv grpc-ipfs-lite_${VERSION}_ios-framework.tar.gz ${OUT}/
       - persist_to_workspace:
           root: ~/dist
