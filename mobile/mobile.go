@@ -5,7 +5,7 @@ import (
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-log"
-	crypto "github.com/libp2p/go-libp2p-crypto"
+	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/textileio/grpc-ipfs-lite/server"
 )
@@ -15,7 +15,9 @@ func Start(datastorePath string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	log.SetLogLevel("*", "warn")
+	if err := log.SetLogLevel("*", "warn"); err != nil {
+		return err
+	}
 
 	ds, err := ipfslite.BadgerDatastore(datastorePath)
 	if err != nil {
