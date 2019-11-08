@@ -9,6 +9,7 @@ import (
 	"time"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
+	"github.com/ipfs/go-cid"
 	cbor "github.com/ipfs/go-ipld-cbor"
 	"github.com/ipfs/go-log"
 	"github.com/ipfs/go-merkledag"
@@ -20,16 +21,18 @@ import (
 )
 
 var (
+	peer                                                       *ipfslite.Peer
 	client                                                     pb.IpfsLiteClient
 	stringToAdd                                                string = "hola"
 	refFile, refLargeFile                                      *pb.Node
-	refSize                                                           int32
+	refSize                                                    int32
 	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
 	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
 )
 
 func TestSetup(t *testing.T) {
-	peer, err := newPeer()
+	var err error
+	peer, err = newPeer()
 	if err != nil {
 		t.Fatalf("failed to create peer: %v", err)
 	}
@@ -41,6 +44,19 @@ func TestSetup(t *testing.T) {
 		t.Fatalf("failed to grpc dial: %v", err)
 	}
 	client = pb.NewIpfsLiteClient(conn)
+}
+
+func TestGetRemoteCID(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cid, err := cid.Decode("QmY7Yh4UquoXHLPFo2XbhXkhBvFoPwmQUSa92pxnxjQuPU")
+	if err != nil {
+		t.Fatalf("failed to decode cid: %v", err)
+	}
+	_, err = peer.GetFile(ctx, cid)
+	if err != nil {
+		t.Fatalf("failed to GetFile using remote CID: %v", err)
+	}
 }
 
 func TestAddFile(t *testing.T) {
