@@ -6,35 +6,38 @@ import (
 	"io"
 	"os"
 	"testing"
-	"time"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	cbor "github.com/ipfs/go-ipld-cbor"
-	"github.com/ipfs/go-log"
 	"github.com/ipfs/go-merkledag"
-	crypto "github.com/libp2p/go-libp2p-crypto"
-	"github.com/multiformats/go-multiaddr"
 	multihash "github.com/multiformats/go-multihash"
 	pb "github.com/textileio/grpc-ipfs-lite/ipfs-lite"
+	"github.com/textileio/grpc-ipfs-lite/util"
 	"google.golang.org/grpc"
 )
 
 var (
+	litePeer                                                   *ipfslite.Peer
 	client                                                     pb.IpfsLiteClient
-	stringToAdd                                                string = "hola"
+	stringToAdd                                                = "hola"
 	refFile, refLargeFile                                      *pb.Node
-	refSize                                                           int32
+	refSize                                                    int32
 	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
 	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
+	ctx                                                        context.Context
+	cancel                                                     context.CancelFunc
 )
 
 func TestSetup(t *testing.T) {
-	peer, err := newPeer()
+	ctx, cancel = context.WithCancel(context.Background())
+
+	var err error
+	litePeer, err = util.NewPeer(ctx, "/tmp/ipfs-lite", 4005, false)
 	if err != nil {
 		t.Fatalf("failed to create peer: %v", err)
 	}
 
-	go StartServer(peer, "localhost:10000")
+	go StartServer(litePeer, "localhost:10000")
 
 	conn, err := grpc.Dial("localhost:10000", grpc.WithInsecure())
 	if err != nil {
@@ -44,16 +47,13 @@ func TestSetup(t *testing.T) {
 }
 
 func TestAddFile(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	stream, err := client.AddFile(ctx)
 	if err != nil {
 		t.Fatalf("failed to AddFile: %v", err)
 	}
 
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: []byte(stringToAdd)}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: []byte(stringToAdd)}})
 	resp, err := stream.CloseAndRecv()
 	if err != nil {
 		t.Fatalf("failed to CloseAndRecv AddFile: %v", err)
@@ -62,8 +62,6 @@ func TestAddFile(t *testing.T) {
 }
 
 func TestGetFile(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	stream, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refFile.Block.GetCid()})
 	if err != nil {
 		t.Fatalf("failed to GetFile: %v", err)
@@ -88,9 +86,6 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestAddLargeFile(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	stream, err := client.AddFile(ctx)
 	if err != nil {
 		t.Fatalf("failed to AddLargeFile: %v", err)
@@ -110,7 +105,7 @@ func TestAddLargeFile(t *testing.T) {
 
 	buffer := make([]byte, BufferSize)
 
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
 
 	for {
 		bytesread, err := file.Read(buffer)
@@ -121,7 +116,7 @@ func TestAddLargeFile(t *testing.T) {
 			}
 			break
 		}
-		stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: buffer[:bytesread]}})
+		_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: buffer[:bytesread]}})
 	}
 
 	resp, err := stream.CloseAndRecv()
@@ -132,18 +127,16 @@ func TestAddLargeFile(t *testing.T) {
 }
 
 func TestGetLargeFile(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	stream, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: refLargeFile.Block.GetCid()})
 	if err != nil {
 		t.Fatalf("failed to GetFile: %v", err)
 	}
 
 	out, err := os.Create("/tmp/out.jpeg")
-	defer out.Close()
 	if err != nil {
 		t.Fatalf("failed to create out file: %v", err)
 	}
+	defer out.Close()
 
 	buffer := bytes.NewBuffer([]byte{})
 	for {
@@ -165,7 +158,7 @@ func TestGetLargeFile(t *testing.T) {
 		}
 	}
 
-	out.Sync()
+	_ = out.Sync()
 
 	got := int32(len(buffer.Bytes()))
 	if got != refSize {
@@ -173,9 +166,32 @@ func TestGetLargeFile(t *testing.T) {
 	}
 }
 
+func TestGetRemoteCID(t *testing.T) {
+	stream, err := client.GetFile(ctx, &pb.GetFileRequest{Cid: "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u"})
+	if err != nil {
+		t.Fatalf("failed to GetFile: %v", err)
+	}
+
+	buffer := bytes.NewBuffer([]byte{})
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("failed to receive file chunk: %v", err)
+		}
+		buffer.Write(resp.GetChunk())
+	}
+
+	val := string(buffer.Bytes())
+	want := "Hello World\n"
+	if val != want {
+		t.Fatalf("wanted %s but got: %s", want, val)
+	}
+}
+
 func TestHasBlock(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	resp, err := client.HasBlock(ctx, &pb.HasBlockRequest{Cid: refFile.Block.GetCid()})
 	if err != nil {
 		t.Fatalf("failed to HasBlock: %v", err)
@@ -186,9 +202,6 @@ func TestHasBlock(t *testing.T) {
 }
 
 func TestAddNode(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	node0data := map[string]interface{}{
 		"name": "node0",
 	}
@@ -210,9 +223,6 @@ func TestAddNode(t *testing.T) {
 }
 
 func TestAddNodes(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	node1Data := map[string]interface{}{
 		"name": "node1",
 		"link": refNode0.Cid(),
@@ -268,8 +278,6 @@ func TestAddNodes(t *testing.T) {
 }
 
 func TestGetNode(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refNode0.Cid().String()})
 	if err != nil {
 		t.Fatalf("failed to GetNode: %v", err)
@@ -282,16 +290,13 @@ func TestGetNode(t *testing.T) {
 }
 
 func TestGetNodes(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cids := []string{refNode0.Cid().String(), refNode1.Cid().String(), refNode2.Cid().String(), refNode3.Cid().String()}
 
 	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: cids})
 	if err != nil {
 		t.Fatalf("failed to GetNodes: %v", err)
 	}
-	results := []*pb.Node{}
+	var results []*pb.Node
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
@@ -313,9 +318,6 @@ func TestGetNodes(t *testing.T) {
 }
 
 func TestAddProtoNode(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	node := merkledag.NodeWithData([]byte(stringToAdd))
 
 	// Don't need to provide Cid for ProtoNode
@@ -331,21 +333,18 @@ func TestAddProtoNode(t *testing.T) {
 }
 
 func TestAddProtoNodes(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	node1 := merkledag.NodeWithData([]byte(stringToAdd))
-	node1.AddNodeLink("link", refProtoNode0)
+	_ = node1.AddNodeLink("link", refProtoNode0)
 	block1 := pb.Block{
 		RawData: node1.RawData(),
 	}
 	node2 := merkledag.NodeWithData([]byte(stringToAdd))
-	node2.AddNodeLink("link", node1)
+	_ = node2.AddNodeLink("link", node1)
 	block2 := pb.Block{
 		RawData: node2.RawData(),
 	}
 	node3 := merkledag.NodeWithData([]byte(stringToAdd))
-	node3.AddNodeLink("link", node2)
+	_ = node3.AddNodeLink("link", node2)
 	block3 := pb.Block{
 		RawData: node3.RawData(),
 	}
@@ -359,8 +358,6 @@ func TestAddProtoNodes(t *testing.T) {
 }
 
 func TestGetProtoNode(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	resp, err := client.GetNode(ctx, &pb.GetNodeRequest{Cid: refProtoNode0.Cid().String()})
 	if err != nil {
 		t.Fatalf("failed to GetProtoNode: %v", err)
@@ -373,16 +370,13 @@ func TestGetProtoNode(t *testing.T) {
 }
 
 func TestGetProtoNodes(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cids := []string{refProtoNode0.Cid().String(), refProtoNode1.Cid().String(), refProtoNode2.Cid().String(), refProtoNode3.Cid().String()}
 
 	stream, err := client.GetNodes(ctx, &pb.GetNodesRequest{Cids: cids})
 	if err != nil {
 		t.Fatalf("failed to GetProtoNodes: %v", err)
 	}
-	results := []*pb.Node{}
+	var results []*pb.Node
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
@@ -404,8 +398,6 @@ func TestGetProtoNodes(t *testing.T) {
 }
 
 func TestResolveLink(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	resp, err := client.ResolveLink(ctx, &pb.ResolveLinkRequest{NodeCid: refNode3.Cid().String(), Path: []string{"link", "name"}})
 	if err != nil {
 		t.Fatalf("failed to ResolveLink: %v", err)
@@ -419,9 +411,6 @@ func TestResolveLink(t *testing.T) {
 }
 
 func TestTree(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	resp, err := client.Tree(ctx, &pb.TreeRequest{NodeCid: refNode3.Cid().String(), Path: "", Depth: -1})
 	if err != nil {
 		t.Fatalf("failed to Tree: %v", err)
@@ -433,9 +422,6 @@ func TestTree(t *testing.T) {
 }
 
 func TestRemoveNode(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	_, err := client.RemoveNode(ctx, &pb.RemoveNodeRequest{Cid: refNode3.Cid().String()})
 	if err != nil {
 		t.Fatalf("failed to RemoveNode: %v", err)
@@ -443,9 +429,6 @@ func TestRemoveNode(t *testing.T) {
 }
 
 func TestRemoveNodes(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cids := []string{refNode0.Cid().String(), refNode0.Cid().String(), refNode1.Cid().String(), refNode2.Cid().String()}
 
 	_, err := client.RemoveNodes(ctx, &pb.RemoveNodesRequest{Cids: cids})
@@ -454,41 +437,12 @@ func TestRemoveNodes(t *testing.T) {
 	}
 }
 
-func newPeer() (*ipfslite.Peer, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func TestStopServer(t *testing.T) {
+	StopServer()
+}
 
-	log.SetLogLevel("*", "warn")
-
-	ds, err := ipfslite.BadgerDatastore("/tmp/test")
-	if err != nil {
-		return nil, err
-	}
-	priv, _, err := crypto.GenerateKeyPair(crypto.RSA, 2048)
-	if err != nil {
-		return nil, err
-	}
-
-	listen, _ := multiaddr.NewMultiaddr("/ip4/0.0.0.0/tcp/4005")
-
-	h, dht, err := ipfslite.SetupLibp2p(
-		ctx,
-		priv,
-		nil,
-		[]multiaddr.Multiaddr{listen},
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	lite, err := ipfslite.New(ctx, ds, h, dht, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	lite.Bootstrap(ipfslite.DefaultBootstrapPeers())
-	return lite, nil
+func TestCancelContext(t *testing.T) {
+	cancel()
 }
 
 func createNode(data map[string]interface{}) (*cbor.Node, error) {
