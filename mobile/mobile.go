@@ -2,6 +2,7 @@ package mobile
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/textileio/grpc-ipfs-lite/server"
 	"github.com/textileio/grpc-ipfs-lite/util"
@@ -11,20 +12,25 @@ var (
 	cancel context.CancelFunc
 )
 
+const ipfsPort = 4005
+const grpcPort = 10000
+
 // Start starts the mobile ipfs-lite peer and gRPC server
-func Start(datastorePath string, debug bool) error {
+func Start(datastorePath string, debug bool) (int, error) {
 	var ctx context.Context
 	ctx, cancel = context.WithCancel(context.Background())
 
-	lite, err := util.NewPeer(ctx, datastorePath, 4005, debug)
+	lite, err := util.NewPeer(ctx, datastorePath, ipfsPort, debug)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	// TODO: run this in a goroutine, but need to get any error back out, but this blocks, so how do you know it is running with no error?
-	go server.StartServer(lite, "localhost:10000")
+	host := fmt.Sprintf("localhost:%d", grpcPort)
 
-	return nil
+	// TODO: run this in a goroutine, but need to get any error back out, but this blocks, so how do you know it is running with no error?
+	go server.StartServer(lite, host)
+
+	return grpcPort, nil
 }
 
 // Stop stops the embedded grpc and ipfs servers
