@@ -92,10 +92,10 @@ func (s *ipfsLiteServer) AddFile(srv pb.IpfsLite_AddFileServer) error {
 	for {
 		req, err := srv.Recv()
 		if err == io.EOF {
-			writer.Close()
+			_ = writer.Close()
 			break
 		} else if err != nil {
-			writer.CloseWithError(err)
+			_ = writer.CloseWithError(err)
 			break
 		}
 		switch payload := req.GetPayload().(type) {
@@ -123,12 +123,12 @@ func (s *ipfsLiteServer) AddFile(srv pb.IpfsLite_AddFileServer) error {
 }
 
 func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFileServer) error {
-	cid, err := cid.Decode(req.GetCid())
+	id, err := cid.Decode(req.GetCid())
 	if err != nil {
 		return err
 	}
 
-	reader, err := s.peer.GetFile(srv.Context(), cid)
+	reader, err := s.peer.GetFile(srv.Context(), id)
 	if err != nil {
 		return err
 	}
@@ -147,11 +147,11 @@ func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFile
 }
 
 func (s *ipfsLiteServer) HasBlock(ctx context.Context, req *pb.HasBlockRequest) (*pb.HasBlockResponse, error) {
-	cid, err := cid.Decode(req.GetCid())
+	id, err := cid.Decode(req.GetCid())
 	if err != nil {
 		return nil, err
 	}
-	hasBlock, err := s.peer.HasBlock(cid)
+	hasBlock, err := s.peer.HasBlock(id)
 	if err != nil {
 		return nil, err
 	}
@@ -203,11 +203,11 @@ func (s *ipfsLiteServer) AddNodes(ctx context.Context, req *pb.AddNodesRequest) 
 }
 
 func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*pb.GetNodeResponse, error) {
-	cid, err := cid.Decode(req.GetCid())
+	id, err := cid.Decode(req.GetCid())
 	if err != nil {
 		return nil, err
 	}
-	node, err := s.peer.Get(ctx, cid)
+	node, err := s.peer.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +223,11 @@ func (s *ipfsLiteServer) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*
 func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNodesServer) error {
 	cids := make([]cid.Cid, len(req.GetCids()))
 	for i, cidString := range req.GetCids() {
-		cid, err := cid.Decode(cidString)
+		id, err := cid.Decode(cidString)
 		if err != nil {
 			return err
 		}
-		cids[i] = cid
+		cids[i] = id
 	}
 	ch := s.peer.GetMany(srv.Context(), cids)
 	for {
@@ -253,11 +253,11 @@ func (s *ipfsLiteServer) GetNodes(req *pb.GetNodesRequest, srv pb.IpfsLite_GetNo
 }
 
 func (s *ipfsLiteServer) RemoveNode(ctx context.Context, req *pb.RemoveNodeRequest) (*pb.RemoveNodeResponse, error) {
-	cid, err := cid.Decode(req.GetCid())
+	id, err := cid.Decode(req.GetCid())
 	if err != nil {
 		return nil, err
 	}
-	err = s.peer.Remove(ctx, cid)
+	err = s.peer.Remove(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -267,11 +267,11 @@ func (s *ipfsLiteServer) RemoveNode(ctx context.Context, req *pb.RemoveNodeReque
 func (s *ipfsLiteServer) RemoveNodes(ctx context.Context, req *pb.RemoveNodesRequest) (*pb.RemoveNodesResponse, error) {
 	cids := make([]cid.Cid, len(req.GetCids()))
 	for i, reqCid := range req.GetCids() {
-		cid, err := cid.Decode(reqCid)
+		id, err := cid.Decode(reqCid)
 		if err != nil {
 			return nil, err
 		}
-		cids[i] = cid
+		cids[i] = id
 	}
 	err := s.peer.RemoveMany(ctx, cids)
 	if err != nil {
@@ -281,12 +281,12 @@ func (s *ipfsLiteServer) RemoveNodes(ctx context.Context, req *pb.RemoveNodesReq
 }
 
 func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkRequest) (*pb.ResolveLinkResponse, error) {
-	cid, err := cid.Decode(req.GetNodeCid())
+	id, err := cid.Decode(req.GetNodeCid())
 	if err != nil {
 		return nil, err
 	}
 
-	node, err := s.peer.Get(ctx, cid)
+	node, err := s.peer.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -311,12 +311,12 @@ func (s *ipfsLiteServer) ResolveLink(ctx context.Context, req *pb.ResolveLinkReq
 }
 
 func (s *ipfsLiteServer) Tree(ctx context.Context, req *pb.TreeRequest) (*pb.TreeResponse, error) {
-	cid, err := cid.Decode(req.GetNodeCid())
+	id, err := cid.Decode(req.GetNodeCid())
 	if err != nil {
 		return nil, err
 	}
 
-	node, err := s.peer.Get(ctx, cid)
+	node, err := s.peer.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -331,11 +331,11 @@ func pbBlockToBlock(pbBlock *pb.Block) (blocks.Block, error) {
 	if len(pbBlock.GetCid()) == 0 {
 		block = blocks.NewBlock(pbBlock.GetRawData())
 	} else {
-		cid, err := cid.Decode(pbBlock.GetCid())
+		id, err := cid.Decode(pbBlock.GetCid())
 		if err != nil {
 			return nil, err
 		}
-		block, err = blocks.NewBlockWithCid(pbBlock.GetRawData(), cid)
+		block, err = blocks.NewBlockWithCid(pbBlock.GetRawData(), id)
 		if err != nil {
 			return nil, err
 		}

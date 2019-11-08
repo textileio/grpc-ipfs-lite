@@ -17,24 +17,27 @@ import (
 )
 
 var (
-	peer                                                       *ipfslite.Peer
+	litePeer                                                   *ipfslite.Peer
 	client                                                     pb.IpfsLiteClient
-	stringToAdd                                                string = "hola"
+	stringToAdd                                                = "hola"
 	refFile, refLargeFile                                      *pb.Node
 	refSize                                                    int32
 	refNode0, refNode1, refNode2, refNode3                     *cbor.Node
 	refProtoNode0, refProtoNode1, refProtoNode2, refProtoNode3 *merkledag.ProtoNode
-	ctx, cancel                                                = context.WithCancel(context.Background())
+	ctx                                                        context.Context
+	cancel                                                     context.CancelFunc
 )
 
 func TestSetup(t *testing.T) {
+	ctx, cancel = context.WithCancel(context.Background())
+
 	var err error
-	peer, err = util.NewPeer(ctx, "/tmp/ipfs-lite", 4005, false)
+	litePeer, err = util.NewPeer(ctx, "/tmp/ipfs-lite", 4005, false)
 	if err != nil {
 		t.Fatalf("failed to create peer: %v", err)
 	}
 
-	go StartServer(peer, "localhost:10000")
+	go StartServer(litePeer, "localhost:10000")
 
 	conn, err := grpc.Dial("localhost:10000", grpc.WithInsecure())
 	if err != nil {
@@ -49,8 +52,8 @@ func TestAddFile(t *testing.T) {
 		t.Fatalf("failed to AddFile: %v", err)
 	}
 
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: []byte(stringToAdd)}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: []byte(stringToAdd)}})
 	resp, err := stream.CloseAndRecv()
 	if err != nil {
 		t.Fatalf("failed to CloseAndRecv AddFile: %v", err)
@@ -102,7 +105,7 @@ func TestAddLargeFile(t *testing.T) {
 
 	buffer := make([]byte, BufferSize)
 
-	stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
+	_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_AddParams{AddParams: &pb.AddParams{}}})
 
 	for {
 		bytesread, err := file.Read(buffer)
@@ -113,7 +116,7 @@ func TestAddLargeFile(t *testing.T) {
 			}
 			break
 		}
-		stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: buffer[:bytesread]}})
+		_ = stream.Send(&pb.AddFileRequest{Payload: &pb.AddFileRequest_Chunk{Chunk: buffer[:bytesread]}})
 	}
 
 	resp, err := stream.CloseAndRecv()
@@ -130,10 +133,10 @@ func TestGetLargeFile(t *testing.T) {
 	}
 
 	out, err := os.Create("/tmp/out.jpeg")
-	defer out.Close()
 	if err != nil {
 		t.Fatalf("failed to create out file: %v", err)
 	}
+	defer out.Close()
 
 	buffer := bytes.NewBuffer([]byte{})
 	for {
@@ -155,7 +158,7 @@ func TestGetLargeFile(t *testing.T) {
 		}
 	}
 
-	out.Sync()
+	_ = out.Sync()
 
 	got := int32(len(buffer.Bytes()))
 	if got != refSize {
@@ -293,7 +296,7 @@ func TestGetNodes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to GetNodes: %v", err)
 	}
-	results := []*pb.Node{}
+	var results []*pb.Node
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
@@ -331,17 +334,17 @@ func TestAddProtoNode(t *testing.T) {
 
 func TestAddProtoNodes(t *testing.T) {
 	node1 := merkledag.NodeWithData([]byte(stringToAdd))
-	node1.AddNodeLink("link", refProtoNode0)
+	_ = node1.AddNodeLink("link", refProtoNode0)
 	block1 := pb.Block{
 		RawData: node1.RawData(),
 	}
 	node2 := merkledag.NodeWithData([]byte(stringToAdd))
-	node2.AddNodeLink("link", node1)
+	_ = node2.AddNodeLink("link", node1)
 	block2 := pb.Block{
 		RawData: node2.RawData(),
 	}
 	node3 := merkledag.NodeWithData([]byte(stringToAdd))
-	node3.AddNodeLink("link", node2)
+	_ = node3.AddNodeLink("link", node2)
 	block3 := pb.Block{
 		RawData: node3.RawData(),
 	}
@@ -373,7 +376,7 @@ func TestGetProtoNodes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to GetProtoNodes: %v", err)
 	}
-	results := []*pb.Node{}
+	var results []*pb.Node
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {

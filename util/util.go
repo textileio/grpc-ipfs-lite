@@ -6,22 +6,23 @@ import (
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-log"
-	corecrypto "github.com/libp2p/go-libp2p-core/crypto"
-	crypto "github.com/libp2p/go-libp2p-crypto"
+	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/multiformats/go-multiaddr"
 )
 
 // NewPeer creates a new ipfslite.Peer
 func NewPeer(ctx context.Context, datastorePath string, port int, debug bool) (*ipfslite.Peer, error) {
-	logLevel := "warn"
+	logLevel := "WARNING"
 	if debug {
-		logLevel = "debug"
+		logLevel = "DEBUG"
 	}
-	log.SetLogLevel("*", logLevel)
+	if err := log.SetLogLevel("*", logLevel); err != nil {
+		return nil, err
+	}
 
 	// Bootstrappers are using 1024 keys. See:
 	// https://github.com/ipfs/infra/issues/378
-	corecrypto.MinRsaKeyBits = 1024
+	crypto.MinRsaKeyBits = 1024
 
 	ds, err := ipfslite.BadgerDatastore(datastorePath)
 	if err != nil {
