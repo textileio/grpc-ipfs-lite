@@ -13,6 +13,7 @@ import (
 	cbor "github.com/ipfs/go-ipld-cbor"
 	"github.com/ipfs/go-log"
 	"github.com/ipfs/go-merkledag"
+	corecrypto "github.com/libp2p/go-libp2p-core/crypto"
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/multiformats/go-multiaddr"
 	multihash "github.com/multiformats/go-multihash"
@@ -47,9 +48,10 @@ func TestSetup(t *testing.T) {
 }
 
 func TestGetRemoteCID(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	cid, err := cid.Decode("QmY7Yh4UquoXHLPFo2XbhXkhBvFoPwmQUSa92pxnxjQuPU")
+
+	cid, err := cid.Decode("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u")
 	if err != nil {
 		t.Fatalf("failed to decode cid: %v", err)
 	}
@@ -474,12 +476,17 @@ func newPeer() (*ipfslite.Peer, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	log.SetLogLevel("*", "warn")
+	log.SetLogLevel("*", "debug")
+
+	// Bootstrappers are using 1024 keys. See:
+	// https://github.com/ipfs/infra/issues/378
+	corecrypto.MinRsaKeyBits = 1024
 
 	ds, err := ipfslite.BadgerDatastore("/tmp/test")
 	if err != nil {
 		return nil, err
 	}
+
 	priv, _, err := crypto.GenerateKeyPair(crypto.RSA, 2048)
 	if err != nil {
 		return nil, err
@@ -492,6 +499,7 @@ func newPeer() (*ipfslite.Peer, error) {
 		priv,
 		nil,
 		[]multiaddr.Multiaddr{listen},
+		ipfslite.Libp2pOptionsExtra...,
 	)
 
 	if err != nil {
