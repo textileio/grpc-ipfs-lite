@@ -12,8 +12,8 @@ var (
 	cancel context.CancelFunc
 )
 
-const ipfsPort = 4005
-const grpcPort = 10000
+const ipfsPort = 4006
+const grpcPort = 10001
 
 // Start starts the mobile ipfs-lite peer and gRPC server
 func Start(datastorePath string, debug bool) (int, error) {
