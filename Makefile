@@ -1,5 +1,5 @@
 test:
-	go test github.com/textileio/grpc-ipfs-lite/server
+	go test ./server ./mobile
 
 ios:
 	go get golang.org/x/mobile/cmd/...
