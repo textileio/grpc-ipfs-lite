@@ -16,6 +16,6 @@ func TestStart(t *testing.T) {
 }
 
 func TestStop(t *testing.T) {
-	time.Sleep(2 * time.Second)
+	time.Sleep(10 * time.Second)
 	Stop()
 }

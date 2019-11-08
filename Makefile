@@ -1,5 +1,5 @@
 test:
-	go test ./server ./mobile
+	go test ./...
 
 ios:
 	go get golang.org/x/mobile/cmd/...
