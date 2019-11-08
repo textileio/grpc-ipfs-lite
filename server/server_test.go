@@ -437,6 +437,10 @@ func TestRemoveNodes(t *testing.T) {
 	}
 }
 
+func TestStopServer(t *testing.T) {
+	StopServer()
+}
+
 func TestCancelContext(t *testing.T) {
 	cancel()
 }
