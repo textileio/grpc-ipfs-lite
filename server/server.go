@@ -22,12 +22,20 @@ type ipfsLiteServer struct {
 
 var (
 	grpcServer *grpc.Server
+	manager    PeerManager
 )
 
 const getFileChunkSize = 1024
 
+// PeerManager provides a Peer instance and stops it when requested
+type PeerManager interface {
+	Peer() *ipfslite.Peer
+	Stop() error
+}
+
 // StartServer starts the gRPC server
-func StartServer(peer *ipfslite.Peer, host string) error {
+func StartServer(peerManager PeerManager, host string) error {
+	manager = peerManager
 	lis, err := net.Listen("tcp", host)
 	if err != nil {
 		return err
@@ -35,16 +43,16 @@ func StartServer(peer *ipfslite.Peer, host string) error {
 
 	grpcServer = grpc.NewServer()
 	server := &ipfsLiteServer{
-		peer: peer,
+		peer: peerManager.Peer(),
 	}
 	pb.RegisterIpfsLiteServer(grpcServer, server)
 	return grpcServer.Serve(lis)
 }
 
 // StopServer stops the grpc server
-func StopServer() {
-	// TODO: is there anything to do with the ipfs-lite peer?
+func StopServer() error {
 	grpcServer.Stop()
+	return manager.Stop()
 }
 
 type addFileResult struct {

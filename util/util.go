@@ -5,13 +5,44 @@ import (
 	"fmt"
 
 	ipfslite "github.com/hsanjuan/ipfs-lite"
+	"github.com/ipfs/go-datastore"
 	"github.com/ipfs/go-log"
 	crypto "github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/libp2p/go-libp2p-core/host"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/textileio/grpc-ipfs-lite/server"
 )
 
-// NewPeer creates a new ipfslite.Peer
-func NewPeer(ctx context.Context, datastorePath string, port int, debug bool) (*ipfslite.Peer, error) {
+type manager struct {
+	server.PeerManager
+
+	datastore datastore.Batching
+	host      host.Host
+	dht       *dht.IpfsDHT
+	peer      *ipfslite.Peer
+}
+
+func (m *manager) Peer() *ipfslite.Peer {
+	return m.peer
+}
+
+func (m *manager) Stop() error {
+	var lastError error
+	if err := m.datastore.Close(); err != nil {
+		lastError = err
+	}
+	if err := m.host.Close(); err != nil {
+		lastError = err
+	}
+	if err := m.dht.Close(); err != nil {
+		lastError = err
+	}
+	return lastError
+}
+
+// NewPeerManager creates a new server.PeerManager
+func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (server.PeerManager, error) {
 	logLevel := "WARNING"
 	if debug {
 		logLevel = "DEBUG"
@@ -24,7 +55,10 @@ func NewPeer(ctx context.Context, datastorePath string, port int, debug bool) (*
 	// https://github.com/ipfs/infra/issues/378
 	crypto.MinRsaKeyBits = 1024
 
-	ds, err := ipfslite.BadgerDatastore(datastorePath)
+	var peerManager = manager{}
+
+	var err error
+	peerManager.datastore, err = ipfslite.BadgerDatastore(datastorePath)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +71,7 @@ func NewPeer(ctx context.Context, datastorePath string, port int, debug bool) (*
 	multiAddr := fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", port)
 	listen, _ := multiaddr.NewMultiaddr(multiAddr)
 
-	h, dht, err := ipfslite.SetupLibp2p(
+	peerManager.host, peerManager.dht, err = ipfslite.SetupLibp2p(
 		ctx,
 		priv,
 		nil,
@@ -49,11 +83,12 @@ func NewPeer(ctx context.Context, datastorePath string, port int, debug bool) (*
 		return nil, err
 	}
 
-	lite, err := ipfslite.New(ctx, ds, h, dht, nil)
+	peerManager.peer, err = ipfslite.New(ctx, peerManager.datastore, peerManager.host, peerManager.dht, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	lite.Bootstrap(ipfslite.DefaultBootstrapPeers())
-	return lite, nil
+	peerManager.peer.Bootstrap(ipfslite.DefaultBootstrapPeers())
+
+	return peerManager, nil
 }
