@@ -7,17 +7,17 @@ import (
 	"os"
 	"testing"
 
-	ipfslite "github.com/hsanjuan/ipfs-lite"
 	cbor "github.com/ipfs/go-ipld-cbor"
 	"github.com/ipfs/go-merkledag"
 	multihash "github.com/multiformats/go-multihash"
 	pb "github.com/textileio/grpc-ipfs-lite/ipfs-lite"
+	"github.com/textileio/grpc-ipfs-lite/peermanager"
 	"github.com/textileio/grpc-ipfs-lite/util"
 	"google.golang.org/grpc"
 )
 
 var (
-	litePeer                                                   *ipfslite.Peer
+	peerManager                                                peermanager.PeerManager
 	client                                                     pb.IpfsLiteClient
 	stringToAdd                                                = "hola"
 	refFile, refLargeFile                                      *pb.Node
@@ -32,12 +32,12 @@ func TestSetup(t *testing.T) {
 	ctx, cancel = context.WithCancel(context.Background())
 
 	var err error
-	litePeer, err = util.NewPeer(ctx, "/tmp/ipfs-lite", 4005, false)
+	peerManager, err = util.NewPeerManager(ctx, "/tmp/ipfs-lite", 4005, false)
 	if err != nil {
 		t.Fatalf("failed to create peer: %v", err)
 	}
 
-	go StartServer(litePeer, "localhost:10000")
+	go StartServer(peerManager, "localhost:10000")
 
 	conn, err := grpc.Dial("localhost:10000", grpc.WithInsecure())
 	if err != nil {
@@ -438,7 +438,10 @@ func TestRemoveNodes(t *testing.T) {
 }
 
 func TestStopServer(t *testing.T) {
-	StopServer()
+	err := StopServer()
+	if err != nil {
+		t.Fatalf("failed to StopServer: %v", err)
+	}
 }
 
 func TestCancelContext(t *testing.T) {

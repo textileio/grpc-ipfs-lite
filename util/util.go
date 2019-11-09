@@ -11,23 +11,21 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/textileio/grpc-ipfs-lite/server"
+	"github.com/textileio/grpc-ipfs-lite/peermanager"
 )
 
 type manager struct {
-	server.PeerManager
-
 	datastore datastore.Batching
 	host      host.Host
 	dht       *dht.IpfsDHT
 	peer      *ipfslite.Peer
 }
 
-func (m *manager) Peer() *ipfslite.Peer {
+func (m manager) Peer() *ipfslite.Peer {
 	return m.peer
 }
 
-func (m *manager) Stop() error {
+func (m manager) Stop() error {
 	var lastError error
 	if err := m.datastore.Close(); err != nil {
 		lastError = err
@@ -42,7 +40,7 @@ func (m *manager) Stop() error {
 }
 
 // NewPeerManager creates a new server.PeerManager
-func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (server.PeerManager, error) {
+func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (peermanager.PeerManager, error) {
 	logLevel := "WARNING"
 	if debug {
 		logLevel = "DEBUG"

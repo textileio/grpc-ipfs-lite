@@ -11,6 +11,7 @@ import (
 	"github.com/ipfs/go-cid"
 	format "github.com/ipfs/go-ipld-format"
 	pb "github.com/textileio/grpc-ipfs-lite/ipfs-lite"
+	"github.com/textileio/grpc-ipfs-lite/peermanager"
 	"google.golang.org/grpc"
 )
 
@@ -22,19 +23,13 @@ type ipfsLiteServer struct {
 
 var (
 	grpcServer *grpc.Server
-	manager    PeerManager
+	manager    peermanager.PeerManager
 )
 
 const getFileChunkSize = 1024
 
-// PeerManager provides a Peer instance and stops it when requested
-type PeerManager interface {
-	Peer() *ipfslite.Peer
-	Stop() error
-}
-
 // StartServer starts the gRPC server
-func StartServer(peerManager PeerManager, host string) error {
+func StartServer(peerManager peermanager.PeerManager, host string) error {
 	manager = peerManager
 	lis, err := net.Listen("tcp", host)
 	if err != nil {

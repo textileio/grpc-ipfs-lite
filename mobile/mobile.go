@@ -20,7 +20,7 @@ func Start(datastorePath string, debug bool) (int, error) {
 	var ctx context.Context
 	ctx, cancel = context.WithCancel(context.Background())
 
-	lite, err := util.NewPeer(ctx, datastorePath, ipfsPort, debug)
+	peerManager, err := util.NewPeerManager(ctx, datastorePath, ipfsPort, debug)
 	if err != nil {
 		return 0, err
 	}
@@ -28,13 +28,13 @@ func Start(datastorePath string, debug bool) (int, error) {
 	host := fmt.Sprintf("localhost:%d", grpcPort)
 
 	// TODO: run this in a goroutine, but need to get any error back out, but this blocks, so how do you know it is running with no error?
-	go server.StartServer(lite, host)
+	go server.StartServer(peerManager, host)
 
 	return grpcPort, nil
 }
 
 // Stop stops the embedded grpc and ipfs servers
-func Stop() {
-	server.StopServer()
+func Stop() error {
 	cancel()
+	return server.StopServer()
 }
