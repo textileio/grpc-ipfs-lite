@@ -11,21 +11,23 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/textileio/grpc-ipfs-lite/peermanager"
 )
 
-type manager struct {
+// StandardManager is our main implementation of PeerManager
+type StandardManager struct {
 	datastore datastore.Batching
 	host      host.Host
 	dht       *dht.IpfsDHT
 	peer      *ipfslite.Peer
 }
 
-func (m manager) Peer() *ipfslite.Peer {
+// Peer returns the manager Peer
+func (m *StandardManager) Peer() *ipfslite.Peer {
 	return m.peer
 }
 
-func (m manager) Stop() error {
+// Stop stops the datastore, libp2p host and dht when requested
+func (m *StandardManager) Stop() error {
 	var lastError error
 	if err := m.datastore.Close(); err != nil {
 		lastError = err
@@ -40,7 +42,7 @@ func (m manager) Stop() error {
 }
 
 // NewPeerManager creates a new server.PeerManager
-func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (peermanager.PeerManager, error) {
+func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (*StandardManager, error) {
 	logLevel := "WARNING"
 	if debug {
 		logLevel = "DEBUG"
@@ -53,7 +55,7 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 	// https://github.com/ipfs/infra/issues/378
 	crypto.MinRsaKeyBits = 1024
 
-	var peerManager = manager{}
+	var peerManager = StandardManager{}
 
 	var err error
 	peerManager.datastore, err = ipfslite.BadgerDatastore(datastorePath)
@@ -88,5 +90,5 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 
 	peerManager.peer.Bootstrap(ipfslite.DefaultBootstrapPeers())
 
-	return peerManager, nil
+	return &peerManager, nil
 }
