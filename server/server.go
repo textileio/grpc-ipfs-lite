@@ -26,7 +26,7 @@ var (
 	manager    peermanager.PeerManager
 )
 
-const getFileChunkSize = 1024
+const getFileChunkSize = 1024 * 32
 
 // StartServer starts the gRPC server
 func StartServer(peerManager peermanager.PeerManager, host string) error {
@@ -139,12 +139,14 @@ func (s *ipfsLiteServer) GetFile(req *pb.GetFileRequest, srv pb.IpfsLite_GetFile
 	buffer := make([]byte, getFileChunkSize)
 	for {
 		size, err := reader.Read(buffer)
-		if err != nil && err != io.EOF {
-			return err
+		if size > 0 {
+			srv.Send(&pb.GetFileResponse{Chunk: buffer[:size]})
 		}
-		srv.Send(&pb.GetFileResponse{Chunk: buffer[:size]})
 		if err == io.EOF {
 			return nil
+		}
+		if err != nil {
+			return err
 		}
 	}
 }
