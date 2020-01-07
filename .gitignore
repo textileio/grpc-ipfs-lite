@@ -13,3 +13,10 @@
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+# make ios
+Mobile.framework
+
+# make android
+mobile-sources.jar
+mobile.aar
