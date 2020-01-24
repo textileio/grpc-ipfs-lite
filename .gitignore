@@ -5,6 +5,11 @@
 *.so
 *.dylib
 
+# Folders
+_obj
+_test
+__pycache__
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -20,3 +25,10 @@ Mobile.framework
 # make android
 mobile-sources.jar
 mobile.aar
+
+# keys
+*.pem
+
+# generated lib
+release/Android/grpc_ipfs_lite_pb/src/main/java
+release/Android/grpc_ipfs_lite_pb/build
