@@ -28,7 +28,7 @@ jobs:
       - name: Spot check
         run: |
              cd release/Android
-             ./gradlew spotlessCheck --stacktrace
+             ./gradlew check --stacktrace
       - name: Java Protoc
         run: |
              cd release/Android
