@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getTargetContext();
 
-		assertEquals("io.textile.pb.test", appContext.getPackageName());
+		assertEquals("io.textile.grpc_ipfs_lite_pb.test", appContext.getPackageName());
 	}
 }
