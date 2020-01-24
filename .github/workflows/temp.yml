@@ -22,7 +22,9 @@ jobs:
       - name: Install Android SDK
         uses: malinskiy/action-android/install-sdk@release/0.0.3
       - name: Configure Gradle
-        run: ./gradlew help
+        run: |
+             cd release/Android
+             ./gradlew help
       - name: Spot check
         run: |
              cd release/Android
