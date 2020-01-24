@@ -20,7 +20,7 @@ jobs:
         with:
           version: '3.11.2'
       - name: Install Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.0.3
+        uses: malinskiy/action-android/install-sdk@release/0.0.5
       - name: Configure Gradle
         run: |
              cd release/Android
@@ -46,4 +46,4 @@ jobs:
           BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
         run: |
              cd release/Android
-             ./gradlew grpc_ipfs_lite_pb:bintrayUpload
+             ./gradlew grpc_ipfs_lite_pb:bintrayUpload --debug
