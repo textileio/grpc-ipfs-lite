@@ -24,7 +24,9 @@ jobs:
       - name: Configure Gradle
         run: ./gradlew help
       - name: Spot check
-        run: ./gradlew spotlessCheck --stacktrace
+        run: |
+             cd release/Android
+             ./gradlew spotlessCheck --stacktrace
       - name: Java Protoc
         run: |
              cd release/Android
