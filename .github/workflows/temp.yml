@@ -40,8 +40,10 @@ jobs:
              # sed -i.bak "s/<version>/${VERSION}/g" release/build.gradle
              sed -i.bak "s/<version>/0.0.1-rc0/g" grpc_ipfs_lite_pb/build.gradle
              ./gradlew grpc_ipfs_lite_pb:install
-             # ./gradlew pb:bintrayUpload
       - name: Package Upload
+        env:
+          BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
+          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
         run: |
              cd release/Android
-             ./gradlew pb:bintrayUpload
+             ./gradlew grpc_ipfs_lite_pb:bintrayUpload
