@@ -41,6 +41,6 @@ jobs:
         run: |
              cd release/Android
              # sed -i.bak "s/<version>/${VERSION}/g" release/build.gradle
-             sed -i.bak "s/<version>/0.0.1-rc1/g" grpc_ipfs_lite_pb/build.gradle
+             sed -i.bak "s/<version>/0.0.1-rc2/g" grpc_ipfs_lite_pb/build.gradle
              ./gradlew grpc_ipfs_lite_pb:install
              ./gradlew grpc_ipfs_lite_pb:bintrayUpload --debug
