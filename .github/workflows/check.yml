@@ -67,14 +67,14 @@ jobs:
           go get -v -t -d ./...
       - name: build android framework
         run: |
-             go mod vendor
-             mkdir -p $GOPATH/src/github.com/textileio
-             cd $GOPATH/src/github.com/textileio/grpc-ipfs-lite
-             export GO111MODULE=off
-             go get golang.org/x/mobile/cmd/...
-             DATE=$(date --iso-8601=seconds)
-             FLAGS="-X github.com/textileio/grpc-ipfs-lite/common.BuildDate=${DATE} -X github.com/textileio/grpc-ipfs-lite/common.GitState=clean"
-             gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
+            #  go mod vendor
+            #  mkdir -p $GOPATH/src/github.com/textileio/grpc-ipfs-lite
+            #  cd $GOPATH/src/github.com/textileio/grpc-ipfs-lite
+            export GO111MODULE=off
+            go get golang.org/x/mobile/cmd/...
+            DATE=$(date --iso-8601=seconds)
+            FLAGS="-X github.com/textileio/grpc-ipfs-lite/common.BuildDate=${DATE} -X github.com/textileio/grpc-ipfs-lite/common.GitState=clean"
+            gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
   build-android-client:
     name: android client build
     needs: build-android-aar
