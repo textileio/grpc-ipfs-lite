@@ -6,6 +6,7 @@ on:
 jobs:
   test-grpc:
     name: grpc-api unit test
+    needs: build-android-client
     runs-on: ubuntu-latest
     container:
       image: textile/builder:1.13.1
@@ -29,7 +30,7 @@ jobs:
              make test
   build-android-arr:
     name: android client build
-    needs: test-grpc
+    needs: build-android-client
     runs-on: ubuntu-latest
     container:
       image: textile/builder:1.13.1
@@ -77,7 +78,6 @@ jobs:
              gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
   build-android-client:
     name: android client build
-    needs: test-grpc
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
