@@ -6,7 +6,9 @@ on:
 jobs:
   grpc:
     name: grpc-api unit test
-    runs-on: textile/builder:1.12.5
+    runs-on: ubuntu-latest
+    container:
+      image: textile/builder:1.13.1
     steps:
       - name: Check out code
         uses: actions/checkout@v1
