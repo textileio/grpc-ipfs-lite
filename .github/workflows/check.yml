@@ -29,8 +29,6 @@ jobs:
   build-android-aar:
     name: android aar build
     runs-on: ubuntu-latest
-    env:
-
     steps:
       - name: Set up Go
         uses: actions/setup-go@v1
@@ -62,10 +60,8 @@ jobs:
           go get -v -t -d ./...
       - name: build android framework
         run: |
-             #  export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
              go mod vendor
              mkdir -p ~/go/src/github.com/textileio
-             #  cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
              cd ~/go/src/github.com/textileio/grpc-ipfs-lite
              export GO111MODULE=off
              go get golang.org/x/mobile/cmd/...
