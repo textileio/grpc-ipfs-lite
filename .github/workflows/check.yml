@@ -51,6 +51,8 @@ jobs:
         uses: malinskiy/action-android/install-sdk@release/0.0.5
       - name: Check out code
         uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
       - name: Cache dependencies
         id: cache-dependencies
         uses: actions/cache@v1
@@ -66,8 +68,8 @@ jobs:
       - name: build android framework
         run: |
              go mod vendor
-             mkdir -p ~/go/src/github.com/textileio
-             cd ~/go/src/github.com/textileio/grpc-ipfs-lite
+             mkdir -p $GOPATH/src/github.com/textileio
+             cd $GOPATH/src/github.com/textileio/grpc-ipfs-lite
              export GO111MODULE=off
              go get golang.org/x/mobile/cmd/...
              DATE=$(date --iso-8601=seconds)
