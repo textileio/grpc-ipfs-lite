@@ -8,8 +8,6 @@ jobs:
     name: grpc-api unit test
     needs: build-android-client
     runs-on: ubuntu-latest
-    container:
-      image: textile/builder:1.13.1
     steps:
       - name: Check out code
         uses: actions/checkout@v1
@@ -28,8 +26,8 @@ jobs:
       - name: Make test
         run: |
              make test
-  build-android-arr:
-    name: android arr build
+  build-android-aar:
+    name: android aar build
     runs-on: ubuntu-latest
     container:
       image: textile/builder:1.13.1
@@ -44,6 +42,11 @@ jobs:
         uses: Arduino/actions/setup-protoc@master
         with:
           version: '3.11.2'
+      - name: install golang
+        run: |
+             wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
+             sudo tar -C /usr/local -xzf go1.12.5.linux-amd64.tar.gz
+             mkdir -p $GOPATH/bin
       - name: Install Android SDK
         uses: malinskiy/action-android/install-sdk@release/0.0.5
       - name: Cache dependencies
@@ -87,7 +90,7 @@ jobs:
              gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
   build-android-client:
     name: android client build
-    needs: build-android-arr
+    needs: build-android-aar
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
