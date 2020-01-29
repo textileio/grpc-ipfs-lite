@@ -47,8 +47,6 @@ jobs:
         uses: Arduino/actions/setup-protoc@master
         with:
           version: '3.11.2'
-      - name: Set up Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.0.5
       - name: Check out code
         uses: actions/checkout@v1
         with:
@@ -68,7 +66,9 @@ jobs:
       - name: Install sdkmanager
         run: |
             wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-            sudo tar -C /usr/local -xzf sdk-tools-linux-3859397.zip
+            tar -C /usr/local -xzf sdk-tools-linux-3859397.zip
+            cd tools
+            chmod +x sdkmanager
             sdkmanager --licenses
             echo y | sdkmanager "build-tools;28.0.3"
             echo y | sdkmanager "platforms;android-28"
