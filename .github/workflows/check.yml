@@ -63,6 +63,12 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           go get -v -t -d ./...
+      
+      - name: Download Android Emulator Image
+        run: |
+          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;28.0.3"
+          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-28"
+          $ANDROID_HOME/tools/bin/sdkmanager "ndk-bundle"
       - name: Install sdkmanager
         run: |
             wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
