@@ -30,8 +30,10 @@ jobs:
     name: android aar build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v1
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
       - name: set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -40,13 +42,10 @@ jobs:
         uses: Arduino/actions/setup-protoc@master
         with:
           version: '3.11.2'
-      - name: install golang
-        run: |
-             wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
-             sudo tar -C /usr/local -xzf go1.12.5.linux-amd64.tar.gz
-             mkdir -p $GOPATH/bin
       - name: Install Android SDK
         uses: malinskiy/action-android/install-sdk@release/0.0.5
+      - name: Check out code
+        uses: actions/checkout@v1
       - name: Cache dependencies
         id: cache-dependencies
         uses: actions/cache@v1
