@@ -29,6 +29,8 @@ jobs:
   build-android-aar:
     name: android aar build
     runs-on: ubuntu-latest
+    env:
+       GOPATH=~/go
     steps:
       - name: Set up Go
         uses: actions/setup-go@v1
