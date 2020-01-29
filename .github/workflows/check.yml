@@ -51,7 +51,7 @@ jobs:
         run: |
             wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
             unzip sdk-tools-linux-3859397.zip
-            cd tools
+            cd tools/bin
             ls ./
             sdkmanager --licenses
             echo y | sdkmanager "build-tools;28.0.3"
