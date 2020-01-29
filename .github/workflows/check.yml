@@ -29,6 +29,8 @@ jobs:
   build-android-aar:
     name: android aar build
     runs-on: ubuntu-latest
+    env:
+
     steps:
       - name: Set up Go
         uses: actions/setup-go@v1
@@ -58,26 +60,17 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           go get -v -t -d ./...
-      - name: Temp check paths
-        run: |
-             echo $GOROOT
-             echo $GOPATH
       - name: build android framework
         run: |
-             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+             #  export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
              go mod vendor
              mkdir -p ~/go/src/github.com/textileio
-             cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
+             #  cd ~ && mv project go/src/github.com/textileio/grpc-ipfs-lite
              cd ~/go/src/github.com/textileio/grpc-ipfs-lite
              export GO111MODULE=off
              go get golang.org/x/mobile/cmd/...
-             COMMIT=$(echo $CIRCLE_SHA1 | cut -c -7)
-             SUMMARY=$CIRCLE_SHA1
-             if [ "${CIRCLE_TAG}" != "" ]; then
-                 SUMMARY=${CIRCLE_TAG}
-             fi
              DATE=$(date --iso-8601=seconds)
-             FLAGS="-X github.com/textileio/grpc-ipfs-lite/common.GitSummary=${SUMMARY} -X github.com/textileio/grpc-ipfs-lite/common.BuildDate=${DATE} -X github.com/textileio/grpc-ipfs-lite/common.GitCommit=${COMMIT} -X github.com/textileio/grpc-ipfs-lite/common.GitBranch=${CIRCLE_BRANCH} -X github.com/textileio/grpc-ipfs-lite/common.GitState=clean"
+             FLAGS="-X github.com/textileio/grpc-ipfs-lite/common.BuildDate=${DATE} -X github.com/textileio/grpc-ipfs-lite/common.GitState=clean"
              gomobile bind -v -ldflags="-w $FLAGS" -target=android -o=mobile.aar github.com/textileio/grpc-ipfs-lite/mobile
   build-android-client:
     name: android client build
