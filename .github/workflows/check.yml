@@ -50,8 +50,9 @@ jobs:
       - name: Install sdkmanager
         run: |
             wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-            unzip -sdk-tools-linux-3859397.zip
+            unzip sdk-tools-linux-3859397.zip
             cd tools
+            ls ./
             sdkmanager --licenses
             echo y | sdkmanager "build-tools;28.0.3"
             echo y | sdkmanager "platforms;android-28"
