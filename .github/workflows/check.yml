@@ -53,10 +53,11 @@ jobs:
             unzip sdk-tools-linux-3859397.zip
             cd tools/bin
             ls ./
-            sdkmanager --licenses
-            echo y | sdkmanager "build-tools;28.0.3"
-            echo y | sdkmanager "platforms;android-28"
-            sdkmanager 'ndk-bundle'
+            chmod +x sdkmanager
+            ./sdkmanager --licenses
+            echo y | ./sdkmanager "build-tools;28.0.3"
+            echo y | ./sdkmanager "platforms;android-28"
+            ./sdkmanager 'ndk-bundle'
       - name: Download Android Emulator Image
         run: |
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;28.0.3"
