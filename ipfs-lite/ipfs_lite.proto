@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-// option java_multiple_files = true;
-option java_package = "io.textile.grpc_ipfs_lite_pb";
+option java_multiple_files = true;
+option java_package = "io.textile.grpc_ipfs_lite";
 option java_outer_classname = "IpfsLiteProto";
 option objc_class_prefix = "TTE";
 
