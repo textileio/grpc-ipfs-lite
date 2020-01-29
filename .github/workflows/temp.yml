@@ -34,7 +34,10 @@ jobs:
              cd clients/android
              sed -i.bak "s/<version>/0.0.1-rc0/g" ipfs_lite/build.gradle
              ./gradlew ipfslite:install
-             ./gradlew check --stacktrace
+      - name: Test
+        run: |
+             cd clients/android
+             ./gradlew ipfslite:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.textile.ipfslite.PeerTest
       # - name: Java Protoc
       #   run: |
       #        cd clients/android
