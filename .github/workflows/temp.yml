@@ -25,7 +25,7 @@ jobs:
         run: |
              cd clients/android
              ./gradlew help
-      - name: Spot check
+      - name: Check
         run: |
              cd clients/android
              ./gradlew check --stacktrace
