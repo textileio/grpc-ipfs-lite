@@ -241,10 +241,74 @@ jobs:
             curl -i -X PUT -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} -T grpc-ipfs-lite-${VERSION}.aar https://api.bintray.com/maven/textile/maven/grpc-ipfs-lite/io/textile/grpc-ipfs-lite/${VERSION}/grpc-ipfs-lite-${VERSION}.aar;publish=1
             curl -i -X POST -u ${BINTRAY_USERNAME}:${BINTRAY_API_KEY} https://api.bintray.com/content/textile/maven/grpc-ipfs-lite/${VERSION}/publish
 
+
+
+  test-android-client:
+    docker:
+      - image: circleci/android:api-28-ndk
+    steps:
+      - checkout
+      - run:
+          name: install protobuf
+          command: |
+            curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+            unzip protoc-3.6.1-linux-x86_64.zip -d protoc3
+            sudo mv protoc3/bin/* /usr/local/bin/
+            sudo mv protoc3/include/* /usr/local/include/
+      - restore_cache:
+          key: go-mod-v1-android-{{ checksum "go.sum" }}-{{ arch }}
+      - run:
+          name: install tools
+          command: |
+            sdkmanager --licenses
+            echo y | sdkmanager "build-tools;28.0.3"
+            echo y | sdkmanager "platforms;android-28"
+            sdkmanager 'ndk-bundle'
+      - run:
+          name: test android-ipfs-lite
+          command: |
+            cd ~/go/src/github.com/textileio/go-textile
+            cd clients/android
+            sed -i.bak "s/<version>/0.0.1-rc0/g" ipfs_lite/build.gradle
+            ./gradlew ipfslite:install
+            ./gradlew ipfslite:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.textile.ipfslite.PeerTest
+  release-android-client:
+    docker:
+      - image: circleci/android:api-28-ndk
+    steps:
+      - checkout
+      - run:
+          name: install protobuf
+          command: |
+            curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+            unzip protoc-3.6.1-linux-x86_64.zip -d protoc3
+            sudo mv protoc3/bin/* /usr/local/bin/
+            sudo mv protoc3/include/* /usr/local/include/
+      - restore_cache:
+          key: go-mod-v1-android-{{ checksum "go.sum" }}-{{ arch }}
+      - run:
+          name: install tools
+          command: |
+            sdkmanager --licenses
+            echo y | sdkmanager "build-tools;28.0.3"
+            echo y | sdkmanager "platforms;android-28"
+            sdkmanager 'ndk-bundle'
+      - run:
+          name: android-ipfs-lite
+          command: |
+            cd ~/go/src/github.com/textileio/go-textile
+            cd clients/android
+            sed -i.bak "s/<version>/${VERSION}/g" ipfs_lite/build.gradle
+            ./gradlew ipfslite:install
+            
 workflows:
   version: 2
   grpc-ipfs-lite:
     jobs:
+      - test-android-client:
+          filters:
+            tags:
+              only: /.*/
       - persist-checkout:
           filters:
             tags:
