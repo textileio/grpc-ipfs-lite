@@ -78,3 +78,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+
+ipfslite/src/main/proto/ipfs_lite.proto
