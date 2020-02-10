@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/golang/protobuf v1.3.2
-	github.com/hsanjuan/ipfs-lite v0.1.8
+	github.com/hsanjuan/ipfs-lite v0.2.0
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.4
 	github.com/ipfs/go-datastore v0.3.1
