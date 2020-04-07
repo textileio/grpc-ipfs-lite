@@ -8,7 +8,7 @@ import (
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-datastore"
 	badger "github.com/ipfs/go-ds-badger"
-	"github.com/ipfs/go-log"
+	"github.com/ipfs/go-log/v2"
 	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
