@@ -65,12 +65,10 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 	if lowMem {
 		opts.TableLoadingMode = options.FileIO
 	}
-	ds, err := badger.NewDatastore(datastorePath, &opts)
+	peerManager.datastore, err = badger.NewDatastore(datastorePath, &opts)
 	if err != nil {
 		return nil, err
 	}
-
-	peerManager.datastore = ds
 
 	priv, _, err := crypto.GenerateKeyPair(crypto.RSA, 2048)
 	if err != nil {
