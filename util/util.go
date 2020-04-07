@@ -45,9 +45,9 @@ func (m *StandardManager) Stop() error {
 
 // NewPeerManager creates a new server.PeerManager
 func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool, lowMem bool) (*StandardManager, error) {
-	logLevel := "WARNING"
+	logLevel := "warn"
 	if debug {
-		logLevel = "DEBUG"
+		logLevel = "debug"
 	}
 	if err := log.SetLogLevel("*", logLevel); err != nil {
 		return nil, err
@@ -65,10 +65,12 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 	if lowMem {
 		opts.TableLoadingMode = options.FileIO
 	}
-	peerManager.datastore, err = badger.NewDatastore(datastorePath, &opts)
+	ds, err := badger.NewDatastore(datastorePath, &opts)
 	if err != nil {
 		return nil, err
 	}
+
+	peerManager.datastore = ds
 
 	priv, _, err := crypto.GenerateKeyPair(crypto.RSA, 2048)
 	if err != nil {
@@ -83,6 +85,7 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 		priv,
 		nil,
 		[]multiaddr.Multiaddr{listen},
+		peerManager.datastore,
 		ipfslite.Libp2pOptionsExtra...,
 	)
 
