@@ -36,5 +36,5 @@ require (
 	github.com/multiformats/go-multiaddr v0.2.1
 	github.com/multiformats/go-multihash v0.0.13
 	golang.org/x/mobile v0.0.0-20191210151939-1a1fef82734d // indirect
-	google.golang.org/grpc v1.27.1
+	google.golang.org/grpc v1.28.1
 )
