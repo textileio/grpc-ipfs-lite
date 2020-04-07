@@ -6,7 +6,7 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	port, err := Start("/tmp/mobile-ipfs-lite", false)
+	port, err := Start("/tmp/mobile-ipfs-lite", false, true)
 	if err != nil {
 		t.Fatalf("failed to Start: %v", err)
 	}
@@ -24,7 +24,7 @@ func TestStop(t *testing.T) {
 }
 
 func TestStartAgain(t *testing.T) {
-	port, err := Start("/tmp/mobile-ipfs-lite", false)
+	port, err := Start("/tmp/mobile-ipfs-lite", false, true)
 	if err != nil {
 		t.Fatalf("failed to Start again: %v", err)
 	}
