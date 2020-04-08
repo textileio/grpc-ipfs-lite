@@ -8,14 +8,12 @@ require (
 	// upgrade c
 	github.com/hsanjuan/ipfs-lite v0.1.8
 	github.com/ipfs/go-block-format v0.0.2
-	// upgrade a
 	github.com/ipfs/go-cid v0.0.5
 	// upgrade c
 	github.com/ipfs/go-datastore v0.3.1
 	// upgrade b
 	github.com/ipfs/go-ds-badger v0.2.0
 	github.com/ipfs/go-ipld-cbor v0.0.4
-	// upgrade b
 	github.com/ipfs/go-ipld-format v0.2.0
 	github.com/ipfs/go-log/v2 v2.0.4
 	github.com/ipfs/go-merkledag v0.3.1
