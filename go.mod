@@ -3,8 +3,8 @@ module github.com/textileio/grpc-ipfs-lite
 go 1.13
 
 require (
-  github.com/dgraph-io/badger v1.6.0
-	github.com/golang/protobuf v1.3.2
+	github.com/dgraph-io/badger v1.6.0
+	github.com/golang/protobuf v1.3.5
 	github.com/hsanjuan/ipfs-lite v0.1.8
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.4
