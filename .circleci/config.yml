@@ -5,40 +5,6 @@ checkout-linux: &checkout-linux
     at: /root
 
 jobs:
-  persist-checkout:
-    docker:
-      - image: python
-    steps:
-      - checkout
-      - run:
-          name: clean up git
-          command: |
-            rm -rf .git
-      - persist_to_workspace:
-          root: /root
-          paths:
-            - project
-
-  unit-test:
-    docker:
-      - image: textile/builder:1.12.5
-    steps:
-      - *checkout-linux
-      - restore_cache:
-          key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
-      - run:
-          name: cache mods
-          command: |
-            go mod download
-      - save_cache:
-          key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
-          paths:
-            - /go/pkg/mod
-      - run:
-          name: run tests
-          command: |
-            make test
-
   build-ios-framework:
     macos:
       xcode: "10.2.1"
@@ -245,27 +211,13 @@ workflows:
   version: 2
   grpc-ipfs-lite:
     jobs:
-      - persist-checkout:
-          filters:
-            tags:
-              only: /.*/
-      - unit-test:
-          requires:
-            - persist-checkout
-          filters:
-            tags:
-              only: /.*/
       - build-ios-framework:
-          requires:
-            - unit-test
           filters:
             branches:
               only: master
             tags:
               only: /.*/
       - build-android-aar:
-          requires:
-            - unit-test
           filters:
             branches:
               only: master

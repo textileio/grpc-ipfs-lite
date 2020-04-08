@@ -16,11 +16,11 @@ const ipfsPort = 4006
 const grpcPort = 10001
 
 // Start starts the mobile ipfs-lite peer and gRPC server
-func Start(datastorePath string, debug bool) (int, error) {
+func Start(datastorePath string, debug bool, lowMem bool) (int, error) {
 	var ctx context.Context
 	ctx, cancel = context.WithCancel(context.Background())
 
-	peerManager, err := util.NewPeerManager(ctx, datastorePath, ipfsPort, debug)
+	peerManager, err := util.NewPeerManager(ctx, datastorePath, ipfsPort, debug, lowMem)
 	if err != nil {
 		return 0, err
 	}
