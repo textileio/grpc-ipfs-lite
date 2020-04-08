@@ -42,7 +42,7 @@ func (m *StandardManager) Stop() error {
 }
 
 // NewPeerManager creates a new server.PeerManager
-func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool) (*StandardManager, error) {
+func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool, lowMem bool) (*StandardManager, error) {
 	logLevel := "WARNING"
 	if debug {
 		logLevel = "DEBUG"

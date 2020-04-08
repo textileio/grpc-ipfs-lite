@@ -32,7 +32,7 @@ func TestSetup(t *testing.T) {
 	ctx, cancel = context.WithCancel(context.Background())
 
 	var err error
-	peerManager, err = util.NewPeerManager(ctx, "/tmp/ipfs-lite", 4005, false)
+	peerManager, err = util.NewPeerManager(ctx, "/tmp/ipfs-lite", 4005, false, false)
 	if err != nil {
 		t.Fatalf("failed to create peer: %v", err)
 	}
