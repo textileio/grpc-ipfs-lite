@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dgraph-io/badger/options"
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-datastore"
+	badger "github.com/ipfs/go-ds-badger"
 	"github.com/ipfs/go-log"
 	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -58,7 +60,11 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 	var peerManager = StandardManager{}
 
 	var err error
-	peerManager.datastore, err = ipfslite.BadgerDatastore(datastorePath)
+	opts := badger.DefaultOptions
+	if lowMem {
+		opts.TableLoadingMode = options.FileIO
+	}
+	peerManager.datastore, err = badger.NewDatastore(datastorePath, &opts)
 	if err != nil {
 		return nil, err
 	}
