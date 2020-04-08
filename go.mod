@@ -10,7 +10,6 @@ require (
 	github.com/hsanjuan/ipfs-lite v0.1.8
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.5
-	// upgrade c
 	github.com/ipfs/go-datastore v0.4.4
 	github.com/ipfs/go-ds-badger v0.2.4
 	github.com/ipfs/go-ipld-cbor v0.0.4
