@@ -17,11 +17,10 @@ require (
 	github.com/ipfs/go-log v1.0.3 // indirect
 	github.com/ipfs/go-log/v2 v2.0.4
 	github.com/ipfs/go-merkledag v0.3.1
-	// upgrade c
-	github.com/libp2p/go-libp2p-core v0.2.3
-	// upgrade c
+	github.com/libp2p/go-libp2p-core v0.3.0
 	github.com/libp2p/go-libp2p-kad-dht v0.2.1
-	github.com/multiformats/go-multiaddr v0.2.0
+	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/multiformats/go-multiaddr v0.2.1
 	github.com/multiformats/go-multibase v0.0.2 // indirect
 	github.com/multiformats/go-multihash v0.0.13
 	github.com/pkg/errors v0.9.1 // indirect
@@ -31,5 +30,6 @@ require (
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b // indirect
+	golang.org/x/tools v0.0.0-20200408132156-9ee5ef7a2c0d // indirect
 	google.golang.org/grpc v1.26.0
 )
