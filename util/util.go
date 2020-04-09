@@ -8,7 +8,7 @@ import (
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	"github.com/ipfs/go-datastore"
 	badger "github.com/ipfs/go-ds-badger"
-	"github.com/ipfs/go-log"
+	log "github.com/ipfs/go-log/v2"
 	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
@@ -45,7 +45,7 @@ func (m *StandardManager) Stop() error {
 
 // NewPeerManager creates a new server.PeerManager
 func NewPeerManager(ctx context.Context, datastorePath string, port int, debug bool, lowMem bool) (*StandardManager, error) {
-	logLevel := "WARNING"
+	logLevel := "WARN"
 	if debug {
 		logLevel = "DEBUG"
 	}
