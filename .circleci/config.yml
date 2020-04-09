@@ -25,7 +25,7 @@ jobs:
           name: cache mods
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-            . ~/.zshrc
+            ls $GOROOT/bin
             go mod download
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
