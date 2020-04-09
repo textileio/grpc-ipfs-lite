@@ -25,7 +25,6 @@ jobs:
           name: cache mods
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-            ls $GOROOT/bin
             go mod download
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
@@ -209,6 +208,8 @@ workflows:
     jobs:
       - build-ios-framework:
           filters:
+            branches:
+              only: master
             tags:
               only: /.*/
       - build-android-aar:
