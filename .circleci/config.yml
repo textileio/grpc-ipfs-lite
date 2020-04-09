@@ -10,14 +10,14 @@ jobs:
       xcode: "10.2.1"
     environment:
       GOPATH: /Users/distiller/go
-      GOROOT: /Users/distiller/gosrc/go
+      GOROOT: /usr/local/go
     steps:
       - checkout
       - run:
           name: install golang
           command: |
             curl -L -o go1.14.2.darwin-amd64.tar.gz https://dl.google.com/go/go1.14.2.darwin-amd64.tar.gz
-            sudo tar -C /Users/distiller -xzf go1.14.2.darwin-amd64.tar.gz
+            sudo tar -C /usr/local -xzf go1.14.2.darwin-amd64.tar.gz
             mkdir -p $GOPATH/bin
       - restore_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
