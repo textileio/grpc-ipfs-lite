@@ -16,8 +16,6 @@ jobs:
       - run:
           name: install golang
           command: |
-            export GOROOT=/usr/local/go
-            export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
             curl -L -o go1.14.2.darwin-amd64.tar.gz https://dl.google.com/go/go1.14.2.darwin-amd64.tar.gz
             sudo tar -C /usr/local -xzf go1.14.2.darwin-amd64.tar.gz
             mkdir -p $GOPATH/bin
@@ -27,6 +25,7 @@ jobs:
           name: cache mods
           command: |
             export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+            . ~/.zshrc
             go mod download
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}-{{ arch }}
