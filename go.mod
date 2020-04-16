@@ -18,7 +18,7 @@ require (
 	github.com/ipfs/go-log/v2 v2.0.4
 	github.com/ipfs/go-merkledag v0.3.1
 	github.com/libp2p/go-libp2p-core v0.3.0
-	github.com/libp2p/go-libp2p-kad-dht v0.2.1
+	github.com/libp2p/go-libp2p-kad-dht v0.7.4
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/multiformats/go-multiaddr v0.2.1
 	github.com/multiformats/go-multibase v0.0.2 // indirect
