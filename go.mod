@@ -31,5 +31,5 @@ require (
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b // indirect
 	golang.org/x/tools v0.0.0-20200408132156-9ee5ef7a2c0d // indirect
-	google.golang.org/grpc v1.26.0
+	google.golang.org/grpc v1.29.0
 )
