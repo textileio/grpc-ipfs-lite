@@ -11,7 +11,7 @@ import (
 	log "github.com/ipfs/go-log/v2"
 	crypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
+	"github.com/libp2p/go-libp2p-kad-dht/dual"
 	"github.com/multiformats/go-multiaddr"
 )
 
@@ -19,7 +19,7 @@ import (
 type StandardManager struct {
 	datastore datastore.Batching
 	host      host.Host
-	dht       *dht.IpfsDHT
+	dht       *dual.DHT
 	peer      *ipfslite.Peer
 }
 
@@ -31,13 +31,13 @@ func (m *StandardManager) Peer() *ipfslite.Peer {
 // Stop stops the datastore, libp2p host and dht when requested
 func (m *StandardManager) Stop() error {
 	var lastError error
-	if err := m.datastore.Close(); err != nil {
-		lastError = err
-	}
 	if err := m.host.Close(); err != nil {
 		lastError = err
 	}
 	if err := m.dht.Close(); err != nil {
+		lastError = err
+	}
+	if err := m.datastore.Close(); err != nil {
 		lastError = err
 	}
 	return lastError
@@ -82,6 +82,7 @@ func NewPeerManager(ctx context.Context, datastorePath string, port int, debug b
 		priv,
 		nil,
 		[]multiaddr.Multiaddr{listen},
+		peerManager.datastore,
 		ipfslite.Libp2pOptionsExtra...,
 	)
 

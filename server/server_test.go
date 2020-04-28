@@ -28,22 +28,23 @@ var (
 	cancel                                                     context.CancelFunc
 )
 
-func TestSetup(t *testing.T) {
+func TestMain(m *testing.M) {
 	ctx, cancel = context.WithCancel(context.Background())
 
 	var err error
 	peerManager, err = util.NewPeerManager(ctx, "/tmp/ipfs-lite", 4005, false, false)
 	if err != nil {
-		t.Fatalf("failed to create peer: %v", err)
+		panic("failed to create peer: " + err.Error())
 	}
 
 	go StartServer(peerManager, "localhost:10000")
 
 	conn, err := grpc.Dial("localhost:10000", grpc.WithInsecure())
 	if err != nil {
-		t.Fatalf("failed to grpc dial: %v", err)
+		panic("failed to grpc dial: " + err.Error())
 	}
 	client = pb.NewIpfsLiteClient(conn)
+	os.Exit(m.Run())
 }
 
 func TestAddFile(t *testing.T) {
@@ -437,15 +438,15 @@ func TestRemoveNodes(t *testing.T) {
 	}
 }
 
+func TestCancelContext(t *testing.T) {
+	cancel()
+}
+
 func TestStopServer(t *testing.T) {
 	err := StopServer()
 	if err != nil {
 		t.Fatalf("failed to StopServer: %v", err)
 	}
-}
-
-func TestCancelContext(t *testing.T) {
-	cancel()
 }
 
 func createNode(data map[string]interface{}) (*cbor.Node, error) {
