@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
 	github.com/dgraph-io/badger v1.6.1
-	github.com/golang/protobuf v1.3.5
+	github.com/golang/protobuf v1.4.0
 	// upgrade c
 	github.com/hsanjuan/ipfs-lite v1.1.11
 	github.com/ipfs/go-block-format v0.0.2
