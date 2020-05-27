@@ -9,7 +9,7 @@ require (
 	// upgrade c
 	github.com/hsanjuan/ipfs-lite v1.1.11
 	github.com/ipfs/go-block-format v0.0.2
-	github.com/ipfs/go-cid v0.0.5
+	github.com/ipfs/go-cid v0.0.6
 	github.com/ipfs/go-datastore v0.4.4
 	github.com/ipfs/go-ds-badger v0.2.4
 	github.com/ipfs/go-ipld-cbor v0.0.4
@@ -19,7 +19,6 @@ require (
 	github.com/libp2p/go-libp2p-core v0.5.2
 	github.com/libp2p/go-libp2p-kad-dht v0.7.10
 	github.com/multiformats/go-multiaddr v0.2.1
-	github.com/multiformats/go-multibase v0.0.2 // indirect
 	github.com/multiformats/go-multihash v0.0.13
 	github.com/polydawn/refmt v0.0.0-20190807091052-3d65705ee9f1 // indirect
 	github.com/whyrusleeping/cbor-gen v0.0.0-20200402171437-3d27c146c105 // indirect
