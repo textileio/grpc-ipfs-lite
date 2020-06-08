@@ -16,8 +16,8 @@ require (
 	github.com/ipfs/go-ipld-format v0.2.0
 	github.com/ipfs/go-log/v2 v2.0.5
 	github.com/ipfs/go-merkledag v0.3.2
-	github.com/libp2p/go-libp2p-core v0.5.2
-	github.com/libp2p/go-libp2p-kad-dht v0.7.10
+	github.com/libp2p/go-libp2p-core v0.5.4
+	github.com/libp2p/go-libp2p-kad-dht v0.8.2
 	github.com/multiformats/go-multiaddr v0.2.1
 	github.com/multiformats/go-multibase v0.0.2 // indirect
 	github.com/multiformats/go-multihash v0.0.13
