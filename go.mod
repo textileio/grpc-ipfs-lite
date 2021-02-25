@@ -18,5 +18,5 @@ require (
 	github.com/libp2p/go-libp2p-kad-dht v0.8.2
 	github.com/multiformats/go-multiaddr v0.2.2
 	github.com/multiformats/go-multihash v0.0.13
-	google.golang.org/grpc v1.29.1
+	google.golang.org/grpc v1.36.0
 )
