@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/dgraph-io/badger v1.6.1
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.5.1
 	github.com/hsanjuan/ipfs-lite v1.1.14
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.6
