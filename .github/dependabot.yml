@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: gomod
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "03:00"
+    timezone: America/Los_Angeles
+  open-pull-requests-limit: 25
+  ignore:
+  - dependency-name: google.golang.org/grpc
+    versions:
+    - 1.35.0
+    - 1.36.0
+    - 1.36.1
+  - dependency-name: github.com/golang/protobuf
+    versions:
+    - 1.4.3
+    - 1.5.1
+  - dependency-name: github.com/ipfs/go-log/v2
+    versions:
+    - 2.1.2
+  - dependency-name: github.com/libp2p/go-libp2p-core
+    versions:
+    - 0.8.0
+    - 0.8.2
+    - 0.8.3
+  - dependency-name: github.com/hsanjuan/ipfs-lite
+    versions:
+    - 1.1.18
+  - dependency-name: github.com/multiformats/go-multihash
+    versions:
+    - 0.0.14
