@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/dgraph-io/badger v1.6.1
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.5.2
 	github.com/hsanjuan/ipfs-lite v1.1.14
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.6
@@ -18,5 +18,5 @@ require (
 	github.com/libp2p/go-libp2p-kad-dht v0.8.2
 	github.com/multiformats/go-multiaddr v0.2.2
 	github.com/multiformats/go-multihash v0.0.13
-	google.golang.org/grpc v1.29.1
+	google.golang.org/grpc v1.53.0
 )
